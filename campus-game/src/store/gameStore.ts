@@ -68,15 +68,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const dayScene = scene as DayScene
       const intro = dayScene.intro || []
       const outro = dayScene.outro || []
-
-      // intro 播完且正在探索 → 停住，不推进（观察面板会显示）
-      if (isExploring && currentLineIndex >= intro.length - 1) {
-        set({ currentLineIndex: intro.length - 1 })
-        return
-      }
+      const totalLines = intro.length + outro.length
 
       // outro 播完 → 进入下一场景
-      if (!isExploring && currentLineIndex >= intro.length + outro.length - 1) {
+      if (!isExploring && currentLineIndex >= totalLines) {
         if (dayScene.nextSceneId) {
           const nextScene = scenes[dayScene.nextSceneId]
           set({
@@ -157,6 +152,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   finishExploring: () => {
+    const { isExploring } = get()
+    if (!isExploring) return
     const scene = get().getDayScene()
     if (!scene) return
     const introLength = (scene.intro || []).length
