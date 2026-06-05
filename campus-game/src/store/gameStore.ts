@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { GameState, Scene, DayScene, NightScene } from '../types/game'
 import { scenes } from '../data/chapters'
+import { characters } from '../data/characters'
 
 interface GameStore extends GameState {
   // ── 游戏流程 ──
@@ -40,7 +41,7 @@ const initialState: GameState = {
   notebook: [],
   writings: [],
   flags: {},
-  relationships: { robert: 0, ludwig: 0, maya: 0 },
+  impressions: { ludwig: 0, maya: 0 },
   isPlaying: false,
 }
 
@@ -116,7 +117,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   confirmObservation: () => {
-    const { modalObservationId, observedIds, notebook, relationships } = get()
+    const { modalObservationId, observedIds, notebook, impressions } = get()
     if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
@@ -125,10 +126,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const obs = scene.observations.find(o => o.id === modalObservationId)
     if (!obs) return
 
-    const newRelationships = { ...relationships }
+    // 推进人物印象
+    const newImpressions = { ...impressions }
     if (obs.relationshipEffect) {
-      const { characterId, delta } = obs.relationshipEffect
-      newRelationships[characterId] = (newRelationships[characterId] || 0) + delta
+      const { characterId } = obs.relationshipEffect
+      const char = characters[characterId]
+      if (char && char.impressionLevels.length > 0) {
+        const current = newImpressions[characterId] || 0
+        const maxLevel = char.impressionLevels.length - 1
+        newImpressions[characterId] = Math.min(current + 1, maxLevel)
+      }
     }
 
     const entryExists = notebook.find(e => e.id === obs.notebookEntry.id)
@@ -136,7 +143,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({
       observedIds: [...observedIds, modalObservationId],
       notebook: entryExists ? notebook : [...notebook, obs.notebookEntry],
-      relationships: newRelationships,
+      impressions: newImpressions,
       modalObservationId: null,
       feedback: { text: `✓ ${obs.notebookEntry.label} 已记录`, visible: true },
     })
@@ -270,7 +277,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         notebook: s.notebook,
         writings: s.writings,
         flags: s.flags,
-        relationships: s.relationships,
+        impressions: s.impressions,
         isPlaying: s.isPlaying,
       },
     }

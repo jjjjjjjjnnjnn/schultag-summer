@@ -156,36 +156,37 @@ function NotebookContent() {
   )
 }
 
-// ── 角色关系侧边栏 ──
+// ── 人物印象侧边栏 ──
 function CharacterSidebar() {
-  const relationships = useGameStore(s => s.relationships)
+  const impressions = useGameStore(s => s.impressions)
 
   const mainChars = Object.values(characters).filter(
-    c => c.role !== 'protagonist' && c.role !== 'teacher'
+    c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
   )
 
   return (
     <div className="w-48 border-r border-stone-800/30 bg-stone-950/50 p-4 hidden lg:flex flex-col">
-      <h3 className="text-xs text-stone-600 uppercase tracking-wider mb-3">关系</h3>
-      <div className="space-y-3">
-        {mainChars.map(c => (
-          <div key={c.id} className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />
-              <span className="text-xs text-stone-400">{c.name}</span>
-              <span className="text-xs text-stone-600">{c.nameEn}</span>
+      <h3 className="text-xs text-stone-600 uppercase tracking-wider mb-3">人物印象</h3>
+      <div className="space-y-4">
+        {mainChars.map(c => {
+          const level = impressions[c.id] || 0
+          const impressionText = c.impressionLevels[level] || '陌生'
+
+          return (
+            <div key={c.id} className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />
+                <span className="text-xs text-stone-400">{c.name}</span>
+              </div>
+              <p
+                className="text-xs ml-4 transition-all duration-500"
+                style={{ color: c.color, opacity: level === 0 ? 0.4 : 1 }}
+              >
+                {impressionText}
+              </p>
             </div>
-            <div className="h-1 bg-stone-800 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${Math.max(5, 50 + (relationships[c.id] || 0) * 5)}%`,
-                  backgroundColor: c.color,
-                }}
-              />
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

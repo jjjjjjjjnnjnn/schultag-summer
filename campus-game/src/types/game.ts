@@ -85,6 +85,8 @@ export interface Character {
   role: 'protagonist' | 'main' | 'supporting' | 'teacher'
   color: string
   traits: string[]
+  /** 人物印象等级，从低到高 */
+  impressionLevels: string[]
 }
 
 // ── 游戏状态 ──
@@ -107,7 +109,7 @@ export interface GameState {
   writings: string[]
   /** 游戏标记 */
   flags: Record<string, boolean>
-  /** 好感度 */
-  relationships: Record<string, number>
+  /** 人物印象等级（每个角色当前的等级索引） */
+  impressions: Record<string, number>
   isPlaying: boolean
 }

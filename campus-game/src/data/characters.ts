@@ -9,6 +9,7 @@ export const characters: Record<string, Character> = {
     role: 'protagonist',
     color: '#d97706',
     traits: ['沉默寡言', '观察者', '中二病', '隐藏作家'],
+    impressionLevels: [],
   },
   ludwig: {
     id: 'ludwig',
@@ -18,6 +19,7 @@ export const characters: Record<string, Character> = {
     role: 'main',
     color: '#3b82f6',
     traits: ['外向', '爱聊天', '语言天赋', '烘焙爱好者'],
+    impressionLevels: ['陌生', '初识', '开始注意到他', '似乎理解他'],
   },
   maya: {
     id: 'maya',
@@ -27,6 +29,7 @@ export const characters: Record<string, Character> = {
     role: 'main',
     color: '#8b5cf6',
     traits: ['安静', '观察力强', '生态学爱好者', '动作清晰'],
+    impressionLevels: ['陌生', '初识', '开始注意她', '似乎理解她'],
   },
   teacher: {
     id: 'teacher',
@@ -35,5 +38,6 @@ export const characters: Record<string, Character> = {
     role: 'teacher',
     color: '#6b7280',
     traits: ['英语老师', '幽默'],
+    impressionLevels: [],
   },
 }
