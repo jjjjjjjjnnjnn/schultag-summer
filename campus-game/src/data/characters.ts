@@ -1,0 +1,39 @@
+import type { Character } from '../types/game'
+
+export const characters: Record<string, Character> = {
+  robert: {
+    id: 'robert',
+    name: '荣加俊',
+    nameEn: 'Robert',
+    age: 15,
+    role: 'protagonist',
+    color: '#d97706',
+    traits: ['沉默寡言', '观察者', '中二病', '隐藏作家'],
+  },
+  ludwig: {
+    id: 'ludwig',
+    name: '王嘉亿',
+    nameEn: 'Ludwig',
+    age: 15,
+    role: 'main',
+    color: '#3b82f6',
+    traits: ['外向', '爱聊天', '语言天赋', '烘焙爱好者'],
+  },
+  maya: {
+    id: 'maya',
+    name: '兰若瑶',
+    nameEn: 'Maya',
+    age: 18,
+    role: 'main',
+    color: '#8b5cf6',
+    traits: ['安静', '观察力强', '生态学爱好者', '动作清晰'],
+  },
+  teacher: {
+    id: 'teacher',
+    name: '小飞飞',
+    nameEn: 'Ms. Fly',
+    role: 'teacher',
+    color: '#6b7280',
+    traits: ['英语老师', '幽默'],
+  },
+}
