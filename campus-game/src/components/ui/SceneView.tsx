@@ -1,13 +1,23 @@
+import { useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
 import type { NightScene } from '../../types/game'
-import { scenes } from '../../data/chapters'
 
 export function SceneView() {
-  const { getCurrentScene, currentLine, advanceLine, isExploring } = useGameStore()
+  const { getCurrentScene, currentLine, advanceLine, isExploring, goToNextScene } = useGameStore()
   const scene = getCurrentScene()
   const line = currentLine()
+
+  // 当前场景的行已全部播完 → 自动跳转下一场景
+  useEffect(() => {
+    if (!scene || isExploring || line !== null) return
+    const nextId = 'nextSceneId' in scene ? scene.nextSceneId : undefined
+    if (!nextId) return
+    // 延迟一帧确保当前渲染完成
+    const t = setTimeout(goToNextScene, 50)
+    return () => clearTimeout(t)
+  }, [scene, line, isExploring, goToNextScene])
 
   if (!scene) {
     return (
@@ -224,19 +234,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
         {nightScene.nextSceneId && (
           <div className="text-center mt-8">
             <button
-              onClick={() => {
-                const nextId = nightScene.nextSceneId
-                if (nextId) {
-                  const nextScene = scenes[nextId]
-                  useGameStore.setState({
-                    currentSceneId: nextId,
-                    currentLineIndex: 0,
-                    isExploring: nextScene?.mode === 'day',
-                    observedIds: [],
-                    selectedEntryIds: [],
-                  })
-                }
-              }}
+              onClick={() => useGameStore.getState().goToNextScene()}
               className="px-6 py-2.5 border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-stone-100 transition-all text-sm rounded"
             >
               下一天 →

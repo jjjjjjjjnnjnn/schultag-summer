@@ -7,6 +7,7 @@ interface GameStore extends GameState {
   // ── 游戏流程 ──
   startGame: () => void
   advanceLine: () => void
+  goToNextScene: () => void
   saveGame: () => void
   loadGame: () => boolean
   resetGame: () => void
@@ -67,43 +68,42 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (scene.mode === 'day') {
       const dayScene = scene as DayScene
       const intro = dayScene.intro || []
-      const outro = dayScene.outro || []
-      const totalLines = intro.length + outro.length
 
-      // intro 播完且正在探索 → 停住
-      if (isExploring && currentLineIndex >= intro.length - 1) {
-        return
+      // intro 播完且正在探索 → 停住（使用过滤后行数）
+      if (isExploring) {
+        const { writingTags } = get()
+        const visibleIntro = intro.filter(
+          l => !l.requiresTag || writingTags.includes(l.requiresTag)
+        )
+        if (currentLineIndex >= visibleIntro.length - 1) return
       }
 
-      // 先推进
-      const nextIndex = currentLineIndex + 1
-
-      // outro 播完 → 进入下一场景
-      if (!isExploring && nextIndex >= totalLines) {
-        if (dayScene.nextSceneId) {
-          const nextScene = scenes[dayScene.nextSceneId]
-          set({
-            currentSceneId: dayScene.nextSceneId,
-            currentLineIndex: 0,
-            isExploring: nextScene?.mode === 'day',
-            observedIds: [],
-            selectedEntryIds: [],
-          })
-        }
-        return
-      }
-
-      set({ currentLineIndex: nextIndex })
+      set({ currentLineIndex: currentLineIndex + 1 })
+      return
     }
 
-    // 夜晚场景
+    // 夜晚场景：只推进，不处理转场
     if (scene.mode === 'night') {
-      const nightScene = scene as NightScene
-      if (!nightScene.writingPhase && currentLineIndex < nightScene.lines.length - 1) {
-        set({ currentLineIndex: currentLineIndex + 1 })
-      }
-      // writingPhase 由 submitWriting 处理
+      set({ currentLineIndex: currentLineIndex + 1 })
     }
+  },
+
+  goToNextScene: () => {
+    const { currentSceneId } = get()
+    const scene = scenes[currentSceneId]
+    if (!scene) return
+
+    const nextId = 'nextSceneId' in scene ? scene.nextSceneId : undefined
+    if (!nextId) return
+
+    const nextScene = scenes[nextId]
+    set({
+      currentSceneId: nextId,
+      currentLineIndex: 0,
+      isExploring: nextScene?.mode === 'day',
+      observedIds: [],
+      selectedEntryIds: [],
+    })
   },
 
   // ══════════════════════════════════════
@@ -163,10 +163,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!isExploring) return
     const scene = get().getDayScene()
     if (!scene) return
-    const introLength = (scene.intro || []).length
+    // 使用过滤后的 intro 行数（requiresTag 不满足的行被跳过）
+    const { writingTags } = get()
+    const intro = (scene.intro || []).filter(
+      l => !l.requiresTag || writingTags.includes(l.requiresTag)
+    )
     set({
       isExploring: false,
-      currentLineIndex: introLength,
+      currentLineIndex: intro.length,
     })
   },
 
