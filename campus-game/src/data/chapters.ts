@@ -116,7 +116,7 @@ const prologueNight: NightScene = {
     recipes: [
       {
         requiredEntries: ['note-light-01', 'note-maya-look-01'],
-        composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。走过那道光的时候，有一瞬间整个人都是亮的，然后暗下去，继续走。\n\n她偏过头看了我一眼。很快，然后转回去了。不知道她原本想说什么。\n\n被照亮的那一瞬间，好像什么都暴露了。',
+        composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。走过那道光的时候，有一瞬间整个人都是亮的，然后暗下去，继续走。\n\n她偏过头看了我一眼。很快，然后转回去了。不知道她原本想说什么。\n\n被照亮的那一瞬间，好像什么都暴露了。\n\n——\n\n我把它写下来了。关于光，关于她看了我一眼。\n\n这些句子放进文档里的时候，好像变成了某种证据。证明今天真的发生了这些事。',
         influenceTag: 'noticed-maya',
       },
       {
@@ -147,7 +147,8 @@ const ch01Day: DayScene = {
     { type: 'dialogue', speaker: 'ludwig', text: '哎呀，又是小飞飞的课。' },
     { type: 'dialogue', speaker: 'ludwig', text: '嘿，今天那个新同学是不是要来了。' },
     { type: 'narration', text: '过了几十分钟。窗外篱笆旁边出现了三个身影。' },
-    { type: 'narration', text: '她今天也在。我忍不住又看了她一眼。', requiresTag: 'noticed-maya' },
+    { type: 'narration', text: '她今天也在。', requiresTag: 'noticed-maya' },
+    { type: 'thought', text: '我忍不住又看了她一眼。\n\n——这行字在我脑子里冒出来的时候，我愣了一下。\n\n昨晚写下的句子，今天就变成了现实。', requiresTag: 'noticed-maya' },
     { type: 'dialogue', speaker: 'ludwig', text: '诶诶诶，看窗外，有一个没见过的女生。' },
     { type: 'narration', text: '门被敲响了。国际部老师用德语和小飞飞说了几句话，就带着家长走了。' },
     { type: 'dialogue', speaker: 'teacher', text: '所以，我们班来了一个新同学。用英语介绍一下自己吧！' },

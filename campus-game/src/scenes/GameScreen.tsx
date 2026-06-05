@@ -5,7 +5,7 @@ import { NotebookView } from '../components/ui/NotebookView'
 import { characters } from '../data/characters'
 
 export function GameScreen() {
-  const { saveGame, resetGame, observedIds, notebook, getCurrentScene } = useGameStore()
+  const { saveGame, resetGame, observedIds, notebook, getCurrentScene, writingTags } = useGameStore()
   const scene = getCurrentScene()
   const mode = scene?.mode || 'day'
   const [showMenu, setShowMenu] = useState(false)
@@ -30,6 +30,11 @@ export function GameScreen() {
           {observedIds.length > 0 && (
             <span className="text-xs text-amber-600">
               👁 {observedIds.length} 项观察
+            </span>
+          )}
+          {writingTags.length > 0 && (
+            <span className="text-xs text-violet-600">
+              ✎ {writingTags.length} 个印记
             </span>
           )}
         </div>
