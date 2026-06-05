@@ -14,7 +14,7 @@ export function ObservationModal() {
 
   return (
     <div
-      className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center"
+      className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center"
       onClick={closeObservation}
     >
       <div

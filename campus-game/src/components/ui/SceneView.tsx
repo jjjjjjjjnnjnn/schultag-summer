@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { useGameStore } from '../../store/gameStore'
+import { useEffect, useRef, useMemo } from 'react'
+import { useGameStore, getVisibleLines } from '../../store/gameStore'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
 import type { NightScene } from '../../types/game'
@@ -9,26 +9,34 @@ export function SceneView() {
   const scene = getCurrentScene()
   const line = currentLine()
 
-  // 当前场景的行已全部播完 → 自动跳转下一场景
+  // 用 ref 稳定 goToNextScene 引用，避免 useEffect 反复重置 timeout
+  const goToNextRef = useRef(goToNextScene)
+  goToNextRef.current = goToNextScene
+
+  // 自动转场：当 line 为 null 时切换到下一场景
   useEffect(() => {
     if (!scene || isExploring || line !== null) return
     const nextId = 'nextSceneId' in scene ? scene.nextSceneId : undefined
     if (!nextId) return
-    // 延迟一帧确保当前渲染完成
-    const t = setTimeout(goToNextScene, 50)
+    const t = setTimeout(() => goToNextRef.current(), 50)
     return () => clearTimeout(t)
-  }, [scene, line, isExploring, goToNextScene])
+  }, [scene, line, isExploring])
 
   if (!scene) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-stone-500 text-lg">章节结束</p>
+      <div className="flex-1 flex items-center justify-center scene-fade-in">
+        <div className="text-center">
+          <p className="text-stone-400 text-lg" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+            第一卷 完
+          </p>
+          <p className="text-stone-600 text-xs mt-2">异乡校园 · 夏天</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex-1 flex flex-col scene-fade-in relative" key={scene.id}>
+    <div className="flex-1 flex flex-col relative">
       {/* 观察弹窗 */}
       <ObservationModal />
 
@@ -60,7 +68,7 @@ function DaySceneView({
   onAdvance: () => void
   isExploring: boolean
 }) {
-  const { observedIds, currentLineIndex, feedback } = useGameStore()
+  const { observedIds, currentLineIndex, feedback, writingTags, imprints } = useGameStore()
   const dayScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'day' ? scene : null
@@ -68,10 +76,11 @@ function DaySceneView({
 
   if (!dayScene) return null
 
-  const introLength = (dayScene.intro || []).length
+  const intro = dayScene.intro || []
+  const visibleIntroLength = getVisibleLines(intro, writingTags, imprints).length
   const totalObservations = dayScene.observations.length
   const observedCount = observedIds.length
-  const introDone = currentLineIndex >= introLength - 1
+  const introDone = currentLineIndex >= visibleIntroLength - 1
 
   return (
     <div className="flex-1 flex flex-col">
@@ -95,7 +104,7 @@ function DaySceneView({
             </div>
 
             {/* 观察点列表 */}
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
               {dayScene.observations.map(obs => {
                 const isObserved = observedIds.includes(obs.id)
                 const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
@@ -134,7 +143,7 @@ function DaySceneView({
             </div>
 
             {/* 观察完毕按钮 */}
-            {observedCount > 0 && (
+            {observedCount >= 2 && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => useGameStore.getState().finishExploring()}
@@ -162,18 +171,34 @@ function DaySceneView({
 
 // ── 夜晚场景：固定叙事 + 写作阶段 ──
 function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
-  const { currentLineIndex } = useGameStore()
+  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints } = useGameStore()
   const nightScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'night' ? scene : null
   })
-  const filteredLines = useGameStore(s => s.getFilteredLines())
+  const filteredLines = useMemo(() => {
+    if (!nightScene) return []
+    return getVisibleLines(nightScene.lines, writingTags, imprints)
+  }, [nightScene, writingTags, imprints])
 
   if (!nightScene) return null
 
-  const hasReachedWritingPhase = !!(
-    nightScene.writingPhase && currentLineIndex >= filteredLines.length - 1
-  )
+  const showWritingPhase = isWritingPhaseReady && !!nightScene.writingPhase
+  const isEnding = currentLineIndex >= filteredLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
+
+  // 卷一结尾：显示"第一卷 完"
+  if (isEnding) {
+    return (
+      <div className="flex-1 flex items-center justify-center scene-fade-in">
+        <div className="text-center">
+          <p className="text-stone-400 text-lg" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+            第一卷 完
+          </p>
+          <p className="text-stone-600 text-xs mt-2">异乡校园 · 夏天</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 flex flex-col">
@@ -181,8 +206,8 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
         <div className="max-w-2xl mx-auto space-y-6">
           {/* 固定叙事 */}
           {filteredLines.map((l, i) => {
-            if (i > currentLineIndex && !hasReachedWritingPhase) return null
-            return i === currentLineIndex && !hasReachedWritingPhase ? (
+            if (i > currentLineIndex && !showWritingPhase) return null
+            return i === currentLineIndex && !showWritingPhase ? (
               <div key={i} className="scene-fade-in">
                 <DialogBox line={l} onAdvance={onAdvance} />
               </div>
@@ -203,7 +228,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
           })}
 
           {/* 写作阶段 */}
-          {hasReachedWritingPhase && nightScene.writingPhase && (
+          {showWritingPhase && nightScene.writingPhase && (
             <WritingPhase nightScene={nightScene} />
           )}
         </div>
@@ -214,7 +239,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
-  const { selectedEntryIds, notebook, writings, toggleEntrySelection, submitWriting } = useGameStore()
+  const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting } = useGameStore()
   const wp = nightScene.writingPhase!
   const lastWriting = writings[writings.length - 1]
   const hasWritten = writings.length > 0 && !!lastWriting
@@ -231,6 +256,17 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
         >
           {lastWriting}
         </div>
+
+        {/* 叙事反馈 */}
+        {writingFeedback && (
+          <div className="mt-6 px-4 py-3 border-l-2 border-stone-700 scene-fade-in">
+            <p className="text-sm text-stone-400 italic leading-relaxed"
+               style={{ fontFamily: 'var(--font-serif-cn)' }}>
+              {writingFeedback}
+            </p>
+          </div>
+        )}
+
         {nightScene.nextSceneId && (
           <div className="text-center mt-8">
             <button
@@ -285,13 +321,21 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
       </div>
 
       {/* 提交写作 */}
-      <div className="text-center">
+      <div className="text-center space-y-3">
         <button
           onClick={submitWriting}
           className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded"
         >
           写成文字 ({selectedEntryIds.length} 项素材)
         </button>
+        <div>
+          <button
+            onClick={submitWriting}
+            className="text-xs text-stone-600 hover:text-stone-400 transition-colors"
+          >
+            今晚不写了 →
+          </button>
+        </div>
       </div>
     </div>
   )

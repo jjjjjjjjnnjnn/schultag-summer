@@ -11,6 +11,8 @@ export interface ObservationPoint {
   requires?: string
   /** 观察此点是否影响角色关系 */
   relationshipEffect?: { characterId: string; delta: number }
+  /** 侵入度：0=环境 1=对话 2=行为 3=习惯 5=内心推测 */
+  invasionLevel?: number
 }
 
 // ── 笔记本素材条目 ──
@@ -22,6 +24,8 @@ export interface NotebookEntry {
   text: string
   /** 素材类别 */
   category: 'visual' | 'dialogue' | 'thought' | 'sound' | 'smell' | 'action'
+  /** 侵入度：0=环境 1=对话 2=行为 3=习惯 5=内心推测 */
+  invasionLevel?: number
 }
 
 // ── 场景叙事行（固定推进的剧情线） ──
@@ -31,6 +35,12 @@ export interface StoryLine {
   text: string
   /** 若存在，仅当玩家 writingTags 中包含此标签时才渲染 */
   requiresTag?: string
+  /** 若存在，仅当角色印记达到阈值时才渲染 */
+  requiresImprint?: {
+    characterId: string
+    type: 'observation' | 'writing'
+    threshold: number
+  }
 }
 
 // ── 写作配方：玩家从笔记本选择素材后自动组合成文 ──
@@ -93,6 +103,13 @@ export interface Character {
   impressionLevels: string[]
 }
 
+// ── 角色印记 ──
+export interface CharacterImprint {
+  characterId: string
+  observationCount: number
+  writingCount: number
+}
+
 // ── 游戏状态 ──
 export interface GameState {
   currentSceneId: string
@@ -117,5 +134,13 @@ export interface GameState {
   flags: Record<string, boolean>
   /** 人物印象等级（每个角色当前的等级索引） */
   impressions: Record<string, number>
+  /** 角色印记（观察/写作计数） */
+  imprints: Record<string, CharacterImprint>
+  /** 夜晚场景：写作阶段就绪标记 */
+  isWritingPhaseReady: boolean
+  /** 写作完成后的叙事反馈 */
+  writingFeedback: string
+  /** 暴露度：被看见的程度 (0-100) */
+  exposure: number
   isPlaying: boolean
 }

@@ -15,7 +15,7 @@ export function GameScreen() {
     <div className="h-screen w-screen flex flex-col overflow-hidden">
       {/* 顶部导航栏 */}
       <header className="h-12 px-4 flex items-center justify-between border-b border-stone-800/50 bg-stone-950/80 backdrop-blur-sm z-20">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <span
             className="text-sm text-stone-400 tracking-wider cursor-pointer hover:text-stone-200 transition-colors"
             style={{ fontFamily: 'var(--font-serif-cn)' }}
@@ -23,17 +23,17 @@ export function GameScreen() {
           >
             异乡校园
           </span>
-          <span className="text-xs text-stone-600">·</span>
-          <span className="text-xs text-stone-600">
+          <span className="text-xs text-stone-600 hidden sm:inline">·</span>
+          <span className="text-xs text-stone-600 hidden sm:inline">
             {mode === 'night' ? '🌙 夜晚' : '☀ 白天'}
           </span>
           {observedIds.length > 0 && (
             <span className="text-xs text-amber-600">
-              👁 {observedIds.length} 项观察
+              👁 {observedIds.length}
             </span>
           )}
           {writingTags.length > 0 && (
-            <span className="text-xs text-violet-600">
+            <span className="text-xs text-violet-600 hidden sm:inline">
               ✎ {writingTags.length} 个印记
             </span>
           )}
@@ -48,7 +48,7 @@ export function GameScreen() {
                 : 'border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500'
             }`}
           >
-            ✎ 笔记本 ({notebook.length})
+            ✎ ({notebook.length})
           </button>
         </div>
       </header>
@@ -57,11 +57,10 @@ export function GameScreen() {
       <div className="flex-1 flex overflow-hidden relative">
         {showNotebook ? <NotebookView /> : <CharacterSidebar />}
 
-        {/* 右侧：场景（笔记本打开时隐藏，或始终显示为右栏） */}
+        {/* 右侧：场景 */}
         <div className="flex-1 border-l border-stone-800/30">
           {showNotebook ? (
             <div className="flex-1 h-full">
-              {/* 笔记本打开时，左侧显示笔记本，右侧显示当前场景概览 */}
               <div className="h-full flex flex-col">
                 <NotebookContent />
               </div>
@@ -71,6 +70,9 @@ export function GameScreen() {
           )}
         </div>
       </div>
+
+      {/* 移动端底部人物栏 */}
+      <MobileCharacterBar />
 
       {/* 游戏菜单覆盖层 */}
       {showMenu && (
@@ -161,9 +163,10 @@ function NotebookContent() {
   )
 }
 
-// ── 人物印象侧边栏 ──
+// ── 人物印象侧边栏（桌面端） ──
 function CharacterSidebar() {
   const impressions = useGameStore(s => s.impressions)
+  const imprints = useGameStore(s => s.imprints)
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
@@ -176,6 +179,17 @@ function CharacterSidebar() {
         {mainChars.map(c => {
           const level = impressions[c.id] || 0
           const impressionText = c.impressionLevels[level] || '陌生'
+          const imprint = imprints[c.id]
+          const totalImprint = imprint
+            ? imprint.observationCount + imprint.writingCount
+            : 0
+          const awarenessText = totalImprint === 0
+            ? ''
+            : totalImprint <= 2
+              ? '你开始注意他了'
+              : totalImprint <= 4
+                ? '你总是不自觉地看向他'
+                : '他似乎察觉到了什么'
 
           return (
             <div key={c.id} className="space-y-1">
@@ -189,10 +203,48 @@ function CharacterSidebar() {
               >
                 {impressionText}
               </p>
+              {awarenessText && (
+                <p className="text-xs ml-4 text-stone-600 italic"
+                   style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                  {awarenessText}
+                </p>
+              )}
             </div>
           )
         })}
       </div>
+    </div>
+  )
+}
+
+// ── 移动端底部人物栏 ──
+function MobileCharacterBar() {
+  const impressions = useGameStore(s => s.impressions)
+
+  const mainChars = Object.values(characters).filter(
+    c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
+  )
+
+  const hasData = mainChars.some(c => {
+    const level = impressions[c.id] || 0
+    return level > 0
+  })
+
+  if (!hasData) return null
+
+  return (
+    <div className="lg:hidden border-t border-stone-800/50 bg-stone-950/80 px-4 py-2 flex gap-4 overflow-x-auto">
+      {mainChars.map(c => {
+        const level = impressions[c.id] || 0
+        const impressionText = c.impressionLevels[level] || '陌生'
+        if (level === 0) return null
+        return (
+          <div key={c.id} className="flex items-center gap-2 shrink-0">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c.color }} />
+            <span className="text-xs" style={{ color: c.color }}>{impressionText}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
