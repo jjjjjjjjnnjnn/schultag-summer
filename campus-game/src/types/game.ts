@@ -95,6 +95,10 @@ export interface GameState {
   observedIds: string[]
   /** 当前场景是否处于探索模式 */
   isExploring: boolean
+  /** 观察弹窗：当前打开的观察点 ID（null = 无弹窗） */
+  modalObservationId: string | null
+  /** 观察成功反馈 */
+  feedback: { text: string; visible: boolean }
   /** 夜晚场景：已选中的笔记本素材 ID */
   selectedEntryIds: string[]
   /** 笔记本中所有素材 */

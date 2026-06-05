@@ -1,5 +1,6 @@
 import { useGameStore } from '../../store/gameStore'
 import { DialogBox } from './DialogBox'
+import { ObservationModal } from './ObservationModal'
 import type { NightScene } from '../../types/game'
 import { scenes } from '../../data/chapters'
 
@@ -17,7 +18,10 @@ export function SceneView() {
   }
 
   return (
-    <div className="flex-1 flex flex-col scene-fade-in" key={scene.id}>
+    <div className="flex-1 flex flex-col scene-fade-in relative" key={scene.id}>
+      {/* 观察弹窗 */}
+      <ObservationModal />
+
       {/* 场景信息栏 */}
       <div className="px-6 py-3 border-b border-stone-800/50 flex items-center gap-3">
         <span className="text-sm">{scene.mode === 'day' ? '☀' : '🌙'}</span>
@@ -46,7 +50,7 @@ function DaySceneView({
   onAdvance: () => void
   isExploring: boolean
 }) {
-  const { observedIds, currentLineIndex } = useGameStore()
+  const { observedIds, currentLineIndex, feedback } = useGameStore()
   const dayScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'day' ? scene : null
@@ -90,7 +94,7 @@ function DaySceneView({
                   <button
                     key={obs.id}
                     disabled={isLocked}
-                    onClick={() => useGameStore.getState().observe(obs.id)}
+                    onClick={() => useGameStore.getState().openObservation(obs.id)}
                     className={`
                       w-full text-left px-4 py-3 rounded-lg border transition-all duration-300
                       ${isLocked
@@ -133,6 +137,15 @@ function DaySceneView({
           </div>
         )}
       </div>
+
+      {/* 观察成功反馈 */}
+      {feedback.visible && (
+        <div className="absolute top-16 right-6 z-20 scene-fade-in">
+          <div className="bg-amber-900/30 border border-amber-700/50 text-amber-300 px-4 py-2 rounded-lg text-sm shadow-lg">
+            {feedback.text}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

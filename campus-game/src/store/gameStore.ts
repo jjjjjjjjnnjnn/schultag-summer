@@ -11,7 +11,9 @@ interface GameStore extends GameState {
   resetGame: () => void
 
   // ── 白天：观察系统 ──
-  observe: (observationId: string) => void
+  openObservation: (observationId: string) => void
+  closeObservation: () => void
+  confirmObservation: () => void
   finishExploring: () => void
 
   // ── 夜晚：写作系统 ──
@@ -32,6 +34,8 @@ const initialState: GameState = {
   currentLineIndex: 0,
   observedIds: [],
   isExploring: true,
+  modalObservationId: null,
+  feedback: { text: '', visible: false },
   selectedEntryIds: [],
   notebook: [],
   writings: [],
@@ -101,14 +105,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // 白天：观察系统
   // ══════════════════════════════════════
 
-  observe: (observationId: string) => {
-    const { observedIds, notebook, relationships } = get()
+  openObservation: (observationId: string) => {
+    const { observedIds } = get()
     if (observedIds.includes(observationId)) return
+    set({ modalObservationId: observationId })
+  },
+
+  closeObservation: () => {
+    set({ modalObservationId: null })
+  },
+
+  confirmObservation: () => {
+    const { modalObservationId, observedIds, notebook, relationships } = get()
+    if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
     if (!scene) return
 
-    const obs = scene.observations.find(o => o.id === observationId)
+    const obs = scene.observations.find(o => o.id === modalObservationId)
     if (!obs) return
 
     const newRelationships = { ...relationships }
@@ -117,14 +131,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newRelationships[characterId] = (newRelationships[characterId] || 0) + delta
     }
 
-    // 避免重复添加
     const entryExists = notebook.find(e => e.id === obs.notebookEntry.id)
 
     set({
-      observedIds: [...observedIds, observationId],
+      observedIds: [...observedIds, modalObservationId],
       notebook: entryExists ? notebook : [...notebook, obs.notebookEntry],
       relationships: newRelationships,
+      modalObservationId: null,
+      feedback: { text: `✓ ${obs.notebookEntry.label} 已记录`, visible: true },
     })
+
+    // 自动隐藏反馈 2 秒后
+    setTimeout(() => {
+      set({ feedback: { text: '', visible: false } })
+    }, 2000)
   },
 
   finishExploring: () => {
