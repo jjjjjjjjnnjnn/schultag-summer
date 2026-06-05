@@ -157,11 +157,12 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
     const scene = s.getCurrentScene()
     return scene?.mode === 'night' ? scene : null
   })
+  const filteredLines = useGameStore(s => s.getFilteredLines())
 
   if (!nightScene) return null
 
   const hasReachedWritingPhase = !!(
-    nightScene.writingPhase && currentLineIndex >= nightScene.lines.length - 1
+    nightScene.writingPhase && currentLineIndex >= filteredLines.length - 1
   )
 
   return (
@@ -169,7 +170,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
       <div className="flex-1 px-6 py-8 overflow-y-auto">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* 固定叙事 */}
-          {nightScene.lines.map((l, i) => {
+          {filteredLines.map((l, i) => {
             if (i > currentLineIndex && !hasReachedWritingPhase) return null
             return i === currentLineIndex && !hasReachedWritingPhase ? (
               <div key={i} className="scene-fade-in">

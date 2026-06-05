@@ -26,6 +26,7 @@ interface GameStore extends GameState {
   getDayScene: () => DayScene | null
   getNightScene: () => NightScene | null
   currentLine: () => { type: string; text: string; speaker?: string } | null
+  getFilteredLines: () => { type: string; text: string; speaker?: string; requiresTag?: string }[]
 }
 
 const SAVE_KEY = 'schultag-save-v2'
@@ -40,6 +41,7 @@ const initialState: GameState = {
   selectedEntryIds: [],
   notebook: [],
   writings: [],
+  writingTags: [],
   flags: {},
   impressions: { ludwig: 0, maya: 0 },
   isPlaying: false,
@@ -178,7 +180,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   submitWriting: () => {
-    const { selectedEntryIds, notebook, writings, currentSceneId } = get()
+    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId } = get()
     const scene = scenes[currentSceneId]
     if (!scene || scene.mode !== 'night') return
 
@@ -191,10 +193,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 检查是否有匹配的配方
     let composedText = nightScene.writingPhase.defaultText
+    let matchedTag: string | undefined
     for (const recipe of nightScene.writingPhase.recipes) {
       const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
       if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
         composedText = recipe.composedText
+        matchedTag = recipe.influenceTag
         break
       }
     }
@@ -207,8 +211,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       composedText = '今天什么也没写。有些日子就是这样。'
     }
 
+    const newTags = matchedTag && !writingTags.includes(matchedTag)
+      ? [...writingTags, matchedTag]
+      : writingTags
+
     set({
       writings: [...writings, composedText],
+      writingTags: newTags,
       selectedEntryIds: [],
     })
   },
@@ -259,6 +268,25 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return null
   },
 
+  /** 返回按 writingTags 过滤后的场景行数组 */
+  getFilteredLines: () => {
+    const { currentSceneId, writingTags } = get()
+    const scene = scenes[currentSceneId]
+    if (!scene) return []
+
+    const filter = (l: { requiresTag?: string }) =>
+      !l.requiresTag || writingTags.includes(l.requiresTag)
+
+    if (scene.mode === 'day') {
+      const dayScene = scene as DayScene
+      return [...(dayScene.intro || []).filter(filter), ...(dayScene.outro || []).filter(filter)]
+    }
+    if (scene.mode === 'night') {
+      return (scene as NightScene).lines.filter(filter)
+    }
+    return []
+  },
+
   // ══════════════════════════════════════
   // 存档
   // ══════════════════════════════════════
@@ -276,6 +304,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         selectedEntryIds: s.selectedEntryIds,
         notebook: s.notebook,
         writings: s.writings,
+        writingTags: s.writingTags,
         flags: s.flags,
         impressions: s.impressions,
         isPlaying: s.isPlaying,

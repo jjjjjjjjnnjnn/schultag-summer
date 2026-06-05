@@ -29,6 +29,8 @@ export interface StoryLine {
   type: 'narration' | 'dialogue' | 'thought' | 'observe' | 'notebook'
   speaker?: string
   text: string
+  /** 若存在，仅当玩家 writingTags 中包含此标签时才渲染 */
+  requiresTag?: string
 }
 
 // ── 写作配方：玩家从笔记本选择素材后自动组合成文 ──
@@ -37,6 +39,8 @@ export interface WritingRecipe {
   requiredEntries: string[]
   /** 组合后生成的文字 */
   composedText: string
+  /** 若存在，写入此标签，影响后续场景叙事 */
+  influenceTag?: string
 }
 
 // ── 白天场景 ──
@@ -107,6 +111,8 @@ export interface GameState {
   notebook: NotebookEntry[]
   /** 已写成的文字 */
   writings: string[]
+  /** 写作产生的标签（影响后续场景叙事） */
+  writingTags: string[]
   /** 游戏标记 */
   flags: Record<string, boolean>
   /** 人物印象等级（每个角色当前的等级索引） */
