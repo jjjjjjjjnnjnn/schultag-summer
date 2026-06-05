@@ -70,8 +70,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const outro = dayScene.outro || []
       const totalLines = intro.length + outro.length
 
+      // intro 播完且正在探索 → 停住
+      if (isExploring && currentLineIndex >= intro.length - 1) {
+        return
+      }
+
+      // 先推进
+      const nextIndex = currentLineIndex + 1
+
       // outro 播完 → 进入下一场景
-      if (!isExploring && currentLineIndex >= totalLines) {
+      if (!isExploring && nextIndex >= totalLines) {
         if (dayScene.nextSceneId) {
           const nextScene = scenes[dayScene.nextSceneId]
           set({
@@ -85,8 +93,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         return
       }
 
-      // 正常推进
-      set({ currentLineIndex: currentLineIndex + 1 })
+      set({ currentLineIndex: nextIndex })
     }
 
     // 夜晚场景
