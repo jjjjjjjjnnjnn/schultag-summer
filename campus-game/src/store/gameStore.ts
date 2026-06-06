@@ -4,6 +4,7 @@ import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
 import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
+import { evaluatePerceptions } from '../lib/perceptionEngine'
 import enContent from '../i18n/content/en'
 import deContent from '../i18n/content/de'
 
@@ -147,6 +148,8 @@ const initialState: GameState = {
   gameStartTime: Date.now(),
   behaviorStates: {},
   activatedConsequences: [],
+  perceptions: [],
+  perceptionHistory: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -247,6 +250,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const nextBudget = isNextDay && nextScene.mode === 'day'
       ? ((nextScene as DayScene).attentionBudget ?? 3)
       : 3
+
+    // V1.2: 计算认知快照（在 set 之前，使用当前场景状态）
+    const newPerceptions = evaluatePerceptions(get())
+    const perceptionSnapshot = {
+      chapterId: sceneChapterId,
+      perceptions: newPerceptions,
+    }
+
     set({
       currentSceneId: nextId,
       currentLineIndex: 0,
@@ -263,6 +274,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isTransitioning: false,
       transitionText: '',
       completedChapters: newCompleted,
+      perceptions: newPerceptions,
+      perceptionHistory: [...get().perceptionHistory, perceptionSnapshot],
     })
 
     // 成就检查
@@ -294,6 +307,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isPlaying: true,
       behaviorStates: {},
       activatedConsequences: [],
+      perceptions: [],
+      perceptionHistory: [],
     })
   },
 
@@ -654,6 +669,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         playedEchoIds: state.playedEchoIds,
         behaviorStates: state.behaviorStates,
         activatedConsequences: state.activatedConsequences,
+        perceptions: state.perceptions,
+        perceptionHistory: state.perceptionHistory,
       },
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData))

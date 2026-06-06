@@ -4,6 +4,7 @@ import { useTranslation, useContent } from '../../i18n'
 import { characters } from '../../data/characters'
 import { CHAPTERS } from '../../data/chapters'
 import { audio } from '../../lib/audio'
+import { PERCEPTION_TAG_LABELS } from '../../lib/perceptionEngine'
 
 type Tab = 'observations' | 'writings' | 'characters' | 'stats'
 
@@ -157,6 +158,7 @@ function CharactersTab() {
   const impressions = useGameStore(s => s.impressions)
   const allNotebookEntries = useGameStore(s => s.allNotebookEntries)
   const settings = useGameStore(s => s.settings)
+  const perceptions = useGameStore(s => s.perceptions)
   const t = useTranslation()
   const { co } = useContent()
   const isForeignLang = settings.language === 'en' || settings.language === 'de'
@@ -216,6 +218,41 @@ function CharactersTab() {
                   ))}
                 </div>
               )}
+
+              {/* V1.2: 认知标签 */}
+              <div className="mt-2 pt-2 border-t border-stone-700/20">
+                <p className="text-[10px] text-stone-600 uppercase tracking-wider mb-1">{t('char.perception')}</p>
+                <div className="flex flex-wrap">
+                  {perceptions
+                    .filter(p => p.to === char.id || p.from === char.id)
+                    .flatMap(p => {
+                      const otherChar = p.to === char.id ? p.from : p.to
+                      const otherName = otherChar === 'robert'
+                        ? (isForeignLang ? 'Robert' : '荣加俊')
+                        : (characters[otherChar]?.nameEn || otherChar)
+                      return p.tags.map(tag => ({
+                        key: `${p.from}-${p.to}-${tag}`,
+                        label: `${otherName}: ${PERCEPTION_TAG_LABELS[tag]?.[settings.language] || tag}`,
+                      }))
+                    })
+                    .map(item => (
+                      <span
+                        key={item.key}
+                        className="inline-block text-[10px] px-2 py-0.5 rounded-full mr-1 mb-1"
+                        style={{
+                          backgroundColor: `${char.color}15`,
+                          color: char.color,
+                          border: `1px solid ${char.color}30`,
+                        }}
+                      >
+                        {item.label}
+                      </span>
+                    ))}
+                  {perceptions.filter(p => p.to === char.id || p.from === char.id).length === 0 && (
+                    <p className="text-xs text-stone-600 italic">{t('char.noPerception')}</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )

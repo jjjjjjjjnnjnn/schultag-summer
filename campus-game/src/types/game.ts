@@ -32,6 +32,44 @@ export interface ConsequenceRule {
   delayChapters: number
 }
 
+// ── V1.2 认知网络 ──
+
+/** 认知标签：定性描述角色间的认知状态 */
+export type PerceptionTag =
+  | 'curious'      // 好奇
+  | 'distant'      // 保持距离
+  | 'trusting'     // 信任
+  | 'wary'         // 警觉
+  | 'admiring'     // 欣赏
+  | 'confused'     // 困惑
+  | 'indifferent'  // 无所谓
+  | 'guilty'       // 内疚（Robert 独有）
+
+/** 认知关系：一个角色对另一个角色的看法 */
+export interface Perception {
+  from: string       // 观察者角色 ID
+  to: string         // 被观察者角色 ID
+  tags: PerceptionTag[]
+  /** 认知来源 */
+  source: 'observation' | 'writing' | 'consequence' | 'dialogue'
+  /** 认知强度：0-1，影响标签显示的权重 */
+  intensity: number
+}
+
+/** 认知快照：某时刻的认知矩阵状态 */
+export interface PerceptionSnapshot {
+  chapterId: string
+  perceptions: Perception[]
+}
+
+/** 认知变化：两个快照之间的差异 */
+export interface PerceptionChange {
+  from: string
+  to: string
+  addedTags: PerceptionTag[]
+  removedTags: PerceptionTag[]
+}
+
 // ── 游戏设置 ──
 export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast'
@@ -290,6 +328,10 @@ export interface GameState {
   behaviorStates: Record<string, BehaviorEffect[]>
   /** V1.1: 已激活的后果规则 ID 列表 */
   activatedConsequences: string[]
+  /** V1.2: 当前认知矩阵 */
+  perceptions: Perception[]
+  /** V1.2: 认知快照历史（每个章节结束时保存） */
+  perceptionHistory: PerceptionSnapshot[]
 }
 
 // ── 存档数据结构 ──

@@ -1,4 +1,4 @@
-import type { GameState, BehaviorEffect, ConsequenceRule, ObservationPoint } from '../types/game'
+import type { GameState, BehaviorEffect, ObservationPoint } from '../types/game'
 import { CONSEQUENCE_RULES } from '../data/consequences'
 
 /**

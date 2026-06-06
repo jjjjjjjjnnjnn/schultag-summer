@@ -110,6 +110,8 @@ const zh: Record<string, string> = {
   'char.awareness.1': '你开始注意他了',
   'char.awareness.2': '你总是不自觉地看向他',
   'char.awareness.3': '他似乎察觉到了什么',
+  'char.perception': '认知',
+  'char.noPerception': '暂无认知',
 
   // 暴露度反馈
   'feedback.recorded': '✓ {name} 已记录',

@@ -117,6 +117,8 @@ const en: Record<string, string> = {
   'char.awareness.1': 'You are starting to notice him.',
   'char.awareness.2': 'You keep glancing at him without meaning to.',
   'char.awareness.3': 'He seems to have noticed something.',
+  'char.perception': 'Perceptions',
+  'char.noPerception': 'No perceptions yet',
 
   // Feedback
   'feedback.recorded': '✓ {name} recorded',
