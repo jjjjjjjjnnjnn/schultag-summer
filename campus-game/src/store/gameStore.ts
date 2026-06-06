@@ -98,6 +98,8 @@ interface GameStore extends GameState {
   getFilteredLines: () => { type: string; text: string; speaker?: string; requiresTag?: string }[]
 }
 
+// NOTE: SAVE_KEY remains 'schultag-save-v2' for backward compatibility with old saves,
+// even though the save data format has been updated to version 3.
 const SAVE_KEY = 'schultag-save-v2'
 const SETTINGS_KEY = 'schultag-settings'
 
@@ -302,6 +304,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isWritingPhaseReady: false,
       writingFeedback: '',
       currentFocus: null,
+      focusHistory: [],
+      previousFocus: null,
       attentionRemaining: budget,
       focusPulseColor: null,
       isPlaying: true,

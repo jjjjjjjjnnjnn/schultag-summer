@@ -138,6 +138,12 @@ const de: Record<string, string> = {
 
   // V1.1 Folgesystem
   'consequence.hint': '(Weil du das letzte Mal geschrieben hast, fing sie an, das zu tun)',
+
+  // V1.2 Anleitung
+  'tutorial.focusHint': 'Wem schenkst du heute Aufmerksamkeit? Das beeinflusst, was du beobachtest.',
+  'tutorial.observeHint': 'Klicke auf helle Stellen in der Szene, um das zu notieren, was dir auffällt.',
+  'tutorial.writeHint': 'Wähle Materialien aus deinem Notizbuch und kombiniere sie zu Prosa. Verschiedene Kombinationen erzeugen verschiedene Geschichten.',
+  'tutorial.echoHint': 'Das, was du geschrieben hast, beginnt zu verändern, was du siehst. Achte auf die Veränderungen.',
 }
 
 export default de

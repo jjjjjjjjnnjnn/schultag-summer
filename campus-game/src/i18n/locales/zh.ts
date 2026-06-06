@@ -144,6 +144,12 @@ const zh: Record<string, string> = {
 
   // V1.1 后果系统
   'consequence.hint': '（因为你上次写下的文字，她开始这样做了）',
+
+  // V1.2 新手引导
+  'tutorial.focusHint': '选择今天更留意谁。这会影响你看到的观察内容。',
+  'tutorial.observeHint': '点击场景中的亮点，记录你观察到的事物。',
+  'tutorial.writeHint': '选择今天观察到的素材，组合成文字。不同的组合会产生不同的故事。',
+  'tutorial.echoHint': '你写下的文字开始影响你看到的现实。注意观察变化。',
 }
 
 export default zh

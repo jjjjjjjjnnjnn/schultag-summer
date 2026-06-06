@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-export function useTypewriter(text: string, speed: number = 40) {
+export function useTypewriter(text: string, speed: number = 35) {
   const [displayed, setDisplayed] = useState('')
   const [isComplete, setIsComplete] = useState(false)
   const indexRef = useRef(0)

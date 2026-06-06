@@ -138,6 +138,12 @@ const en: Record<string, string> = {
 
   // V1.1 Consequence System
   'consequence.hint': '(Because of what you wrote last time, she started doing this)',
+
+  // V1.2 Tutorial
+  'tutorial.focusHint': 'Choose who to pay attention to today. This affects what you observe.',
+  'tutorial.observeHint': 'Click on bright spots in the scene to record what you notice.',
+  'tutorial.writeHint': 'Select materials from your notebook and combine them into prose. Different combinations create different stories.',
+  'tutorial.echoHint': 'What you wrote is beginning to change what you see. Notice the changes.',
 }
 
 export default en

@@ -193,7 +193,17 @@ function DaySceneView({
 
         {/* 焦点选择：intro 播完后、观察前 */}
         {isExploring && introDone && !currentFocus && (
-          <FocusSelector onSelect={selectFocus} budget={dayScene.attentionBudget ?? 3} />
+          <>
+            {/* 新手引导提示 */}
+            {focusHistory.length === 0 && !currentFocus && (
+              <div className="mb-4 px-4 py-3 bg-stone-800/30 rounded-lg border border-stone-700/30 max-w-2xl mx-auto">
+                <p className="text-xs text-stone-500 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                  {c('tutorial.focusHint', '选择今天更留意谁。这会影响你看到的观察内容。')}
+                </p>
+              </div>
+            )}
+            <FocusSelector onSelect={selectFocus} budget={dayScene.attentionBudget ?? 3} />
+          </>
         )}
 
         {/* 观察面板：intro 播完且选了焦点后显示 */}
@@ -218,6 +228,14 @@ function DaySceneView({
                   : c('ui.clickToObserve', '点击下方你感兴趣的对象进行观察')}
                 {observedCount > 0 && ` · ${c('ui.observed', '已观察')} ${observedCount}/${totalObservations}`}
               </p>
+              {/* 第一次观察引导 */}
+              {observedCount === 0 && allNotebookEntries.length === 0 && (
+                <div className="mt-3 px-3 py-2 bg-amber-900/10 rounded border border-amber-800/20">
+                  <p className="text-xs text-amber-600/80" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                    {c('tutorial.observeHint', '点击场景中的亮点，记录你观察到的事物。')}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* 热点模式：有 position 的观察点 */}
@@ -349,7 +367,7 @@ function DaySceneView({
 
 // ── 夜晚场景：固定叙事 + 写作阶段 ──
 function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
-  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure, settings } = useGameStore()
+  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure, settings, writings } = useGameStore()
   const { c } = useContent()
   const isForeignLang = settings.language === 'en' || settings.language === 'de'
   const nightScene = useGameStore(s => {
@@ -364,25 +382,28 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
   // Safety: if filteredLines is empty but nightScene has lines, use them directly
   const displayLines = filteredLines.length > 0 ? filteredLines : (nightScene?.lines || [])
 
+  // Safety: ensure currentLineIndex doesn't exceed displayLines range
+  const safeLineIndex = Math.min(currentLineIndex, Math.max(displayLines.length - 1, 0))
+
   // Echo sound: play once when an echo line first appears
   useEffect(() => {
-    const currentLine = displayLines[currentLineIndex]
+    const currentLine = displayLines[safeLineIndex]
     if (!currentLine) return
     const isEcho = !!(currentLine as any).requiresFocusHistory
     if (isEcho) {
-      const lineId = `${nightScene?.id}-${currentLineIndex}`
+      const lineId = `${nightScene?.id}-${safeLineIndex}`
       const played = useGameStore.getState().playedEchoIds
       if (!played.includes(lineId)) {
         audio.play('echo')
         useGameStore.setState({ playedEchoIds: [...played, lineId] })
       }
     }
-  }, [currentLineIndex, displayLines])
+  }, [safeLineIndex, displayLines])
 
   if (!nightScene) return null
 
   const showWritingPhase = isWritingPhaseReady && !!nightScene.writingPhase
-  const isEnding = currentLineIndex >= displayLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
+  const isEnding = safeLineIndex >= displayLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
 
   // 卷一结尾：显示"第一卷 完"
   if (isEnding) {
@@ -402,10 +423,19 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
     <div className="flex-1 flex flex-col">
       <div className="flex-1 px-6 pt-8 pb-24 overflow-y-auto">
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
+          {/* 第一次 Echo 提示 */}
+          {safeLineIndex === 0 && displayLines.some(l => l.requiresTag) && writings.length === 1 && (
+            <div className="mb-4 px-3 py-2 bg-stone-800/30 rounded border border-stone-700/30">
+              <p className="text-xs text-stone-500 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                {c('tutorial.echoHint', '你写下的文字开始影响你看到的现实。注意观察变化。')}
+              </p>
+            </div>
+          )}
+
           {/* 固定叙事 */}
           {displayLines.map((l, i) => {
-            if (i > currentLineIndex && !showWritingPhase) return null
-            return i === currentLineIndex && !showWritingPhase ? (
+            if (i > safeLineIndex && !showWritingPhase) return null
+            return i === safeLineIndex && !showWritingPhase ? (
               <div key={i} className="scene-fade-in">
                 <DialogBox line={l} onAdvance={onAdvance} />
               </div>
@@ -500,6 +530,15 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
         <p className="text-amber-500/80 text-sm mb-1">✎ {t('write.title')}</p>
         <p className="text-stone-400 text-sm">{wpCid ? c(wpCid + '.prompt', wp.prompt) : wp.prompt}</p>
       </div>
+
+      {/* 第一次写作引导 */}
+      {writings.length === 0 && !hasWritten && (
+        <div className="px-3 py-2 bg-violet-900/10 rounded border border-violet-800/20">
+          <p className="text-xs text-violet-600/80" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+            {c('tutorial.writeHint', '选择今天观察到的素材，组合成文字。不同的组合会产生不同的故事。')}
+          </p>
+        </div>
+      )}
 
       {/* 可选素材列表 */}
       <div>

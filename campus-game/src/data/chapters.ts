@@ -11,6 +11,10 @@ const prologueDay: DayScene = {
   timeOfDay: '放学后',
   titleCard: { day: '周五', time: '16:20' },
   intro: [
+    { type: 'narration', text: '走廊尽头的窗户透进光来。又是这个时间。',
+        cid: 'prologue.day.intro.tutorial.0' },
+    { type: 'narration', text: '你可以选择今天更留意谁。',
+        cid: 'prologue.day.intro.tutorial.1' },
     { type: 'narration', text: '我叫荣加俊。今年十五岁。写了九十万字。',
         cid: 'prologue.day.intro.0' },
     { type: 'narration', text: '没有人知道这件事。直到今天。',
