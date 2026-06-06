@@ -1,12 +1,23 @@
+import { useEffect } from 'react'
 import { useTypewriter } from '../../hooks/useTypewriter'
 import { useGameStore } from '../../store/gameStore'
 import { useTranslation, useContent } from '../../i18n'
 import { audio } from '../../lib/audio'
 
 export function ObservationModal() {
-  const { modalObservationId, closeObservation, confirmObservation, previousFocus, focusHistory } = useGameStore()
+  const { modalObservationId, closeObservation, confirmObservation, previousFocus, focusHistory, behaviorStates } = useGameStore()
   const t = useTranslation()
   const { co } = useContent()
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') {
+        closeObservation()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [closeObservation])
 
   if (!modalObservationId) return null
 
@@ -37,6 +48,12 @@ export function ObservationModal() {
   const fullText = addon ? obsText + '\n\n' + addon : obsText
   const obsName = obs.cid ? co(obs.cid, 'name', obs.name) : obs.name
 
+  // V1.1: 检查行为效果
+  const characterEffects = behaviorStates[obs.focusGroup] || []
+  const consequenceHint = characterEffects.length > 0
+    ? characterEffects[characterEffects.length - 1]?.behaviorDescription
+    : undefined
+
   return (
     <div
       className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center"
@@ -56,6 +73,15 @@ export function ObservationModal() {
         <div className="px-6 py-4 overflow-y-auto flex-1 scrollbar-thin">
           <ObservationText text={fullText} />
         </div>
+
+        {/* V1.1: 因果标注 */}
+        {consequenceHint && (
+          <div className="px-6 pb-2 shrink-0">
+            <p className="text-xs text-amber-600/70 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+              （{consequenceHint}）
+            </p>
+          </div>
+        )}
 
         {/* 分割线 */}
         <div className="px-6 shrink-0">

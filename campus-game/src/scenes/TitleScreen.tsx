@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { useTranslation, useContent } from '../i18n'
 import { audio } from '../lib/audio'
@@ -13,6 +13,14 @@ export function TitleScreen() {
   const { startGame, loadGame, settings } = useGameStore()
   const [overlay, setOverlay] = useState<Overlay>(null)
   const t = useTranslation()
+
+  useEffect(() => {
+    if (settings.reducedMotion) {
+      document.body.classList.add('reduce-motion')
+    } else {
+      document.body.classList.remove('reduce-motion')
+    }
+  }, [settings.reducedMotion])
 
   const handleStart = () => {
     audio.init()

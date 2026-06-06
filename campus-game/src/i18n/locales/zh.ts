@@ -90,6 +90,9 @@ const zh: Record<string, string> = {
   'settings.small': '小',
   'settings.medium': '中',
   'settings.large': '大',
+  'settings.reducedMotion': '动画',
+  'settings.motionOn': '开启',
+  'settings.motionOff': '减少',
 
   // 章节
   'chapter.completed': '已完成',
@@ -110,12 +113,35 @@ const zh: Record<string, string> = {
 
   // 暴露度反馈
   'feedback.recorded': '✓ {name} 已记录',
+  'feedback.recordedSuffix': '已记录',
   'feedback.noticed': '有人开始注意到你了。',
   'feedback.watched': '你记录了太多关于她的东西。',
+
+  // 反馈（写作阶段）
+  'feedback.todayWrote': '今天记下了：{labels}。',
+  'feedback.todayNothing': '今天什么也没写。有些日子就是这样。',
+  'feedback.noWriting': '有些夜晚，笔尖落不下来。',
+  'feedback.writingLow': '你写下这些句子。它们好像停留得比平时更久。',
+  'feedback.writingMid': '你写下这些句子。\n\n突然有种被人看见的感觉。',
+  'feedback.writingHigh': '你写下这些句子。\n\n关掉文档的时候，迟疑了一下。',
+
+  // 游戏 UI
+  'ui.volumeComplete': '第一卷 完',
+  'ui.gameTitle': '异乡校园 · 夏天',
+  'ui.clickHotspot': '点击场景中你感兴趣的对象',
+  'ui.clickToObserve': '点击下方你感兴趣的对象进行观察',
+  'ui.observed': '已记录',
+  'ui.clickContinue': '点击继续 →',
+
+  // 设置
+  'settings.previewText': '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。',
 
   // 介绍/帮助
   'intro.title': '关于这个游戏',
   'help.title': '怎么玩',
+
+  // V1.1 后果系统
+  'consequence.hint': '（因为你上次写下的文字，她开始这样做了）',
 }
 
 export default zh

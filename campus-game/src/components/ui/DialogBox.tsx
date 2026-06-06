@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useTypewriter } from '../../hooks/useTypewriter'
 import { characters } from '../../data/characters'
 import { useContent } from '../../i18n'
@@ -26,6 +27,23 @@ export function DialogBox({ line, onAdvance }: Props) {
       onAdvance()
     }
   }
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // 如果有 overlay 打开，不处理 Space/Enter
+      if (useGameStore.getState().modalObservationId) return
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault()
+        if (!isComplete) {
+          skip()
+        } else {
+          onAdvance()
+        }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isComplete, skip, onAdvance])
 
   const isThought = line.type === 'thought'
   const isDialogue = line.type === 'dialogue' && character

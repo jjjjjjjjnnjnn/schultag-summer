@@ -1,12 +1,44 @@
 // ── 焦点类型 ──
 export type FocusType = 'maya' | 'ludwig' | 'environment'
 
+// ── V1.1 后果系统 ──
+
+/** 行为效果：角色因 Robert 的写作而产生的行为改变 */
+export interface BehaviorEffect {
+  id: string
+  source: 'writing' | 'observation' | 'consequence'
+  /** 触发条件（由哪个 writingTag 触发） */
+  triggerTag: string
+  /** 行为描述（出现在观察文本中） */
+  behaviorDescription: string
+  /** 影响的观察点 ID 列表 */
+  affectedObservations: string[]
+  /** 持续时间 */
+  duration: 'chapter' | 'permanent'
+  /** 时间戳 */
+  activatedAt: number
+}
+
+/** 后果规则：定义 writingTag 如何转化为行为效果 */
+export interface ConsequenceRule {
+  /** 触发条件 */
+  trigger: {
+    type: 'writingTag' | 'imprintThreshold'
+    value: string | number
+  }
+  /** 产生的行为效果 */
+  effect: Omit<BehaviorEffect, 'activatedAt'>
+  /** 延迟几章后生效（制造时间差） */
+  delayChapters: number
+}
+
 // ── 游戏设置 ──
 export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast'
   fontSize: 'small' | 'medium' | 'large'
   language: 'zh' | 'en' | 'de'
   soundEnabled: boolean
+  reducedMotion: boolean
 }
 
 // ── 观察点：白天场景中玩家可以自由点击观察的对象 ──
@@ -34,6 +66,12 @@ export interface ObservationPoint {
   focusAddendumDeep?: string
   /** 内容翻译 key（用于多语言查找） */
   cid?: string
+  /** V1.1: 被行为效果修改时的替代观察文本 */
+  alternateText?: string
+  /** V1.1: 被行为效果修改时的替代笔记本条目 */
+  alternateEntry?: NotebookEntry
+  /** V1.1: 受哪些行为效果影响（效果 ID 列表） */
+  affectedBy?: string[]
 }
 
 // ── 笔记本素材条目 ──
@@ -244,4 +282,21 @@ export interface GameState {
   isPlaying: boolean
   /** 已播放过音效的 Echo 行 ID（防重复播放） */
   playedEchoIds: string[]
+  /** 累计游玩时间（毫秒） */
+  playTimeMs: number
+  /** 当前游戏会话开始时间 */
+  gameStartTime: number
+  /** V1.1: 行为状态（角色 ID → 激活的行为效果列表） */
+  behaviorStates: Record<string, BehaviorEffect[]>
+  /** V1.1: 已激活的后果规则 ID 列表 */
+  activatedConsequences: string[]
+}
+
+// ── 存档数据结构 ──
+export interface SaveData {
+  version: 3
+  timestamp: number
+  playTimeMs: number
+  chapterId: string
+  state: Partial<GameState>
 }

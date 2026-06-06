@@ -130,6 +130,33 @@ export function SettingsPanel() {
         </div>
       </div>
 
+      {/* 减少动画 */}
+      <div>
+        <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3">{t('settings.reducedMotion')}</h3>
+        <div className="flex gap-2">
+          <button
+            onClick={() => updateSettings({ reducedMotion: false })}
+            className={`px-3 py-1.5 text-xs rounded border transition-all ${
+              !settings.reducedMotion
+                ? 'border-amber-700 bg-amber-900/20 text-amber-400'
+                : 'border-stone-700 text-stone-500 hover:text-stone-300'
+            }`}
+          >
+            {t('settings.motionOn')}
+          </button>
+          <button
+            onClick={() => updateSettings({ reducedMotion: true })}
+            className={`px-3 py-1.5 text-xs rounded border transition-all ${
+              settings.reducedMotion
+                ? 'border-amber-700 bg-amber-900/20 text-amber-400'
+                : 'border-stone-700 text-stone-500 hover:text-stone-300'
+            }`}
+          >
+            {t('settings.motionOff')}
+          </button>
+        </div>
+      </div>
+
       {/* 预览 */}
       <div>
         <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3">{t('settings.preview')}</h3>

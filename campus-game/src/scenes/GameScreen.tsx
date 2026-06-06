@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { useTranslation, useContent } from '../i18n'
 import { SceneView } from '../components/ui/SceneView'
@@ -12,13 +12,39 @@ import { characters } from '../data/characters'
 type MenuOverlay = null | 'chapters' | 'achievements' | 'settings'
 
 export function GameScreen() {
-  const { saveGame, resetGame, observedIds, allNotebookEntries, getCurrentScene, writingTags } = useGameStore()
+  const { saveGame, resetGame, observedIds, allNotebookEntries, getCurrentScene, writingTags, isPlaying, settings } = useGameStore()
   const scene = getCurrentScene()
   const mode = scene?.mode || 'day'
   const [showMenu, setShowMenu] = useState(false)
   const [showNotebook, setShowNotebook] = useState(false)
   const [menuOverlay, setMenuOverlay] = useState<MenuOverlay>(null)
   const t = useTranslation()
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') {
+        // 如果观察弹窗打开，让 ObservationModal 处理
+        if (useGameStore.getState().modalObservationId) return
+        if (menuOverlay) {
+          setMenuOverlay(null)
+        } else if (showNotebook) {
+          setShowNotebook(false)
+        } else if (isPlaying) {
+          setMenuOverlay('settings')
+        }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [menuOverlay, showNotebook, isPlaying])
+
+  useEffect(() => {
+    if (settings.reducedMotion) {
+      document.body.classList.add('reduce-motion')
+    } else {
+      document.body.classList.remove('reduce-motion')
+    }
+  }, [settings.reducedMotion])
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden">

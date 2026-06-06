@@ -97,6 +97,9 @@ const de: Record<string, string> = {
   'settings.small': 'Klein',
   'settings.medium': 'Mittel',
   'settings.large': 'Groß',
+  'settings.reducedMotion': 'Animationen',
+  'settings.motionOn': 'An',
+  'settings.motionOff': 'Reduziert',
 
   // Kapitel
   'chapter.completed': 'Abgeschlossen',
@@ -130,6 +133,9 @@ const de: Record<string, string> = {
   // Intro/Hilfe
   'intro.title': 'Über dieses Spiel',
   'help.title': 'Spielanleitung',
+
+  // V1.1 Folgesystem
+  'consequence.hint': '(Weil du das letzte Mal geschrieben hast, fing sie an, das zu tun)',
 }
 
 export default de

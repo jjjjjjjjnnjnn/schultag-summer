@@ -233,3 +233,25 @@ body {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scene-fade-in,
+  .animate-modal-enter,
+  .list-item-enter,
+  .tab-fade-in,
+  .title-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Reduced motion - class-based (for in-game toggle) */
+body.reduce-motion .scene-fade-in,
+body.reduce-motion .animate-modal-enter,
+body.reduce-motion .list-item-enter,
+body.reduce-motion .tab-fade-in,
+body.reduce-motion .title-card {
+  animation: none !important;
+  transition: none !important;
+}

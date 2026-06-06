@@ -1,8 +1,9 @@
 import { create } from 'zustand'
-import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, Settings } from '../types/game'
+import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, Settings, SaveData } from '../types/game'
 import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
+import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
 import enContent from '../i18n/content/en'
 import deContent from '../i18n/content/de'
 
@@ -99,7 +100,7 @@ interface GameStore extends GameState {
 const SAVE_KEY = 'schultag-save-v2'
 const SETTINGS_KEY = 'schultag-settings'
 
-const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium', language: 'zh', soundEnabled: true }
+const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium', language: 'zh', soundEnabled: true, reducedMotion: false }
 
 function loadSettingsFromStorage(): Settings {
   try {
@@ -142,6 +143,10 @@ const initialState: GameState = {
   settings: loadSettingsFromStorage(),
   isPlaying: false,
   playedEchoIds: [],
+  playTimeMs: 0,
+  gameStartTime: Date.now(),
+  behaviorStates: {},
+  activatedConsequences: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -287,6 +292,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       attentionRemaining: budget,
       focusPulseColor: null,
       isPlaying: true,
+      behaviorStates: {},
+      activatedConsequences: [],
     })
   },
 
@@ -525,6 +532,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isWritingPhaseReady: false,
     })
 
+    // V1.1: 评估后果
+    const newEffects = evaluateConsequences(get())
+    if (newEffects.length > 0) {
+      const distributed = distributeEffects(newEffects)
+      const currentStates = get().behaviorStates
+      const mergedStates = { ...currentStates }
+      for (const [charId, effects] of Object.entries(distributed)) {
+        mergedStates[charId] = [...(mergedStates[charId] || []), ...effects]
+      }
+      set({
+        behaviorStates: mergedStates,
+        activatedConsequences: [
+          ...get().activatedConsequences,
+          ...newEffects.map(e => e.id),
+        ],
+      })
+    }
+
     // 成就检查
     const newAchievements = evaluateAchievements(get())
     newAchievements.forEach(id => get().unlockAchievement(id))
@@ -601,34 +626,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // ══════════════════════════════════════
 
   saveGame: () => {
-    const s = get()
-    const save = {
-      version: 2,
+    const state = get()
+    const saveData: SaveData = {
+      version: 3,
       timestamp: Date.now(),
+      playTimeMs: state.playTimeMs + (Date.now() - state.gameStartTime),
+      chapterId: state.currentSceneId.replace(/-day|-night/, ''),
       state: {
-        currentSceneId: s.currentSceneId,
-        currentLineIndex: s.currentLineIndex,
-        observedIds: s.observedIds,
-        isExploring: s.isExploring,
-        selectedEntryIds: s.selectedEntryIds,
-        allNotebookEntries: s.allNotebookEntries,
-        writings: s.writings,
-        writingTags: s.writingTags,
-        flags: s.flags,
-        impressions: s.impressions,
-        imprints: s.imprints,
-        isWritingPhaseReady: s.isWritingPhaseReady,
-        writingFeedback: s.writingFeedback,
-        exposure: s.exposure,
-        attentionRemaining: s.attentionRemaining,
-        currentFocus: s.currentFocus,
-        previousFocus: s.previousFocus,
-        focusHistory: s.focusHistory,
-        completedChapters: s.completedChapters,
-        isPlaying: s.isPlaying,
+        currentSceneId: state.currentSceneId,
+        currentLineIndex: state.currentLineIndex,
+        observedIds: state.observedIds,
+        isExploring: state.isExploring,
+        selectedEntryIds: state.selectedEntryIds,
+        allNotebookEntries: state.allNotebookEntries,
+        writings: state.writings,
+        writingTags: state.writingTags,
+        flags: state.flags,
+        impressions: state.impressions,
+        imprints: state.imprints,
+        exposure: state.exposure,
+        attentionRemaining: state.attentionRemaining,
+        currentFocus: state.currentFocus,
+        previousFocus: state.previousFocus,
+        focusHistory: state.focusHistory,
+        unlockedAchievements: state.unlockedAchievements,
+        completedChapters: state.completedChapters,
+        playedEchoIds: state.playedEchoIds,
+        behaviorStates: state.behaviorStates,
+        activatedConsequences: state.activatedConsequences,
       },
     }
-    localStorage.setItem(SAVE_KEY, JSON.stringify(save))
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saveData))
   },
 
   loadGame: () => {
@@ -636,17 +664,47 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!raw) return false
     try {
       const save = JSON.parse(raw)
-      if (save.version === 2) {
-        // 兼容旧存档：缺失字段用默认值
-        const savedAchievements = localStorage.getItem('schultag-achievements')
+      // v3 格式
+      if (save.version === 3) {
+        let savedAchievements: string[] = []
+        try {
+          const raw = localStorage.getItem('schultag-achievements')
+          if (raw) {
+            savedAchievements = JSON.parse(raw)
+          }
+        } catch { /* corrupted achievements */ }
         set({
           ...initialState,
           ...save.state,
-          unlockedAchievements: savedAchievements ? JSON.parse(savedAchievements) : (save.state.unlockedAchievements || []),
+          unlockedAchievements: savedAchievements.length > 0 ? savedAchievements : (save.state.unlockedAchievements || []),
           completedChapters: save.state.completedChapters || [],
           allNotebookEntries: save.state.allNotebookEntries || [],
           settings: loadSettingsFromStorage(),
           isPlaying: true,
+          playTimeMs: save.playTimeMs || 0,
+          gameStartTime: Date.now(),
+        })
+        return true
+      }
+      // v2 兼容
+      if (save.version === 2) {
+        let savedAchievements: string[] = []
+        try {
+          const raw = localStorage.getItem('schultag-achievements')
+          if (raw) {
+            savedAchievements = JSON.parse(raw)
+          }
+        } catch { /* corrupted achievements */ }
+        set({
+          ...initialState,
+          ...save.state,
+          unlockedAchievements: savedAchievements.length > 0 ? savedAchievements : (save.state.unlockedAchievements || []),
+          completedChapters: save.state.completedChapters || [],
+          allNotebookEntries: save.state.allNotebookEntries || [],
+          settings: loadSettingsFromStorage(),
+          isPlaying: true,
+          playTimeMs: 0,
+          gameStartTime: Date.now(),
         })
         return true
       }

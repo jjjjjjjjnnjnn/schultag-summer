@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import type { FocusType } from '../../types/game'
 import { useTranslation } from '../../i18n'
+import { useGameStore } from '../../store/gameStore'
 
 const FOCUS_KEYS: { type: FocusType; labelKey: string; subKey: string; hintKey: string; color: string }[] = [
   { type: 'maya', labelKey: 'focus.maya', subKey: 'focus.mayaSub', hintKey: 'focus.mayaHint', color: '#8b5cf6' },
@@ -14,6 +16,25 @@ interface Props {
 
 export function FocusSelector({ onSelect, budget = 3 }: Props) {
   const t = useTranslation()
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // 如果有 modal 打开，不处理数字键
+      if (useGameStore.getState().modalObservationId) return
+      if (e.key === '1') {
+        e.preventDefault()
+        onSelect('maya')
+      } else if (e.key === '2') {
+        e.preventDefault()
+        onSelect('ludwig')
+      } else if (e.key === '3') {
+        e.preventDefault()
+        onSelect('environment')
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onSelect])
 
   return (
     <div className="max-w-2xl mx-auto mt-8 scene-fade-in">
