@@ -45,7 +45,7 @@ export const PERCEPTION_TRIGGERS: PerceptionTrigger[] = [
   },
   // 暴露度升高
   {
-    condition: { type: 'imprintThreshold', value: 20 },
+    condition: { type: 'imprintThreshold', value: 12 },
     change: { from: 'ludwig', to: 'robert', addTags: ['wary'], removeTags: [], intensityDelta: 0.1 },
   },
   // Ludwig 行为改变后
@@ -60,5 +60,14 @@ export const PERCEPTION_TRIGGERS: PerceptionTrigger[] = [
   {
     condition: { type: 'writingTag', value: 'deep-talk-ludwig' },
     change: { from: 'ludwig', to: 'robert', addTags: ['trusting'], removeTags: ['admiring'], intensityDelta: 0.3 },
+  },
+  // Robert 对 Maya 的认知变化
+  {
+    condition: { type: 'writingTag', value: 'observed-maya-inner' },
+    change: { from: 'robert', to: 'maya', addTags: ['trusting'], removeTags: ['curious'], intensityDelta: 0.3 },
+  },
+  {
+    condition: { type: 'writingTag', value: 'wrote-maya-pingpong' },
+    change: { from: 'robert', to: 'maya', addTags: ['admiring'], removeTags: ['curious'], intensityDelta: 0.2 },
   },
 ]
