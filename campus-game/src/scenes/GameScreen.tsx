@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
+import { useTranslation } from '../i18n'
 import { SceneView } from '../components/ui/SceneView'
 import { NotebookView } from '../components/ui/NotebookView'
 import { MenuModal } from '../components/menu/MenuModal'
@@ -17,6 +18,7 @@ export function GameScreen() {
   const [showMenu, setShowMenu] = useState(false)
   const [showNotebook, setShowNotebook] = useState(false)
   const [menuOverlay, setMenuOverlay] = useState<MenuOverlay>(null)
+  const t = useTranslation()
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden">
@@ -28,11 +30,11 @@ export function GameScreen() {
             style={{ fontFamily: 'var(--font-serif-cn)' }}
             onClick={() => setShowMenu(!showMenu)}
           >
-            异乡校园
+            {t('title.name')}
           </span>
           <span className="text-xs text-stone-600 hidden sm:inline">·</span>
           <span className="text-xs text-stone-600 hidden sm:inline">
-            {mode === 'night' ? '🌙 夜晚' : '☀ 白天'}
+            {mode === 'night' ? '🌙' : '☀'} {mode === 'night' ? t('game.night') : t('game.day')}
           </span>
           {observedIds.length > 0 && (
             <span className="text-xs text-amber-600">
@@ -41,12 +43,12 @@ export function GameScreen() {
           )}
           {writingTags.length > 0 && (
             <span className="text-xs text-violet-600 hidden sm:inline">
-              ✎ {writingTags.length} 个印记
+              ✎ {writingTags.length} {t('game.imprints')}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowNotebook(!showNotebook)}
             className={`text-xs px-3 py-1.5 rounded border transition-colors ${
@@ -56,6 +58,13 @@ export function GameScreen() {
             }`}
           >
             ✎ ({notebook.length})
+          </button>
+          <button
+            onClick={() => setMenuOverlay('settings')}
+            className="text-xs px-2 py-1.5 rounded border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-colors"
+            title={t('game.settings')}
+          >
+            ⚙
           </button>
         </div>
       </header>
@@ -92,38 +101,38 @@ export function GameScreen() {
             onClick={e => e.stopPropagation()}
           >
             <h2 className="text-lg text-stone-200 mb-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-              菜单
+              {t('game.menu')}
             </h2>
             <button
               onClick={() => { saveGame(); setShowMenu(false) }}
               className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
             >
-              存档
+              {t('game.save')}
             </button>
             <button
               onClick={() => { setShowMenu(false); setMenuOverlay('chapters') }}
               className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
             >
-              章节选择
+              {t('game.chapters')}
             </button>
             <button
               onClick={() => { setShowMenu(false); setMenuOverlay('achievements') }}
               className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
             >
-              成就
+              {t('game.achievements')}
             </button>
             <button
               onClick={() => { setShowMenu(false); setMenuOverlay('settings') }}
               className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
             >
-              设置
+              {t('game.settings')}
             </button>
             <div className="border-t border-stone-800 my-2" />
             <button
               onClick={() => { resetGame(); setShowMenu(false) }}
               className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-stone-800 rounded transition-colors"
             >
-              返回标题
+              {t('game.returnTitle')}
             </button>
           </div>
         </div>
@@ -131,17 +140,17 @@ export function GameScreen() {
 
       {/* 菜单子面板 */}
       {menuOverlay === 'chapters' && (
-        <MenuModal title="章节选择" onClose={() => setMenuOverlay(null)}>
+        <MenuModal title={t('game.chapters')} onClose={() => setMenuOverlay(null)}>
           <ChapterSelect onSelect={() => setMenuOverlay(null)} />
         </MenuModal>
       )}
       {menuOverlay === 'achievements' && (
-        <MenuModal title="成就" onClose={() => setMenuOverlay(null)}>
+        <MenuModal title={t('game.achievements')} onClose={() => setMenuOverlay(null)}>
           <AchievementView />
         </MenuModal>
       )}
       {menuOverlay === 'settings' && (
-        <MenuModal title="设置" onClose={() => setMenuOverlay(null)}>
+        <MenuModal title={t('settings.title')} onClose={() => setMenuOverlay(null)}>
           <SettingsPanel />
         </MenuModal>
       )}
@@ -152,15 +161,16 @@ export function GameScreen() {
 // ── 笔记本详细内容 ──
 function NotebookContent() {
   const { notebook, writings } = useGameStore()
+  const t = useTranslation()
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-4">
       <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3">
-        收集的素材
+        {t('notebook.observations')}
       </h3>
       {notebook.length === 0 ? (
         <p className="text-sm text-stone-600 italic">
-          还没有素材。在白天模式下观察周围的事物。
+          {t('notebook.empty')}
         </p>
       ) : (
         <div className="space-y-2">
@@ -187,7 +197,7 @@ function NotebookContent() {
       {writings.length > 0 && (
         <>
           <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3 mt-6">
-            已写成的文字
+            {t('notebook.writings')}
           </h3>
           <div className="space-y-3">
             {writings.map((w, i) => (
@@ -210,6 +220,7 @@ function NotebookContent() {
 function CharacterSidebar() {
   const impressions = useGameStore(s => s.impressions)
   const imprints = useGameStore(s => s.imprints)
+  const t = useTranslation()
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
@@ -217,7 +228,7 @@ function CharacterSidebar() {
 
   return (
     <div className="w-48 border-r border-stone-800/30 bg-stone-950/50 p-4 hidden lg:flex flex-col">
-      <h3 className="text-xs text-stone-600 uppercase tracking-wider mb-3">人物印象</h3>
+      <h3 className="text-xs text-stone-600 uppercase tracking-wider mb-3">{t('char.impression')}</h3>
       <div className="space-y-4">
         {mainChars.map(c => {
           const level = impressions[c.id] || 0

@@ -1,25 +1,27 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
+import { useTranslation } from '../../i18n'
 import { characters } from '../../data/characters'
 import { CHAPTERS } from '../../data/chapters'
 
 type Tab = 'observations' | 'writings' | 'characters' | 'stats'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'observations', label: '观察' },
-  { id: 'writings', label: '写作' },
-  { id: 'characters', label: '人物' },
-  { id: 'stats', label: '统计' },
-]
-
 export function NotebookView() {
+  const t = useTranslation()
   const [activeTab, setActiveTab] = useState<Tab>('observations')
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'observations', label: t('notebook.observations') },
+    { id: 'writings', label: t('notebook.writings') },
+    { id: 'characters', label: t('notebook.characters') },
+    { id: 'stats', label: t('notebook.stats') },
+  ]
 
   return (
     <div className="flex-1 flex flex-col scene-fade-in">
       {/* Tab 栏 */}
       <div className="px-4 py-2 border-b border-stone-800/50 flex items-center gap-1">
-        <span className="text-xs text-stone-500 mr-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>笔记本</span>
+        <span className="text-xs text-stone-500 mr-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>{t('notebook.title')}</span>
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -46,19 +48,18 @@ export function NotebookView() {
   )
 }
 
-// ── Tab 1: 观察记录 ──
 function ObservationsTab() {
   const allNotebookEntries = useGameStore(s => s.allNotebookEntries)
+  const t = useTranslation()
 
   if (allNotebookEntries.length === 0) {
     return (
       <p className="text-sm text-stone-600 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-        还没有观察记录。在白天模式下观察周围的事物。
+        {t('notebook.empty')}
       </p>
     )
   }
 
-  // 按场景分组
   const grouped: Record<string, typeof allNotebookEntries> = {}
   for (const entry of allNotebookEntries) {
     const key = entry.sceneId || 'unknown'
@@ -107,14 +108,14 @@ function ObservationsTab() {
   )
 }
 
-// ── Tab 2: 写作草稿 ──
 function WritingsTab() {
   const { writings } = useGameStore()
+  const t = useTranslation()
 
   if (writings.length === 0) {
     return (
       <p className="text-sm text-stone-600 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-        还没有写作。在夜晚场景中选择素材写成文字。
+        {t('notebook.emptyWriting')}
       </p>
     )
   }
@@ -124,11 +125,9 @@ function WritingsTab() {
       {writings.map((w, i) => (
         <div key={i} className="space-y-2">
           <h3 className="text-xs text-stone-500 uppercase tracking-wider">
-            第 {i + 1} 篇
+            {t('notebook.writings')} {i + 1}
           </h3>
-          <div
-            className="notebook-paper rounded-lg px-4 py-3 text-sm leading-[1.8]"
-          >
+          <div className="notebook-paper rounded-lg px-4 py-3 text-sm leading-[1.8]">
             {w}
           </div>
         </div>
@@ -137,11 +136,11 @@ function WritingsTab() {
   )
 }
 
-// ── Tab 3: 人物 ──
 function CharactersTab() {
   const imprints = useGameStore(s => s.imprints)
   const impressions = useGameStore(s => s.impressions)
   const allNotebookEntries = useGameStore(s => s.allNotebookEntries)
+  const t = useTranslation()
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher'
@@ -156,7 +155,6 @@ function CharactersTab() {
         const level = impressions[char.id] || 0
         const impressionText = char.impressionLevels[level] || ''
 
-        // 该角色的最近观察
         const recentObs = allNotebookEntries
           .filter(e => e.focusGroup === char.id)
           .slice(-3)
@@ -177,13 +175,13 @@ function CharactersTab() {
             </div>
 
             <div className="flex gap-4 text-xs text-stone-500 mb-2">
-              <span>观察 {obsCount} 次</span>
-              <span>写作 {writeCount} 次</span>
+              <span>{t('char.observations', { n: obsCount })}</span>
+              <span>{t('char.writings', { n: writeCount })}</span>
             </div>
 
             {recentObs.length > 0 && (
               <div className="space-y-1 mt-2 pt-2 border-t border-stone-700/20">
-                <p className="text-[10px] text-stone-600 uppercase tracking-wider">最近观察</p>
+                <p className="text-[10px] text-stone-600 uppercase tracking-wider">{t('char.recentObs')}</p>
                 {recentObs.map(entry => (
                   <p key={entry.id} className="text-xs text-stone-400 leading-relaxed pl-2 border-l border-stone-700/30">
                     {entry.label}
@@ -198,36 +196,33 @@ function CharactersTab() {
   )
 }
 
-// ── Tab 4: 统计 ──
 function StatsTab() {
   const { allNotebookEntries, writings, focusHistory, exposure, unlockedAchievements } = useGameStore()
+  const t = useTranslation()
 
-  // 总观察点数（所有场景的观察点总数）
   const totalObservations = CHAPTERS.reduce((sum, ch) => sum + ch.observationCount, 0)
   const observedCount = allNotebookEntries.length
   const coverage = totalObservations > 0 ? Math.round((observedCount / totalObservations) * 100) : 0
 
-  // 最关注焦点
   const focusCounts: Record<string, number> = {}
   for (const f of focusHistory) {
     focusCounts[f] = (focusCounts[f] || 0) + 1
   }
   const topFocus = Object.entries(focusCounts).sort((a, b) => b[1] - a[1])[0]
   const topFocusLabel = topFocus
-    ? topFocus[0] === 'maya' ? '兰若瑶' : topFocus[0] === 'ludwig' ? '王嘉亿' : '环境'
+    ? topFocus[0] === 'maya' ? t('focus.maya') : topFocus[0] === 'ludwig' ? t('focus.ludwig') : t('focus.env')
     : '—'
 
   return (
     <div className="space-y-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-      <StatRow label="总观察" value={`${observedCount}`} />
-      <StatRow label="总写作" value={`${writings.length}`} />
-      <StatRow label="最关注" value={topFocusLabel} />
-      <StatRow label="暴露度" value={`${exposure}`} />
+      <StatRow label={t('stats.totalObs')} value={`${observedCount}`} />
+      <StatRow label={t('stats.totalWrite')} value={`${writings.length}`} />
+      <StatRow label={t('stats.topFocus')} value={topFocusLabel} />
+      <StatRow label={t('stats.exposure')} value={`${exposure}`} />
 
-      {/* 观察覆盖率 */}
       <div className="pt-2">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-stone-500">观察覆盖率</span>
+          <span className="text-xs text-stone-500">{t('stats.coverage')}</span>
           <span className="text-xs text-stone-400">{observedCount}/{totalObservations}</span>
         </div>
         <div className="h-1.5 w-full bg-stone-800 rounded-full overflow-hidden">
@@ -238,7 +233,7 @@ function StatsTab() {
         </div>
       </div>
 
-      <StatRow label="已解锁成就" value={`${unlockedAchievements.length}`} />
+      <StatRow label={t('stats.achievements')} value={`${unlockedAchievements.length}`} />
     </div>
   )
 }

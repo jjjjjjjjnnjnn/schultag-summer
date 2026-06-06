@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { useGameStore, getVisibleLines } from '../../store/gameStore'
+import { useTranslation } from '../../i18n'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
 import { FocusSelector } from './FocusSelector'
@@ -149,6 +150,7 @@ function DaySceneView({
   isExploring: boolean
 }) {
   const { observedIds, currentLineIndex, feedback, writingTags, imprints, currentFocus, attentionRemaining, selectFocus, focusHistory, exposure, focusPulseColor, allNotebookEntries } = useGameStore()
+  const t = useTranslation()
   const dayScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'day' ? scene : null
@@ -181,7 +183,7 @@ function DaySceneView({
         {isExploring && introDone && currentFocus && (
           <div className="max-w-2xl mx-auto mt-8 scene-fade-in">
             <div className="text-center mb-8">
-              <p className="text-amber-500/80 text-sm mb-2">你看到了什么？</p>
+              <p className="text-amber-500/80 text-sm mb-2">{t('observe.title')}</p>
               {/* 注意力指示器 */}
               <div className="flex items-center justify-center gap-1.5 mb-2">
                 {Array.from({ length: dayScene.attentionBudget ?? 3 }).map((_, i) => (
@@ -191,7 +193,7 @@ function DaySceneView({
                       : 'bg-stone-700'
                   }`} />
                 ))}
-                <span className="text-xs text-stone-600 ml-1">注意力</span>
+                <span className="text-xs text-stone-600 ml-1">{t('observe.attention')}</span>
               </div>
               <p className="text-stone-500 text-xs">
                 {dayScene.observations.some(o => o.position)
@@ -232,14 +234,14 @@ function DaySceneView({
                         }
                       `}
                       style={{ left: `${obs.position.x}%`, top: `${obs.position.y}%` }}
-                      title={`${obs.name}（消耗 ${cost} 注意力）`}
+                      title={`${obs.name}（${t('observe.attention')} ${cost}）`}
                     />
                   )
                 })}
                 {/* 热点名称提示 */}
                 {dayScene.observations.filter(o => o.position && !observedIds.includes(o.id)).length > 0 && (
                   <div className="absolute bottom-2 left-2 text-xs text-stone-500">
-                    {dayScene.observations.filter(o => o.position && !observedIds.includes(o.id)).length} 个可观察对象
+                    {dayScene.observations.filter(o => o.position && !observedIds.includes(o.id)).length} {t('observe.remaining')}
                   </div>
                 )}
               </div>
@@ -274,7 +276,7 @@ function DaySceneView({
                       </span>
                       <span className="text-sm font-medium">{obs.name}</span>
                       {!isObserved && !isDisabled && (
-                        <span className="text-xs text-stone-600 ml-auto">{cost} 注意力</span>
+                        <span className="text-xs text-stone-600 ml-auto">{cost} {t('observe.attention')}</span>
                       )}
                       {isObserved && (
                         <span className="text-xs text-amber-600 ml-auto">已记录</span>
@@ -290,12 +292,12 @@ function DaySceneView({
             {/* 暴露度提示 */}
             {exposure >= 32 && (
               <p className="text-xs text-amber-700 italic text-center mt-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-                你开始在意自己观察的方式。
+                {t('feedback.watched')}
               </p>
             )}
             {exposure >= 16 && exposure < 32 && (
               <p className="text-xs text-stone-600 italic text-center mt-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-                你感觉有人在看你。
+                {t('feedback.noticed')}
               </p>
             )}
 
@@ -306,7 +308,7 @@ function DaySceneView({
                   onClick={() => useGameStore.getState().finishExploring()}
                   className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded"
                 >
-                  结束观察，继续 →
+                  {t('observe.endExplore')}
                 </button>
               </div>
             )}
@@ -397,6 +399,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
   const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
+  const t = useTranslation()
   const wp = nightScene.writingPhase!
   const lastWriting = writings[writings.length - 1]
   const hasWritten = writings.length > 0 && !!lastWriting
@@ -405,7 +408,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
     return (
       <div className="scene-fade-in space-y-4">
         <div className="text-center mb-6">
-          <p className="text-xs text-stone-600">你的写作</p>
+          <p className="text-xs text-stone-600">{t('write.yourWriting')}</p>
         </div>
         <div
           className="notebook-paper rounded-lg px-6 py-4 text-sm leading-relaxed"
@@ -430,19 +433,19 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
               onClick={() => useGameStore.getState().goToNextScene()}
               className="px-6 py-2.5 border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-stone-100 transition-all text-sm rounded"
             >
-              下一天 →
+              {t('write.nextDay')}
             </button>
           </div>
         )}
         {!nightScene.nextSceneId && (
           <div className="text-center mt-8">
-            <p className="text-xs text-stone-600">Demo 结束</p>
-            <p className="text-xs text-stone-700 mt-1">感谢试玩</p>
+            <p className="text-xs text-stone-600">{t('write.demoEnd')}</p>
+            <p className="text-xs text-stone-700 mt-1">{t('write.thanks')}</p>
             <button
               onClick={() => useGameStore.getState().resetGame()}
               className="mt-4 px-4 py-2 border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-all text-xs rounded"
             >
-              返回标题
+              {t('write.returnTitle')}
             </button>
           </div>
         )}
@@ -453,14 +456,14 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
   return (
     <div className="scene-fade-in space-y-6">
       <div className="text-center">
-        <p className="text-amber-500/80 text-sm mb-1">✎ 写作时间</p>
+        <p className="text-amber-500/80 text-sm mb-1">✎ {t('write.title')}</p>
         <p className="text-stone-400 text-sm">{wp.prompt}</p>
       </div>
 
       {/* 可选素材列表 */}
       <div>
         <h3 className="text-xs text-stone-600 uppercase tracking-wider mb-3">
-          笔记本素材
+          {t('write.materials')}
         </h3>
         <div className="space-y-1.5">
           {notebook.map(entry => (
@@ -494,14 +497,14 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
           onClick={submitWriting}
           className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded"
         >
-          写成文字 ({selectedEntryIds.length} 项素材)
+          {t('write.submit', { n: selectedEntryIds.length })}
         </button>
         <div>
           <button
             onClick={submitWriting}
             className="text-xs text-stone-600 hover:text-stone-400 transition-colors"
           >
-            今晚不写了 →
+            {t('write.skip')}
           </button>
         </div>
       </div>

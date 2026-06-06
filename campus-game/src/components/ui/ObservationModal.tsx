@@ -1,8 +1,10 @@
 import { useTypewriter } from '../../hooks/useTypewriter'
 import { useGameStore } from '../../store/gameStore'
+import { useTranslation } from '../../i18n'
 
 export function ObservationModal() {
   const { modalObservationId, closeObservation, confirmObservation, previousFocus, focusHistory } = useGameStore()
+  const t = useTranslation()
 
   if (!modalObservationId) return null
 
@@ -60,15 +62,15 @@ export function ObservationModal() {
             onClick={closeObservation}
             className="text-xs text-stone-500 hover:text-stone-300 transition-colors"
           >
-            关闭
+            {t('observe.close')}
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] text-stone-600">成为写作素材</span>
+            <span className="text-[10px] text-stone-600">{t('observe.materialHint')}</span>
             <button
               onClick={confirmObservation}
               className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 text-amber-400 hover:bg-amber-900/50 transition-all text-sm rounded"
             >
-              加入笔记本
+              {t('observe.addNotebook')}
             </button>
           </div>
         </div>

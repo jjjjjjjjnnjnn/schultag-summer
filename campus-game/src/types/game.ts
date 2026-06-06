@@ -5,6 +5,7 @@ export type FocusType = 'maya' | 'ludwig' | 'environment'
 export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast'
   fontSize: 'small' | 'medium' | 'large'
+  language: 'zh' | 'en' | 'de'
 }
 
 // ── 观察点：白天场景中玩家可以自由点击观察的对象 ──

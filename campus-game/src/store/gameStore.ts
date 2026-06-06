@@ -89,7 +89,7 @@ interface GameStore extends GameState {
 const SAVE_KEY = 'schultag-save-v2'
 const SETTINGS_KEY = 'schultag-settings'
 
-const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium' }
+const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium', language: 'zh' }
 
 function loadSettingsFromStorage(): Settings {
   try {
