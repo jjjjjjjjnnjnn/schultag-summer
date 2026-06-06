@@ -230,7 +230,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         return
       }
 
-      // 正常推进（包括无 writingPhase 的场景，如卷一结尾）
+      // 已经超出范围 → 停止推进（防止卡死）
+      if (currentLineIndex >= filteredLines.length) {
+        return
+      }
+
+      // 正常推进
       set({ currentLineIndex: currentLineIndex + 1 })
     }
   },
