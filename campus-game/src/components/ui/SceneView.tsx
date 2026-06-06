@@ -475,6 +475,10 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
   const lastWriting = writings[writings.length - 1]
   const hasWritten = writings.length > 0 && !!lastWriting
 
+  // 只显示当前章节收集的笔记（按日间场景 ID 过滤）
+  const currentDaySceneId = nightScene.id.replace('-night', '-day')
+  const chapterEntries = allNotebookEntries.filter(e => e.sceneId === currentDaySceneId)
+
   if (hasWritten) {
     return (
       <div className="scene-fade-in space-y-4">
@@ -546,7 +550,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
           {t('write.materials')}
         </h3>
         <div className="space-y-1.5">
-          {allNotebookEntries.map(entry => (
+          {chapterEntries.map(entry => (
             <button
               key={entry.id}
               onClick={() => toggleEntrySelection(entry.id)}
