@@ -53,4 +53,12 @@ export const PERCEPTION_TRIGGERS: PerceptionTrigger[] = [
     condition: { type: 'consequence', value: 'ludwig-more-open' },
     change: { from: 'maya', to: 'ludwig', addTags: ['admiring'], removeTags: ['distant'], intensityDelta: 0.2 },
   },
+  {
+    condition: { type: 'writingTag', value: 'wrote-maya-pingpong' },
+    change: { from: 'maya', to: 'robert', addTags: ['trusting'], removeTags: ['curious'], intensityDelta: 0.2 },
+  },
+  {
+    condition: { type: 'writingTag', value: 'deep-talk-ludwig' },
+    change: { from: 'ludwig', to: 'robert', addTags: ['trusting'], removeTags: ['admiring'], intensityDelta: 0.3 },
+  },
 ]

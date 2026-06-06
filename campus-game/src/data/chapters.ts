@@ -41,20 +41,21 @@ const prologueDay: DayScene = {
     
     },
     {
-      id: 'prologue-food-smell',
-      name: '食堂的气味',
-      description: '从食堂飘出来的味道',
-      observationText: '今天大概是意面。还有那股说不清楚的、学校食堂独有的味道——消毒水、加热的金属餐盘、放了很久的烤面包混在一起。不是好的那种好吃，是那种你每天闻到就会条件反射的味道。',
+      id: 'prologue-maya-hallway',
+      name: '走廊尽头的人影',
+      description: '走廊尽头站着一个不认识的人',
+      observationText: '走廊尽头站着一个女生。背着一个很大的双肩包，拉链上挂着一个毛绒挂件。她站在那里，像是在等什么人，又像是刚到、还不知道往哪里走。她的眼神有点茫然，但嘴角带着一点很淡的笑——那种不确定自己在笑什么的笑。',
       notebookEntry: {
-        id: 'note-smell-01',
-        label: '食堂意面味',
-        text: '食堂的气味飘过来——意面、番茄酱和煮过头的肉味混在一起，学校食堂独有的味道。消毒水、加热的金属餐盘、放了很久的烤面包。',
-        category: 'smell',
+        id: 'note-maya-hallway-01',
+        label: '走廊尽头的人',
+        text: '走廊尽头站着一个女生。背着很大的双肩包，拉链上挂着毛绒挂件。她站在那里，像是在等什么人。',
+        category: 'visual',
         cid: 'prologue.day.obs.1.nb',
       },
       cid: 'prologue.day.obs.1',
+      relationshipEffect: { characterId: 'maya', delta: 1 },
       position: { x: 70, y: 35 },
-      focusGroup: 'environment',
+      focusGroup: 'maya',
     
     },
     {
@@ -913,13 +914,15 @@ const ch03Night: NightScene = {
       {
         requiredEntries: ['note-ch03-maya-voice-01', 'note-ch03-food-01'],
         composedText: '她说话的时候会用手比划。\n\n今天的意大利面配西红柿肉燥酱。\n\n这些细节好像没什么用。但我就是记住了。',
-      
+        influenceTag: 'wrote-maya-voice',
+
         cid: 'ch03.night.wp.recipe.1',
       },
       {
         requiredEntries: ['note-ch03-maya-phone-01', 'note-ch03-maya-voice-01'],
         composedText: '北极熊手机壳。说话时的手势。\n\n我发现自己开始注意她的一些……不是所有人都会注意到的东西。\n\n这让我有点不安。',
-      
+        influenceTag: 'wrote-maya-detail',
+
         cid: 'ch03.night.wp.recipe.2',
       },
     ],
