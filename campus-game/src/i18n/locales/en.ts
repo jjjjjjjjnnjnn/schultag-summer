@@ -2,7 +2,7 @@ const en: Record<string, string> = {
   // Title screen
   'title.name': 'Foreign Campus',
   'title.subtitle': 'Summer',
-  'title.description': 'At a German boarding school, Rong Jiajun writes every day\'s observations into a secret novel.\nLight in the hallway, the smell of the cafeteria, words from friends.\nWhat gets written down is no longer just daily life.',
+  'title.description': 'At a German boarding school, Robert writes every day\'s observations into a secret novel.\nLight in the hallway, the smell of the cafeteria, words from friends.\nWhat gets written down is no longer just daily life.',
   'title.start': 'Start Game',
   'title.continue': 'Continue',
   'title.chapters': 'Chapters',
@@ -36,10 +36,10 @@ const en: Record<string, string> = {
   // Focus
   'focus.title': 'What will you pay more attention to today?',
   'focus.budget': 'You have {n} attention points. Matching focus costs less.',
-  'focus.maya': 'Lan Ruoyao',
+  'focus.maya': 'Maya',
   'focus.mayaSub': 'The new girl',
   'focus.mayaHint': 'You\'ll notice her details more',
-  'focus.ludwig': 'Wang Jiayi',
+  'focus.ludwig': 'Ludwig',
   'focus.ludwigSub': 'Your roommate',
   'focus.ludwigHint': 'You\'ll notice his behavior more',
   'focus.env': 'Environment',
@@ -81,6 +81,9 @@ const en: Record<string, string> = {
   'settings.fontSize': 'Font Size',
   'settings.language': 'Language',
   'settings.preview': 'Preview',
+  'settings.sound': 'Sound',
+  'settings.sfxOn': 'On',
+  'settings.sfxOff': 'Off',
   'settings.slow': 'Slow',
   'settings.normal': 'Normal',
   'settings.fast': 'Fast',
@@ -101,6 +104,9 @@ const en: Record<string, string> = {
   'char.writings': '{n} writings',
   'char.recentObs': 'Recent observations',
   'char.impression': 'Impressions',
+  'char.awareness.1': 'You are starting to notice him.',
+  'char.awareness.2': 'You keep glancing at him without meaning to.',
+  'char.awareness.3': 'He seems to have noticed something.',
 
   // Feedback
   'feedback.recorded': '✓ {name} recorded',

@@ -2,7 +2,7 @@ const de: Record<string, string> = {
   // Titelbildschirm
   'title.name': 'Fremdes Campus',
   'title.subtitle': 'Sommer',
-  'title.description': 'Auf einem deutschen Internat schreibt Rong Jiajun jeden Tag seine Beobachtungen in einen geheimen Roman.\nDas Licht im Flur, der Geruch der Cafeteria, Worte von Freunden.\nWas aufgeschrieben wird, ist nicht mehr nur der Alltag.',
+  'title.description': 'Auf einem deutschen Internat schreibt Robert jeden Tag seine Beobachtungen in einen geheimen Roman.\nDas Licht im Flur, der Geruch der Cafeteria, Worte von Freunden.\nWas aufgeschrieben wird, ist nicht mehr nur der Alltag.',
   'title.start': 'Spiel starten',
   'title.continue': 'Fortsetzen',
   'title.chapters': 'Kapitel',
@@ -36,10 +36,10 @@ const de: Record<string, string> = {
   // Fokus
   'focus.title': 'Wem wirst du heute mehr Aufmerksamkeit schenken?',
   'focus.budget': 'Du hast {n} Aufmerksamkeitspunkte. Passender Fokus kostet weniger.',
-  'focus.maya': 'Lan Ruoyao',
+  'focus.maya': 'Maya',
   'focus.mayaSub': 'Das neue Mädchen',
   'focus.mayaHint': 'Du wirst ihre Details mehr bemerken',
-  'focus.ludwig': 'Wang Jiayi',
+  'focus.ludwig': 'Ludwig',
   'focus.ludwigSub': 'Dein Mitbewohner',
   'focus.ludwigHint': 'Du wirst sein Verhalten mehr bemerken',
   'focus.env': 'Umgebung',
@@ -81,6 +81,9 @@ const de: Record<string, string> = {
   'settings.fontSize': 'Schriftgröße',
   'settings.language': 'Sprache',
   'settings.preview': 'Vorschau',
+  'settings.sound': 'Sound',
+  'settings.sfxOn': 'An',
+  'settings.sfxOff': 'Aus',
   'settings.slow': 'Langsam',
   'settings.normal': 'Normal',
   'settings.fast': 'Schnell',
@@ -101,6 +104,9 @@ const de: Record<string, string> = {
   'char.writings': '{n} Texte',
   'char.recentObs': 'Letzte Beobachtungen',
   'char.impression': 'Eindrücke',
+  'char.awareness.1': 'Du fängst an, ihn zu bemerken.',
+  'char.awareness.2': 'Du schaust ihn immer wieder unbewusst an.',
+  'char.awareness.3': 'Er scheint etwas bemerkt zu haben.',
 
   // Feedback
   'feedback.recorded': '✓ {name} aufgezeichnet',

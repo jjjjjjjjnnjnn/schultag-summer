@@ -1,5 +1,6 @@
 import { useGameStore } from '../../store/gameStore'
 import { CHAPTERS } from '../../data/chapters'
+import { useContent } from '../../i18n'
 
 interface Props {
   onSelect?: () => void
@@ -7,6 +8,7 @@ interface Props {
 
 export function ChapterSelect({ onSelect }: Props) {
   const { completedChapters, currentSceneId, jumpToChapter } = useGameStore()
+  const { co } = useContent()
 
   return (
     <div className="space-y-3">
@@ -15,6 +17,10 @@ export function ChapterSelect({ onSelect }: Props) {
         const isCurrent = currentSceneId === chapter.startSceneId ||
           currentSceneId.replace(/-day|-night/, '') === chapter.id
         const isUnlocked = i === 0 || completedChapters.includes(CHAPTERS[i - 1]?.id) || isCompleted || isCurrent
+
+        const chTitle = chapter.cid ? co(chapter.cid, 'title', chapter.title) : chapter.title
+        const chSubtitle = chapter.cid ? co(chapter.cid, 'subtitle', chapter.subtitle) : chapter.subtitle
+        const chTime = chapter.cid ? co(chapter.cid, 'time', chapter.time) : chapter.time
 
         return (
           <button
@@ -40,11 +46,11 @@ export function ChapterSelect({ onSelect }: Props) {
                   {!isUnlocked ? '🔒' : isCompleted ? '✓' : isCurrent ? '▶' : '○'}
                 </span>
                 <span className="text-sm font-medium" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-                  {chapter.title}
+                  {chTitle}
                 </span>
-                <span className="text-xs text-stone-500">{chapter.subtitle}</span>
+                <span className="text-xs text-stone-500">{chSubtitle}</span>
               </div>
-              <span className="text-xs text-stone-600">{chapter.time}</span>
+              <span className="text-xs text-stone-600">{chTime}</span>
             </div>
             {/* 进度条 */}
             {chapter.observationCount > 0 && (

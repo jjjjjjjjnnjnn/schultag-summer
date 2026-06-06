@@ -1,14 +1,20 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { useTranslation } from '../../i18n'
+import { useTranslation, useContent } from '../../i18n'
 import { characters } from '../../data/characters'
 import { CHAPTERS } from '../../data/chapters'
+import { audio } from '../../lib/audio'
 
 type Tab = 'observations' | 'writings' | 'characters' | 'stats'
 
 export function NotebookView() {
   const t = useTranslation()
   const [activeTab, setActiveTab] = useState<Tab>('observations')
+
+  const handleTabChange = (tab: Tab) => {
+    audio.play('page')
+    setActiveTab(tab)
+  }
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'observations', label: t('notebook.observations') },
@@ -25,20 +31,23 @@ export function NotebookView() {
         {TABS.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`text-xs px-3 py-1.5 rounded transition-colors ${
+            onClick={() => handleTabChange(tab.id)}
+            className={`text-xs px-3 py-1.5 transition-colors relative ${
               activeTab === tab.id
-                ? 'bg-amber-900/20 text-amber-400 border border-amber-700/50'
-                : 'text-stone-500 hover:text-stone-300 border border-transparent'
+                ? 'text-amber-400'
+                : 'text-stone-500 hover:text-stone-300'
             }`}
           >
             {tab.label}
+            {activeTab === tab.id && (
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-amber-500/60 rounded-full" />
+            )}
           </button>
         ))}
       </div>
 
       {/* 内容区 */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 tab-fade-in" key={activeTab}>
         {activeTab === 'observations' && <ObservationsTab />}
         {activeTab === 'writings' && <WritingsTab />}
         {activeTab === 'characters' && <CharactersTab />}
@@ -51,6 +60,7 @@ export function NotebookView() {
 function ObservationsTab() {
   const allNotebookEntries = useGameStore(s => s.allNotebookEntries)
   const t = useTranslation()
+  const { co } = useContent()
 
   if (allNotebookEntries.length === 0) {
     return (
@@ -72,34 +82,40 @@ function ObservationsTab() {
       {CHAPTERS.map(chapter => {
         const entries = grouped[chapter.startSceneId]
         if (!entries || entries.length === 0) return null
+        const chTitle = chapter.cid ? co(chapter.cid, 'title', chapter.title) : chapter.title
+        const chTime = chapter.cid ? co(chapter.cid, 'time', chapter.time) : chapter.time
         return (
           <div key={chapter.id}>
-            <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <span>{chapter.title}</span>
+            <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3 pb-2 border-b border-stone-800/30 flex items-center gap-2">
+              <span>{chTitle}</span>
               <span className="text-stone-700">·</span>
-              <span className="text-stone-600">{chapter.time}</span>
+              <span className="text-stone-600">{chTime}</span>
             </h3>
             <div className="space-y-2">
-              {entries.map(entry => (
-                <div
-                  key={entry.id}
-                  className="bg-stone-800/30 rounded px-3 py-2 border border-stone-700/20"
-                  style={{ fontFamily: 'var(--font-serif-cn)' }}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs">
-                      {entry.category === 'visual' ? '👁' :
-                       entry.category === 'dialogue' ? '💬' :
-                       entry.category === 'thought' ? '💭' :
-                       entry.category === 'sound' ? '🔊' :
-                       entry.category === 'smell' ? '🌸' :
-                       entry.category === 'action' ? '✨' : '📝'}
-                    </span>
-                    <span className="text-xs text-stone-200 font-medium">{entry.label}</span>
+              {entries.map((entry, entryIdx) => {
+                const entryLabel = entry.cid ? co(entry.cid, 'label', entry.label) : entry.label
+                const entryText = entry.cid ? co(entry.cid, 'text', entry.text) : entry.text
+                const categoryColor = entry.category === 'visual' ? '#d97706'
+                  : entry.category === 'dialogue' ? '#3b82f6'
+                  : entry.category === 'thought' ? '#8b5cf6'
+                  : entry.category === 'sound' ? '#a8a29e'
+                  : entry.category === 'smell' ? '#ec4899'
+                  : entry.category === 'action' ? '#22c55e'
+                  : '#a8a29e'
+                return (
+                  <div
+                    key={entry.id}
+                    className="bg-stone-800/20 rounded-r pl-4 pr-3 py-2 border border-stone-700/20 list-item-enter"
+                    style={{ borderLeftWidth: '2px', borderLeftColor: categoryColor, animationDelay: `${entryIdx * 30}ms` }}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs text-stone-200 font-medium">{entryLabel}</span>
+                      <span className="text-[10px] text-stone-600 ml-auto">{entry.category}</span>
+                    </div>
+                    <p className="text-[13px] text-stone-400 leading-[1.8]" style={{ fontFamily: 'var(--font-serif-cn)' }}>{entryText}</p>
                   </div>
-                  <p className="text-xs text-stone-400 leading-[1.8]">{entry.text}</p>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )
@@ -123,11 +139,11 @@ function WritingsTab() {
   return (
     <div className="space-y-4">
       {writings.map((w, i) => (
-        <div key={i} className="space-y-2">
+        <div key={i} className="space-y-2 list-item-enter" style={{ animationDelay: `${i * 40}ms` }}>
           <h3 className="text-xs text-stone-500 uppercase tracking-wider">
             {t('notebook.writings')} {i + 1}
           </h3>
-          <div className="notebook-paper rounded-lg px-4 py-3 text-sm leading-[1.8]">
+          <div className="notebook-paper rounded px-5 py-4 text-[15px] leading-[2] shadow-sm">
             {w}
           </div>
         </div>
@@ -140,7 +156,10 @@ function CharactersTab() {
   const imprints = useGameStore(s => s.imprints)
   const impressions = useGameStore(s => s.impressions)
   const allNotebookEntries = useGameStore(s => s.allNotebookEntries)
+  const settings = useGameStore(s => s.settings)
   const t = useTranslation()
+  const { co } = useContent()
+  const isForeignLang = settings.language === 'en' || settings.language === 'de'
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher'
@@ -153,42 +172,51 @@ function CharactersTab() {
         const obsCount = imprint ? imprint.observationCount : 0
         const writeCount = imprint ? imprint.writingCount : 0
         const level = impressions[char.id] || 0
-        const impressionText = char.impressionLevels[level] || ''
+        const impressionText = char.cid
+          ? co(char.cid, `imp.${level}`, char.impressionLevels[level] || '')
+          : (char.impressionLevels[level] || '')
 
         const recentObs = allNotebookEntries
           .filter(e => e.focusGroup === char.id)
           .slice(-3)
 
+        const primaryName = isForeignLang ? char.nameEn : char.name
+        const secondaryName = isForeignLang ? char.name : char.nameEn
+
         return (
-          <div key={char.id} className="bg-stone-800/30 rounded-lg px-4 py-3 border border-stone-700/20">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: char.color }} />
-              <span className="text-sm text-stone-200 font-medium" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-                {char.name}
-              </span>
-              <span className="text-xs text-stone-500" style={{ fontFamily: 'var(--font-serif-en)' }}>
-                {char.nameEn}
-              </span>
-              {impressionText && (
-                <span className="text-xs ml-auto" style={{ color: char.color }}>{impressionText}</span>
+          <div key={char.id} className="rounded-lg overflow-hidden border border-stone-700/20">
+            {/* Top color bar */}
+            <div className="h-[2px]" style={{ backgroundColor: char.color }} />
+            <div className="bg-stone-800/20 px-4 pt-4 pb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: char.color }} />
+                <span className="text-sm text-stone-200 font-medium" style={{ fontFamily: isForeignLang ? 'var(--font-serif-en)' : 'var(--font-serif-cn)' }}>
+                  {primaryName}
+                </span>
+                <span className="text-xs text-stone-600" style={{ fontFamily: isForeignLang ? 'var(--font-serif-cn)' : 'var(--font-serif-en)' }}>
+                  {secondaryName}
+                </span>
+                {impressionText && (
+                  <span className="text-xs font-medium ml-auto" style={{ color: char.color }}>{impressionText}</span>
+                )}
+              </div>
+
+              <div className="flex gap-4 text-xs text-stone-500 mb-2">
+                <span>{t('char.observations', { n: obsCount })}</span>
+                <span>{t('char.writings', { n: writeCount })}</span>
+              </div>
+
+              {recentObs.length > 0 && (
+                <div className="space-y-1 mt-2 pt-2 border-t border-stone-700/20">
+                  <p className="text-[10px] text-stone-600 uppercase tracking-wider">{t('char.recentObs')}</p>
+                  {recentObs.map(entry => (
+                    <p key={entry.id} className="text-xs text-stone-400 leading-relaxed pl-2 border-l border-stone-700/30">
+                      {entry.label}
+                    </p>
+                  ))}
+                </div>
               )}
             </div>
-
-            <div className="flex gap-4 text-xs text-stone-500 mb-2">
-              <span>{t('char.observations', { n: obsCount })}</span>
-              <span>{t('char.writings', { n: writeCount })}</span>
-            </div>
-
-            {recentObs.length > 0 && (
-              <div className="space-y-1 mt-2 pt-2 border-t border-stone-700/20">
-                <p className="text-[10px] text-stone-600 uppercase tracking-wider">{t('char.recentObs')}</p>
-                {recentObs.map(entry => (
-                  <p key={entry.id} className="text-xs text-stone-400 leading-relaxed pl-2 border-l border-stone-700/30">
-                    {entry.label}
-                  </p>
-                ))}
-              </div>
-            )}
           </div>
         )
       })}

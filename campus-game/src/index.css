@@ -6,11 +6,20 @@
   --font-sans-cn: "Noto Sans SC", "Source Han Sans SC", system-ui, sans-serif;
   --font-mono-cn: "LXGW WenKai Mono", "Fira Code", monospace;
 
-  --color-game-bg: #1a1714;
-  --color-game-panel: #292524;
+  /* Surface 层次 */
+  --color-game-bg: #0f0d0b;
+  --color-game-surface: #1a1714;
+  --color-game-panel: #231f1c;
+  --color-game-elevated: #2d2825;
+
+  /* 文本层次 */
   --color-game-text: #e7e5e4;
-  --color-game-dim: #a8a29e;
+  --color-game-text-secondary: #a8a29e;
+  --color-game-text-muted: #6b6560;
+
+  /* 强调色 */
   --color-game-accent: #d97706;
+  --color-game-accent-soft: rgba(217,119,6,0.12);
   --color-game-highlight: #fbbf24;
 }
 
@@ -20,18 +29,43 @@ body {
   color: var(--color-game-text);
   overflow: hidden;
   margin: 0;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Grain 纹理 ── */
+.grain-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  z-index: 9999;
 }
 
 /* 笔记本纸张纹理 */
 .notebook-paper {
   background-color: #f5f0e8;
   background-image:
-    linear-gradient(rgba(160, 140, 120, 0.15) 1px, transparent 1px);
+    linear-gradient(rgba(160, 140, 120, 0.12) 1px, transparent 1px);
   background-size: 100% 1.8em;
   color: #292524;
   line-height: 1.8em;
   font-family: var(--font-serif-cn);
+  position: relative;
+}
+.notebook-paper::before {
+  content: '';
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(180, 60, 60, 0.15);
 }
 
 /* 打字机光标 */
@@ -39,6 +73,7 @@ body {
   content: '|';
   animation: blink 1s step-end infinite;
   color: var(--color-game-accent);
+  font-weight: 300;
 }
 
 @keyframes blink {
@@ -47,35 +82,50 @@ body {
 
 /* 场景淡入 */
 .scene-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* 弹窗进入动画 */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-modal-enter {
+  animation: modalEnter 0.25s ease-out;
 }
 
 /* ── 场景背景 ── */
 .scene-bg-prologue-day {
-  background: linear-gradient(180deg, rgba(120,80,30,0.12) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(120,80,30,0.10) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-prologue-night {
-  background: linear-gradient(180deg, rgba(30,58,95,0.15) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(30,58,95,0.12) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-ch01-day {
-  background: linear-gradient(180deg, rgba(56,130,180,0.08) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(56,130,180,0.06) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-ch02-day {
-  background: linear-gradient(180deg, rgba(180,100,30,0.12) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(180,100,30,0.10) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-ch03-day {
-  background: linear-gradient(180deg, rgba(120,100,60,0.08) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(120,100,60,0.06) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-ch04-day {
-  background: linear-gradient(180deg, rgba(40,40,80,0.12) 0%, #1a1714 100%);
+  background: linear-gradient(180deg, rgba(40,40,80,0.10) 0%, var(--color-game-bg) 100%);
 }
 .scene-bg-default {
-  background: #1a1714;
+  background: var(--color-game-bg);
 }
 
 /* ── 环境层 ── */
@@ -83,7 +133,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.035;
 }
 .env-light-warm {
   background: radial-gradient(ellipse at 30% 20%, rgba(200,150,50,0.5) 0%, transparent 60%);
@@ -135,4 +185,51 @@ body {
   25% { opacity: 1; }
   75% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* ── 滚动条样式 ── */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168,162,158,0.2) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(168,162,158,0.2);
+  border-radius: 2px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(168,162,158,0.35);
+}
+
+/* ── 微交互 ── */
+
+/* 按钮点击反馈 */
+.btn-press {
+  transition: transform 0.12s ease;
+}
+.btn-press:active {
+  transform: translateY(1px);
+}
+
+/* Tab切换淡入 */
+.tab-fade-in {
+  animation: tabFadeIn 0.2s ease-out;
+}
+@keyframes tabFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 列表项入场 */
+.list-item-enter {
+  animation: listEnter 0.3s ease-out both;
+}
+@keyframes listEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

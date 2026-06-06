@@ -1,10 +1,12 @@
 import { useTypewriter } from '../../hooks/useTypewriter'
 import { useGameStore } from '../../store/gameStore'
-import { useTranslation } from '../../i18n'
+import { useTranslation, useContent } from '../../i18n'
+import { audio } from '../../lib/audio'
 
 export function ObservationModal() {
   const { modalObservationId, closeObservation, confirmObservation, previousFocus, focusHistory } = useGameStore()
   const t = useTranslation()
+  const { co } = useContent()
 
   if (!modalObservationId) return null
 
@@ -23,13 +25,17 @@ export function ObservationModal() {
 
   // 观察偏见：根据 streak 显示不同深度的追加文本
   let addon = ''
-  if (obs.focusAddendum && previousFocus === obs.focusGroup) {
-    addon = obs.focusAddendum
+  const addonText = obs.cid ? co(obs.cid, 'addon', obs.focusAddendum || '') : (obs.focusAddendum || '')
+  const addonDeepText = obs.cid ? co(obs.cid, 'addonDeep', obs.focusAddendumDeep || '') : (obs.focusAddendumDeep || '')
+  if (addonText && previousFocus === obs.focusGroup) {
+    addon = addonText
   }
-  if (obs.focusAddendumDeep && previousFocus === obs.focusGroup && streak >= 2) {
-    addon = obs.focusAddendumDeep
+  if (addonDeepText && previousFocus === obs.focusGroup && streak >= 2) {
+    addon = addonDeepText
   }
-  const fullText = addon ? obs.observationText + '\n\n' + addon : obs.observationText
+  const obsText = obs.cid ? co(obs.cid, 'text', obs.observationText) : obs.observationText
+  const fullText = addon ? obsText + '\n\n' + addon : obsText
+  const obsName = obs.cid ? co(obs.cid, 'name', obs.name) : obs.name
 
   return (
     <div
@@ -37,27 +43,27 @@ export function ObservationModal() {
       onClick={closeObservation}
     >
       <div
-        className="bg-[#2a2520] max-w-lg w-full mx-4 scene-fade-in rounded-lg overflow-hidden shadow-2xl border border-stone-700/50"
+        className="bg-[#2a2520] max-w-lg w-full mx-4 scene-fade-in rounded-lg shadow-2xl border border-stone-700/50 max-h-[85vh] flex flex-col animate-modal-enter"
         style={{ fontFamily: 'var(--font-serif-cn)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* 头部 */}
-        <div className="px-6 pt-6 pb-2 flex items-center gap-3">
-          <span className="text-sm text-stone-300 font-semibold">{obs.name}</span>
+        <div className="px-6 pt-5 pb-3 flex items-center gap-3 shrink-0">
+          <span className="text-[15px] text-stone-200 font-medium tracking-wide">{obsName}</span>
         </div>
 
         {/* 观察文本 — 打字机效果 */}
-        <div className="px-6 py-4">
+        <div className="px-6 py-4 overflow-y-auto flex-1 scrollbar-thin">
           <ObservationText text={fullText} />
         </div>
 
         {/* 分割线 */}
-        <div className="px-6">
-          <div className="h-px bg-stone-700/50" />
+        <div className="px-6 shrink-0">
+          <div className="h-px bg-gradient-to-r from-transparent via-stone-700/50 to-transparent" />
         </div>
 
         {/* 底部按钮 */}
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className="px-6 py-4 flex items-center justify-between shrink-0">
           <button
             onClick={closeObservation}
             className="text-xs text-stone-500 hover:text-stone-300 transition-colors"
@@ -67,8 +73,8 @@ export function ObservationModal() {
           <div className="flex items-center gap-3">
             <span className="text-[10px] text-stone-600">{t('observe.materialHint')}</span>
             <button
-              onClick={confirmObservation}
-              className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 text-amber-400 hover:bg-amber-900/50 transition-all text-sm rounded"
+              onClick={() => { audio.play('observe'); confirmObservation() }}
+              className="px-4 py-2 bg-amber-900/20 border border-amber-700/40 text-amber-400 hover:bg-amber-900/40 transition-all text-sm rounded-sm"
             >
               {t('observe.addNotebook')}
             </button>
@@ -85,7 +91,7 @@ function ObservationText({ text }: { text: string }) {
   return (
     <div onClick={!isComplete ? skip : undefined} className="cursor-pointer">
       <p
-        className="text-stone-300 leading-[1.9] text-sm"
+        className="text-stone-300 leading-[1.9] text-sm break-words"
         style={{ fontFamily: 'var(--font-serif-cn)' }}
       >
         {displayed}

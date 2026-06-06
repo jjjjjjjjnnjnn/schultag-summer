@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
-import { useTranslation } from '../i18n'
+import { useTranslation, useContent } from '../i18n'
 import { SceneView } from '../components/ui/SceneView'
 import { NotebookView } from '../components/ui/NotebookView'
 import { MenuModal } from '../components/menu/MenuModal'
@@ -162,6 +162,7 @@ export function GameScreen() {
 function NotebookContent() {
   const { notebook, writings } = useGameStore()
   const t = useTranslation()
+  const { co } = useContent()
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -174,23 +175,27 @@ function NotebookContent() {
         </p>
       ) : (
         <div className="space-y-2">
-          {notebook.map(entry => (
-            <div key={entry.id} className="bg-stone-800/30 rounded px-3 py-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-amber-500">
-                  {entry.category === 'visual' ? '👁' :
-                   entry.category === 'dialogue' ? '💬' :
-                   entry.category === 'thought' ? '💭' :
-                   entry.category === 'sound' ? '🔊' :
-                   entry.category === 'smell' ? '🌸' :
-                   entry.category === 'action' ? '✨' : '📝'}
-                </span>
-                <span className="text-sm text-stone-200 font-medium">{entry.label}</span>
-                <span className="text-xs text-stone-600">{entry.category}</span>
+          {notebook.map(entry => {
+            const entryLabel = entry.cid ? co(entry.cid, 'label', entry.label) : entry.label
+            const entryText = entry.cid ? co(entry.cid, 'text', entry.text) : entry.text
+            return (
+              <div key={entry.id} className="bg-stone-800/30 rounded px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-amber-500">
+                    {entry.category === 'visual' ? '👁' :
+                     entry.category === 'dialogue' ? '💬' :
+                     entry.category === 'thought' ? '💭' :
+                     entry.category === 'sound' ? '🔊' :
+                     entry.category === 'smell' ? '🌸' :
+                     entry.category === 'action' ? '✨' : '📝'}
+                  </span>
+                  <span className="text-sm text-stone-200 font-medium">{entryLabel}</span>
+                  <span className="text-xs text-stone-600">{entry.category}</span>
+                </div>
+                <p className="text-xs text-stone-500 mt-1 ml-6 leading-relaxed">{entryText}</p>
               </div>
-              <p className="text-xs text-stone-500 mt-1 ml-6 leading-relaxed">{entry.text}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -220,7 +225,10 @@ function NotebookContent() {
 function CharacterSidebar() {
   const impressions = useGameStore(s => s.impressions)
   const imprints = useGameStore(s => s.imprints)
+  const settings = useGameStore(s => s.settings)
   const t = useTranslation()
+  const { co } = useContent()
+  const isForeignLang = settings.language === 'en' || settings.language === 'de'
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
@@ -232,7 +240,9 @@ function CharacterSidebar() {
       <div className="space-y-4">
         {mainChars.map(c => {
           const level = impressions[c.id] || 0
-          const impressionText = c.impressionLevels[level] || '陌生'
+          const impressionText = c.cid
+            ? co(c.cid, 'imp.' + level, c.impressionLevels[level] || '')
+            : (c.impressionLevels[level] || '陌生')
           const imprint = imprints[c.id]
           const totalImprint = imprint
             ? imprint.observationCount + imprint.writingCount
@@ -240,16 +250,16 @@ function CharacterSidebar() {
           const awarenessText = totalImprint === 0
             ? ''
             : totalImprint <= 2
-              ? '你开始注意他了'
+              ? t('char.awareness.1')
               : totalImprint <= 4
-                ? '你总是不自觉地看向他'
-                : '他似乎察觉到了什么'
+                ? t('char.awareness.2')
+                : t('char.awareness.3')
 
           return (
             <div key={c.id} className="space-y-1">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />
-                <span className="text-xs text-stone-400">{c.name}</span>
+                <span className="text-xs text-stone-400">{isForeignLang ? c.nameEn : c.name}</span>
               </div>
               <p
                 className="text-xs ml-4 transition-all duration-500"
@@ -259,7 +269,7 @@ function CharacterSidebar() {
               </p>
               {awarenessText && (
                 <p className="text-xs ml-4 text-stone-600 italic"
-                   style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                   style={{ fontFamily: isForeignLang ? 'var(--font-serif-en)' : 'var(--font-serif-cn)' }}>
                   {awarenessText}
                 </p>
               )}
@@ -274,6 +284,7 @@ function CharacterSidebar() {
 // ── 移动端底部人物栏 ──
 function MobileCharacterBar() {
   const impressions = useGameStore(s => s.impressions)
+  const { co } = useContent()
 
   const mainChars = Object.values(characters).filter(
     c => c.role !== 'protagonist' && c.role !== 'teacher' && c.impressionLevels.length > 0
@@ -290,7 +301,9 @@ function MobileCharacterBar() {
     <div className="lg:hidden border-t border-stone-800/50 bg-stone-950/80 px-4 py-2 flex gap-4 overflow-x-auto">
       {mainChars.map(c => {
         const level = impressions[c.id] || 0
-        const impressionText = c.impressionLevels[level] || '陌生'
+        const impressionText = c.cid
+          ? co(c.cid, 'imp.' + level, c.impressionLevels[level] || '')
+          : (c.impressionLevels[level] || '陌生')
         if (level === 0) return null
         return (
           <div key={c.id} className="flex items-center gap-2 shrink-0">

@@ -3,6 +3,16 @@ import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprin
 import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
+import enContent from '../i18n/content/en'
+import deContent from '../i18n/content/de'
+
+const contentLocales: Record<string, Record<string, string>> = { en: enContent, de: deContent }
+
+/** Direct content lookup for store (no React hooks) */
+function getC(lang: string, cid: string, fallback: string): string {
+  const t = contentLocales[lang]
+  return (t && t[cid]) || fallback
+}
 
 /** 统一的行可见性过滤：requiresTag + requiresImprint + requiresFocusHistory + requiresObservation + requiresExposure */
 export function getVisibleLines(
@@ -89,7 +99,7 @@ interface GameStore extends GameState {
 const SAVE_KEY = 'schultag-save-v2'
 const SETTINGS_KEY = 'schultag-settings'
 
-const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium', language: 'zh' }
+const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium', language: 'zh', soundEnabled: true }
 
 function loadSettingsFromStorage(): Settings {
   try {
@@ -131,6 +141,7 @@ const initialState: GameState = {
   completedChapters: [],
   settings: loadSettingsFromStorage(),
   isPlaying: false,
+  playedEchoIds: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -141,7 +152,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // ══════════════════════════════════════
 
   startGame: () => {
-    set({ ...initialState, isPlaying: true })
+    set({ ...initialState, settings: loadSettingsFromStorage(), isPlaying: true })
   },
 
   selectFocus: (focus: FocusType) => {
@@ -310,7 +321,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   confirmObservation: () => {
-    const { modalObservationId, observedIds, notebook, impressions, imprints, exposure, currentFocus, attentionRemaining } = get()
+    const { modalObservationId, observedIds, notebook, impressions, imprints, exposure, currentFocus, attentionRemaining, settings } = get()
     if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
@@ -318,6 +329,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const obs = scene.observations.find(o => o.id === modalObservationId)
     if (!obs) return
+
+    const lang = settings.language
 
     // 注意力消耗：同类 1 点，异类 2 点
     const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
@@ -361,11 +374,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const isFocusMatch = currentFocus && obs.focusGroup === currentFocus
 
     // 暴露度反馈
-    let feedbackText = `✓ ${obs.notebookEntry.label} 已记录`
+    const entryLabel = obs.notebookEntry.cid ? getC(lang, obs.notebookEntry.cid + '.label', obs.notebookEntry.label) : obs.notebookEntry.label
+    const recordedSuffix = getC(lang, 'feedback.recordedSuffix', '已记录')
+    let feedbackText = `✓ ${entryLabel} ${recordedSuffix}`
     if (newExposure >= 32) {
-      feedbackText += '\n你记录了太多关于她的东西。'
+      feedbackText += '\n' + getC(lang, 'feedback.watched', '你记录了太多关于她的东西。')
     } else if (newExposure >= 16) {
-      feedbackText += '\n有人开始注意到你了。'
+      feedbackText += '\n' + getC(lang, 'feedback.noticed', '有人开始注意到你了。')
     }
 
     set({
@@ -418,26 +433,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   submitWriting: () => {
-    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId, imprints, exposure, currentFocus } = get()
+    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings } = get()
     const scene = scenes[currentSceneId]
     if (!scene || scene.mode !== 'night') return
 
     const nightScene = scene as NightScene
     if (!nightScene.writingPhase) return
 
+    const lang = settings.language
+
     const selectedLabels = notebook
       .filter(e => selectedEntryIds.includes(e.id))
-      .map(e => e.label)
+      .map(e => e.cid ? getC(lang, e.cid + '.label', e.label) : e.label)
 
     // 检查是否有匹配的配方（焦点专属优先）
-    let composedText = nightScene.writingPhase.defaultText
+    const wp = nightScene.writingPhase
+    const wpCid = wp.cid || ''
+    let composedText = wpCid ? getC(lang, wpCid + '.default', wp.defaultText) : wp.defaultText
     let matchedTag: string | undefined
     // 先尝试焦点专属配方
     for (const recipe of nightScene.writingPhase.recipes) {
       if (recipe.requiresFocus && recipe.requiresFocus !== currentFocus) continue
       const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
       if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
-        composedText = recipe.composedText
+        composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
         matchedTag = recipe.influenceTag
         break
       }
@@ -448,7 +467,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (recipe.requiresFocus) continue
         const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
         if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
-          composedText = recipe.composedText
+          composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
           matchedTag = recipe.influenceTag
           break
         }
@@ -457,10 +476,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 如果只选了一两个，生成简单版
     if (selectedEntryIds.length <= 1 && selectedLabels.length > 0) {
-      composedText = `今天记下了：${selectedLabels.join('、')}。`
+      composedText = getC(lang, 'feedback.todayWrote', `今天记下了：${selectedLabels.join('、')}。`)
+        .replace('{labels}', selectedLabels.join(lang === 'de' ? ', ' : ', '))
     }
     if (selectedEntryIds.length === 0) {
-      composedText = '今天什么也没写。有些日子就是这样。'
+      composedText = getC(lang, 'feedback.todayNothing', '今天什么也没写。有些日子就是这样。')
     }
 
     // 收集印记：扫描写作中提及的角色
@@ -480,13 +500,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     let feedback = ''
     const invasionLevel = get().exposure
     if (selectedEntryIds.length === 0) {
-      feedback = '有些夜晚，笔尖落不下来。'
+      feedback = getC(lang, 'feedback.noWriting', '有些夜晚，笔尖落不下来。')
     } else if (invasionLevel < 16) {
-      feedback = '你写下这些句子。它们好像停留得比平时更久。'
+      feedback = getC(lang, 'feedback.writingLow', '你写下这些句子。它们好像停留得比平时更久。')
     } else if (invasionLevel < 32) {
-      feedback = '你写下这些句子。\n\n突然有种被人看见的感觉。'
+      feedback = getC(lang, 'feedback.writingMid', '你写下这些句子。\n\n突然有种被人看见的感觉。')
     } else {
-      feedback = '你写下这些句子。\n\n关掉文档的时候，迟疑了一下。'
+      feedback = getC(lang, 'feedback.writingHigh', '你写下这些句子。\n\n关掉文档的时候，迟疑了一下。')
     }
 
     const newTags = matchedTag && !writingTags.includes(matchedTag)
@@ -638,5 +658,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return false
   },
 
-  resetGame: () => set(initialState),
+  resetGame: () => {
+    const currentSettings = get().settings
+    set({ ...initialState, settings: currentSettings, isPlaying: false })
+  },
 }))

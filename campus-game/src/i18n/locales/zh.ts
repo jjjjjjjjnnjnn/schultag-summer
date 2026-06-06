@@ -81,6 +81,9 @@ const zh: Record<string, string> = {
   'settings.fontSize': '字体大小',
   'settings.language': '语言',
   'settings.preview': '预览',
+  'settings.sound': '音效',
+  'settings.sfxOn': '开',
+  'settings.sfxOff': '关',
   'settings.slow': '慢',
   'settings.normal': '中',
   'settings.fast': '快',
@@ -101,6 +104,9 @@ const zh: Record<string, string> = {
   'char.writings': '写作 {n} 次',
   'char.recentObs': '最近观察',
   'char.impression': '人物印象',
+  'char.awareness.1': '你开始注意他了',
+  'char.awareness.2': '你总是不自觉地看向他',
+  'char.awareness.3': '他似乎察觉到了什么',
 
   // 暴露度反馈
   'feedback.recorded': '✓ {name} 已记录',

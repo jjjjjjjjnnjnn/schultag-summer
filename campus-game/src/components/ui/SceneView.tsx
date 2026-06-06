@@ -1,9 +1,10 @@
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { useGameStore, getVisibleLines } from '../../store/gameStore'
-import { useTranslation } from '../../i18n'
+import { useTranslation, useContent } from '../../i18n'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
 import { FocusSelector } from './FocusSelector'
+import { audio } from '../../lib/audio'
 import type { NightScene, SceneLayout } from '../../types/game'
 
 const SCENE_BG: Record<string, string> = {
@@ -31,6 +32,7 @@ export function SceneView() {
   const prevSceneId = useRef<string | null>(null)
   const [showTitleCard, setShowTitleCard] = useState(false)
   const titleCardTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { c, co } = useContent()
 
   // 用 ref 稳定 goToNextScene 引用
   const goToNextRef = useRef(goToNextScene)
@@ -63,9 +65,9 @@ export function SceneView() {
       <div className="flex-1 flex items-center justify-center scene-fade-in">
         <div className="text-center">
           <p className="text-stone-400 text-lg" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-            第一卷 完
+            {c('ui.volumeComplete', '第一卷 完')}
           </p>
-          <p className="text-stone-600 text-xs mt-2">异乡校园 · 夏天</p>
+          <p className="text-stone-600 text-xs mt-2">{c('ui.gameTitle', '异乡校园 · 夏天')}</p>
         </div>
       </div>
     )
@@ -73,6 +75,19 @@ export function SceneView() {
 
   const bgClass = SCENE_BG[scene.id] || 'scene-bg-default'
   const envClass = ENV_LAYER[scene.id] || ''
+  const sceneCid = scene.cid || ''
+
+  // Translated scene properties
+  const sceneLocation = sceneCid ? c(sceneCid + '.location', scene.location) : scene.location
+  const sceneTimeOfDay = ('timeOfDay' in scene && scene.timeOfDay)
+    ? (sceneCid ? c(sceneCid + '.time', scene.timeOfDay) : scene.timeOfDay)
+    : undefined
+  const titleCardDay = ('titleCard' in scene && scene.titleCard?.day)
+    ? (sceneCid ? co(sceneCid, 'titleCard.day', scene.titleCard.day) : scene.titleCard.day)
+    : ''
+  const titleCardTime = ('titleCard' in scene && scene.titleCard?.time)
+    ? (sceneCid ? co(sceneCid, 'titleCard.time', scene.titleCard.time) : scene.titleCard.time)
+    : ''
 
   return (
     <div className={`flex-1 flex flex-col relative ${bgClass}`}>
@@ -83,11 +98,11 @@ export function SceneView() {
       {showTitleCard && 'titleCard' in scene && scene.titleCard && (
         <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
           <div className="text-center title-card">
-            <p className="text-stone-400 text-sm tracking-widest">{scene.titleCard.day}</p>
+            <p className="text-stone-400 text-sm tracking-widest">{titleCardDay}</p>
             <p className="text-stone-300 text-lg mt-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-              {scene.location}
+              {sceneLocation}
             </p>
-            <p className="text-stone-600 text-xs mt-1">{scene.titleCard.time}</p>
+            <p className="text-stone-600 text-xs mt-1">{titleCardTime}</p>
           </div>
         </div>
       )}
@@ -99,9 +114,9 @@ export function SceneView() {
       {!showTitleCard && (
       <div className="px-6 py-3 border-b border-stone-800/50 flex items-center gap-3 relative z-10">
         <span className="text-sm">{scene.mode === 'day' ? '☀' : '🌙'}</span>
-        <span className="text-sm text-stone-400">{scene.location}</span>
-        {'timeOfDay' in scene && scene.timeOfDay && (
-          <span className="text-xs text-stone-600">· {scene.timeOfDay}</span>
+        <span className="text-sm text-stone-400">{sceneLocation}</span>
+        {sceneTimeOfDay && (
+          <span className="text-xs text-stone-600">· {sceneTimeOfDay}</span>
         )}
       </div>
       )}
@@ -117,6 +132,7 @@ export function SceneView() {
 
 // ── 场景骨架：渲染空间布局参考线 ──
 function SceneSkeleton({ layout }: { layout: SceneLayout }) {
+  const { c } = useContent()
   return (
     <>
       {layout.elements.map((el, i) => (
@@ -130,7 +146,7 @@ function SceneSkeleton({ layout }: { layout: SceneLayout }) {
               className="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-stone-600 whitespace-nowrap select-none"
               style={{ fontFamily: 'var(--font-sans-cn)' }}
             >
-              {el.label}
+              {c('layout.' + el.label, el.label)}
             </span>
           )}
         </div>
@@ -151,6 +167,7 @@ function DaySceneView({
 }) {
   const { observedIds, currentLineIndex, feedback, writingTags, imprints, currentFocus, attentionRemaining, selectFocus, focusHistory, exposure, focusPulseColor, allNotebookEntries } = useGameStore()
   const t = useTranslation()
+  const { c, co } = useContent()
   const dayScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'day' ? scene : null
@@ -166,10 +183,10 @@ function DaySceneView({
 
   return (
     <div className="flex-1 flex flex-col">
-      <div className="flex-1 px-6 py-8 overflow-y-auto">
+      <div className="flex-1 px-6 pt-8 pb-24 overflow-y-auto">
         {/* 固定叙事 */}
         {line && (
-          <div className="max-w-2xl mx-auto scene-fade-in">
+          <div className="max-w-2xl mx-auto scene-fade-in relative z-10">
             <DialogBox line={line} onAdvance={onAdvance} />
           </div>
         )}
@@ -187,9 +204,9 @@ function DaySceneView({
               {/* 注意力指示器 */}
               <div className="flex items-center justify-center gap-1.5 mb-2">
                 {Array.from({ length: dayScene.attentionBudget ?? 3 }).map((_, i) => (
-                  <span key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  <span key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                     i < attentionRemaining
-                      ? 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.4)]'
+                      ? 'bg-amber-400'
                       : 'bg-stone-700'
                   }`} />
                 ))}
@@ -197,15 +214,15 @@ function DaySceneView({
               </div>
               <p className="text-stone-500 text-xs">
                 {dayScene.observations.some(o => o.position)
-                  ? '点击场景中你感兴趣的对象'
-                  : '点击下方你感兴趣的对象进行观察'}
-                {observedCount > 0 && ` · 已观察 ${observedCount}/${totalObservations}`}
+                  ? c('ui.clickHotspot', '点击场景中你感兴趣的对象')
+                  : c('ui.clickToObserve', '点击下方你感兴趣的对象进行观察')}
+                {observedCount > 0 && ` · ${c('ui.observed', '已观察')} ${observedCount}/${totalObservations}`}
               </p>
             </div>
 
             {/* 热点模式：有 position 的观察点 */}
             {dayScene.observations.some(o => o.position) ? (
-              <div className={`relative w-full aspect-[16/9] rounded-lg border border-stone-700/30 overflow-hidden ${
+              <div className={`relative w-full aspect-[16/9] rounded-lg border border-stone-700/30 ${
                 dayScene.sceneLayout ? 'bg-stone-900/40' : 'bg-stone-800/30'
               } ${focusPulseColor ? `animate-focus-pulse-${focusPulseColor}` : ''}`}>
                 {/* 场景骨架 */}
@@ -223,18 +240,18 @@ function DaySceneView({
                       key={obs.id}
                       disabled={isDisabled}
                       onClick={() => useGameStore.getState().openObservation(obs.id)}
-                      className={`absolute w-5 h-5 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2
+                      className={`absolute w-4 h-4 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2 btn-press
                         ${isDisabled
                           ? 'bg-stone-700 cursor-not-allowed opacity-30'
                           : isObserved
-                            ? 'bg-amber-500/60 shadow-[0_0_8px_rgba(217,119,6,0.4)]'
+                            ? 'bg-amber-600/30 opacity-60 cursor-default'
                             : isFocused
-                              ? 'bg-amber-300/90 shadow-[0_0_14px_rgba(251,191,36,0.5)] hover:scale-150 cursor-pointer animate-pulse'
-                              : 'bg-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.3)] hover:scale-150 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] cursor-pointer'
+                              ? 'bg-amber-400/70 hover:scale-125 hover:shadow-[0_0_10px_rgba(251,191,36,0.3)] cursor-pointer'
+                              : 'bg-amber-500/50 hover:scale-125 hover:shadow-[0_0_8px_rgba(251,191,36,0.25)] cursor-pointer'
                         }
                       `}
                       style={{ left: `${obs.position.x}%`, top: `${obs.position.y}%` }}
-                      title={`${obs.name}（${t('observe.attention')} ${cost}）`}
+                      title={`${obs.cid ? co(obs.cid, 'name', obs.name) : obs.name}（${t('observe.attention')} ${cost}）`}
                     />
                   )
                 })}
@@ -248,12 +265,13 @@ function DaySceneView({
             ) : (
               /* 列表模式：无 position 的观察点 */
               <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-                {dayScene.observations.map(obs => {
+                {dayScene.observations.map((obs) => {
                 const isObserved = observedIds.includes(obs.id)
                 const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
                 const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
                 const tooExpensive = attentionRemaining < cost
                 const isDisabled = isLocked || tooExpensive
+                const focusColor = obs.focusGroup === 'maya' ? '#8b5cf6' : obs.focusGroup === 'ludwig' ? '#3b82f6' : '#a8a29e'
 
                 return (
                   <button
@@ -261,28 +279,29 @@ function DaySceneView({
                     disabled={isDisabled}
                     onClick={() => useGameStore.getState().openObservation(obs.id)}
                     className={`
-                      w-full text-left px-4 py-3 rounded-lg border transition-all duration-300
+                      w-full text-left pl-5 pr-4 py-3 rounded-r-lg border transition-all duration-300 btn-press list-item-enter
                       ${isDisabled
                         ? 'border-stone-800 text-stone-700 cursor-not-allowed opacity-40'
                         : isObserved
-                          ? 'border-amber-800/50 bg-amber-900/10 text-stone-300'
-                          : 'border-stone-700 hover:border-amber-700 hover:bg-stone-800/50 text-stone-300 hover:text-stone-100 cursor-pointer'
+                          ? 'border-stone-700/30 bg-stone-800/20 text-stone-400'
+                          : 'border-stone-700/30 hover:bg-stone-800/40 hover:border-stone-600/30 text-stone-300 hover:text-stone-100 cursor-pointer'
                       }
                     `}
+                    style={{ borderLeftWidth: '2px', borderLeftColor: isDisabled ? 'transparent' : focusColor }}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-sm">
-                        {isObserved ? '✓' : isLocked ? '🔒' : tooExpensive ? '·' : '👁'}
+                        {isObserved ? '✓' : isLocked ? '🔒' : tooExpensive ? '·' : '○'}
                       </span>
-                      <span className="text-sm font-medium">{obs.name}</span>
+                      <span className="text-sm font-medium">{obs.cid ? co(obs.cid, 'name', obs.name) : obs.name}</span>
                       {!isObserved && !isDisabled && (
                         <span className="text-xs text-stone-600 ml-auto">{cost} {t('observe.attention')}</span>
                       )}
                       {isObserved && (
-                        <span className="text-xs text-amber-600 ml-auto">已记录</span>
+                        <span className="text-xs text-stone-500 ml-auto">{c('ui.observed', '已记录')}</span>
                       )}
                     </div>
-                    <p className="text-xs text-stone-500 mt-1 ml-8">{obs.description}</p>
+                    <p className="text-[13px] text-stone-500 mt-1 ml-8 leading-relaxed">{obs.cid ? co(obs.cid, 'desc', obs.description) : obs.description}</p>
                   </button>
                 )
               })}
@@ -306,7 +325,7 @@ function DaySceneView({
               <div className="text-center mt-8">
                 <button
                   onClick={() => useGameStore.getState().finishExploring()}
-                  className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded"
+                  className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded btn-press"
                 >
                   {t('observe.endExplore')}
                 </button>
@@ -319,7 +338,7 @@ function DaySceneView({
       {/* 观察成功反馈 */}
       {feedback.visible && (
         <div className="absolute top-16 right-6 z-20 scene-fade-in">
-          <div className="bg-amber-900/30 border border-amber-700/50 text-amber-300 px-4 py-2 rounded-lg text-sm shadow-lg whitespace-pre-line">
+          <div className="bg-[#2a2520]/90 border border-stone-700/40 text-stone-300 px-4 py-2 rounded-lg text-sm shadow-lg whitespace-pre-line backdrop-blur-sm">
             {feedback.text}
           </div>
         </div>
@@ -330,7 +349,9 @@ function DaySceneView({
 
 // ── 夜晚场景：固定叙事 + 写作阶段 ──
 function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
-  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = useGameStore()
+  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure, settings } = useGameStore()
+  const { c } = useContent()
+  const isForeignLang = settings.language === 'en' || settings.language === 'de'
   const nightScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'night' ? scene : null
@@ -338,12 +359,30 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
   const filteredLines = useMemo(() => {
     if (!nightScene) return []
     return getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
-  }, [nightScene, writingTags, imprints])
+  }, [nightScene, writingTags, imprints, focusHistory, allNotebookEntries, exposure])
+
+  // Safety: if filteredLines is empty but nightScene has lines, use them directly
+  const displayLines = filteredLines.length > 0 ? filteredLines : (nightScene?.lines || [])
+
+  // Echo sound: play once when an echo line first appears
+  useEffect(() => {
+    const currentLine = displayLines[currentLineIndex]
+    if (!currentLine) return
+    const isEcho = !!(currentLine as any).requiresFocusHistory
+    if (isEcho) {
+      const lineId = `${nightScene?.id}-${currentLineIndex}`
+      const played = useGameStore.getState().playedEchoIds
+      if (!played.includes(lineId)) {
+        audio.play('echo')
+        useGameStore.setState({ playedEchoIds: [...played, lineId] })
+      }
+    }
+  }, [currentLineIndex, displayLines])
 
   if (!nightScene) return null
 
   const showWritingPhase = isWritingPhaseReady && !!nightScene.writingPhase
-  const isEnding = currentLineIndex >= filteredLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
+  const isEnding = currentLineIndex >= displayLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
 
   // 卷一结尾：显示"第一卷 完"
   if (isEnding) {
@@ -351,9 +390,9 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
       <div className="flex-1 flex items-center justify-center scene-fade-in">
         <div className="text-center">
           <p className="text-stone-400 text-lg" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-            第一卷 完
+            {c('ui.volumeComplete', '第一卷 完')}
           </p>
-          <p className="text-stone-600 text-xs mt-2">异乡校园 · 夏天</p>
+          <p className="text-stone-600 text-xs mt-2">{c('ui.gameTitle', '异乡校园 · 夏天')}</p>
         </div>
       </div>
     )
@@ -361,10 +400,10 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
   return (
     <div className="flex-1 flex flex-col">
-      <div className="flex-1 px-6 py-8 overflow-y-auto">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <div className="flex-1 px-6 pt-8 pb-24 overflow-y-auto">
+        <div className="max-w-2xl mx-auto space-y-6 relative z-10">
           {/* 固定叙事 */}
-          {filteredLines.map((l, i) => {
+          {displayLines.map((l, i) => {
             if (i > currentLineIndex && !showWritingPhase) return null
             return i === currentLineIndex && !showWritingPhase ? (
               <div key={i} className="scene-fade-in">
@@ -375,12 +414,12 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
                 <span className="text-sm text-stone-500 leading-relaxed">
                   {l.type === 'dialogue' && l.speaker && (
                     <span className="mr-1">
-                      {l.speaker === 'robert' ? '我：' :
-                       l.speaker === 'ludwig' ? '王：' :
-                       l.speaker === 'maya' ? '兰：' : ''}
+                      {l.speaker === 'robert' ? (isForeignLang ? 'R: ' : '我：') :
+                       l.speaker === 'ludwig' ? (isForeignLang ? 'L: ' : '王：') :
+                       l.speaker === 'maya' ? (isForeignLang ? 'M: ' : '兰：') : ''}
                     </span>
                   )}
-                  {l.text.slice(0, 80)}{l.text.length > 80 ? '…' : ''}
+                  {(l.cid ? c(l.cid, l.text) : l.text).slice(0, 80)}{(l.cid ? c(l.cid, l.text) : l.text).length > 80 ? '…' : ''}
                 </span>
               </div>
             )
@@ -400,7 +439,9 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
   const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
   const t = useTranslation()
+  const { c, co } = useContent()
   const wp = nightScene.writingPhase!
+  const wpCid = wp.cid || ''
   const lastWriting = writings[writings.length - 1]
   const hasWritten = writings.length > 0 && !!lastWriting
 
@@ -457,7 +498,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
     <div className="scene-fade-in space-y-6">
       <div className="text-center">
         <p className="text-amber-500/80 text-sm mb-1">✎ {t('write.title')}</p>
-        <p className="text-stone-400 text-sm">{wp.prompt}</p>
+        <p className="text-stone-400 text-sm">{wpCid ? c(wpCid + '.prompt', wp.prompt) : wp.prompt}</p>
       </div>
 
       {/* 可选素材列表 */}
@@ -479,7 +520,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
               `}
             >
               <span className="mr-2">{selectedEntryIds.includes(entry.id) ? '■' : '□'}</span>
-              <span className="font-medium">{entry.label}</span>
+              <span className="font-medium">{entry.cid ? co(entry.cid, 'label', entry.label) : entry.label}</span>
               <span className="text-xs text-stone-600 ml-2">· {entry.category}</span>
               {currentFocus && entry.focusGroup === currentFocus && (
                 <span className="w-1.5 h-1.5 rounded-full inline-block ml-2" style={{
@@ -494,8 +535,8 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
       {/* 提交写作 */}
       <div className="text-center space-y-3">
         <button
-          onClick={submitWriting}
-          className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded"
+          onClick={() => { audio.play('write'); submitWriting() }}
+          className="px-6 py-2.5 border border-amber-700 text-amber-400 hover:bg-amber-900/20 transition-all text-sm rounded btn-press"
         >
           {t('write.submit', { n: selectedEntryIds.length })}
         </button>

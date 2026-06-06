@@ -1,8 +1,10 @@
 import { useTypewriter } from '../../hooks/useTypewriter'
 import { characters } from '../../data/characters'
+import { useContent } from '../../i18n'
+import { useGameStore } from '../../store/gameStore'
 
 interface Props {
-  line: { type: string; text: string; speaker?: string; speed?: 'slow' | 'normal' | 'fast' | number }
+  line: { type: string; text: string; speaker?: string; speed?: 'slow' | 'normal' | 'fast' | number; cid?: string }
   onAdvance: () => void
 }
 
@@ -10,8 +12,12 @@ const SPEED_MAP = { slow: 55, normal: 35, fast: 25 }
 
 export function DialogBox({ line, onAdvance }: Props) {
   const speed = typeof line.speed === 'number' ? line.speed : SPEED_MAP[line.speed || 'normal'] || 35
-  const { displayed, isComplete, skip } = useTypewriter(line.text, speed)
+  const { c } = useContent()
+  const lang = useGameStore(s => s.settings.language)
+  const displayText = line.cid ? c(line.cid, line.text) : line.text
+  const { displayed, isComplete, skip } = useTypewriter(displayText, speed)
   const character = line.speaker ? characters[line.speaker] : null
+  const isForeignLang = lang === 'en' || lang === 'de'
 
   const handleClick = () => {
     if (!isComplete) {
@@ -21,56 +27,88 @@ export function DialogBox({ line, onAdvance }: Props) {
     }
   }
 
+  const isThought = line.type === 'thought'
+  const isDialogue = line.type === 'dialogue' && character
+
   const getLineColor = () => {
     switch (line.type) {
       case 'dialogue': return 'text-stone-100'
       case 'thought': return 'text-stone-400 italic'
-      case 'observe': return 'text-amber-400'
-      case 'notebook': return 'text-amber-300'
+      case 'observe': return 'text-amber-400/90'
+      case 'notebook': return 'text-amber-300/90'
       default: return 'text-stone-300'
     }
   }
 
   const typeIcon = () => {
     switch (line.type) {
-      case 'observe': return '👁'
-      case 'notebook': return '✎'
+      case 'observe': return '○'
+      case 'notebook': return '○'
       default: return null
     }
   }
 
+  // Border color: thought=dashed stone, dialogue=character color, else transparent
+  const borderStyle = isThought
+    ? 'border-l border-dashed border-stone-600/30'
+    : isDialogue
+      ? ''
+      : 'border-l border-transparent'
+
+  const inlineBorderStyle = isDialogue && character
+    ? { borderLeftColor: `${character.color}33` }
+    : undefined
+
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left cursor-pointer focus:outline-none"
+      className="w-full text-left cursor-pointer focus:outline-none group btn-press"
     >
-      <div className="pl-4 py-3 min-h-[3rem]"
-        style={character ? { borderLeft: `2px solid ${character.color}` } : { borderLeft: '2px solid transparent' }}
+      <div
+        className={`pl-5 py-5 min-h-[3.5rem] transition-colors duration-300 rounded-sm -ml-5 pr-4 group-hover:bg-stone-900/30 max-w-[65ch] ${borderStyle}`}
+        style={inlineBorderStyle}
       >
-        {character && line.type === 'dialogue' && (
-          <div className="mb-1.5 flex items-center gap-2">
-            <span className="text-sm font-semibold" style={{ color: character.color }}>
-              {character.name}
+        {isDialogue && (
+          <div className="mb-3 flex items-center gap-2">
+            <span
+              className="w-1.5 h-1.5 rounded-full shrink-0"
+              style={{ backgroundColor: character!.color }}
+            />
+            <span
+              className="text-[13px] font-medium"
+              style={{ color: character!.color }}
+            >
+              {isForeignLang ? character!.nameEn : character!.name}
             </span>
-            <span className="text-xs text-stone-500" style={{ fontFamily: 'var(--font-serif-en)' }}>{character.nameEn}</span>
+            <span
+              className="text-[11px] text-stone-600"
+              style={{ fontFamily: isForeignLang ? 'var(--font-serif-cn)' : 'var(--font-serif-en)' }}
+            >
+              {isForeignLang ? character!.name : character!.nameEn}
+            </span>
           </div>
         )}
 
         {typeIcon() && (
-          <span className="text-xs mr-2 opacity-60">{typeIcon()}</span>
+          <span className="text-[10px] mr-2 opacity-40 align-middle">{typeIcon()}</span>
         )}
 
         <span
-          className={`text-base leading-[1.9] ${getLineColor()} ${!isComplete ? 'cursor-blink' : ''}`}
+          className={`text-base leading-[2] tracking-[0.01em] ${getLineColor()} ${!isComplete ? 'cursor-blink' : ''}`}
           style={{ fontFamily: 'var(--font-serif-cn)' }}
         >
-          {line.type === 'thought' && !displayed.startsWith('（') ? '（' : ''}
+          {isThought && !displayed.startsWith('（') ? '（' : ''}
           {displayed}
-          {line.type === 'thought' && isComplete && !displayed.endsWith('）') ? '）' : ''}
+          {isThought && isComplete && !displayed.endsWith('）') ? '）' : ''}
         </span>
 
         {isComplete && (
-          <span className="text-xs text-stone-600 block mt-3" style={{ fontFamily: 'var(--font-serif-cn)' }}>点击继续 →</span>
+          <span
+            className="text-xs text-stone-600/70 block mt-4 tracking-wider animate-[fadeIn_0.4s_ease-out]"
+            style={{ fontFamily: 'var(--font-serif-cn)' }}
+          >
+            {c('ui.clickContinue', '点击继续 →')}
+          </span>
         )}
       </div>
     </button>

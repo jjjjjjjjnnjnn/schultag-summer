@@ -6,6 +6,7 @@ export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast'
   fontSize: 'small' | 'medium' | 'large'
   language: 'zh' | 'en' | 'de'
+  soundEnabled: boolean
 }
 
 // ── 观察点：白天场景中玩家可以自由点击观察的对象 ──
@@ -31,6 +32,8 @@ export interface ObservationPoint {
   focusAddendum?: string
   /** 若存在，焦点叠加 2+ 章时显示此深度偏见文本 */
   focusAddendumDeep?: string
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 // ── 笔记本素材条目 ──
@@ -48,6 +51,8 @@ export interface NotebookEntry {
   focusGroup?: FocusType
   /** 来源场景 ID */
   sceneId?: string
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
   /** 时间戳（排序用） */
   timestamp?: number
 }
@@ -64,6 +69,8 @@ export interface StoryLine {
     characterId: string
     type: 'observation' | 'writing'
     threshold: number
+    /** 内容翻译 key */
+    cid?: string
   }
   /** 打字机速度：'slow'=55ms 'normal'=35ms 'fast'=25ms 或直接指定数字 */
   speed?: 'slow' | 'normal' | 'fast' | number
@@ -71,11 +78,15 @@ export interface StoryLine {
   requiresFocusHistory?: {
     characterId: string
     count: number
+    /** 内容翻译 key */
+    cid?: string
   }
   /** 若存在，仅当玩家观察过此笔记本条目时才渲染 */
   requiresObservation?: string
   /** 若存在，仅当暴露度 >= 此阈值时才渲染 */
   requiresExposure?: number
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 // ── 写作配方：玩家从笔记本选择素材后自动组合成文 ──
@@ -88,6 +99,8 @@ export interface WritingRecipe {
   influenceTag?: string
   /** 若存在，仅当玩家焦点匹配时才匹配此配方 */
   requiresFocus?: FocusType
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 // ── 场景骨架元素 ──
@@ -95,6 +108,8 @@ export interface SceneLayoutElement {
   className?: string
   style: React.CSSProperties
   label?: string
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 // ── 场景骨架布局 ──
@@ -122,6 +137,8 @@ export interface DayScene {
   sceneLayout?: SceneLayout
   /** 每日注意力预算（默认 3） */
   attentionBudget?: number
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 // ── 夜晚场景 ──
@@ -139,8 +156,12 @@ export interface NightScene {
     recipes: WritingRecipe[]
     /** 默认组合文案（如果没匹配任何配方） */
     defaultText: string
+    /** 内容翻译 key（用于多语言查找 .prompt / .default） */
+    cid?: string
   }
   nextSceneId?: string
+  /** 内容翻译 key（用于多语言查找） */
+  cid?: string
 }
 
 export type Scene = DayScene | NightScene
@@ -156,6 +177,8 @@ export interface Character {
   traits: string[]
   /** 人物印象等级，从低到高 */
   impressionLevels: string[]
+  /** 内容翻译 key（用于多语言查找 .traits.0 / .imp.0 等） */
+  cid?: string
 }
 
 // ── 角色印记 ──
@@ -219,4 +242,6 @@ export interface GameState {
   /** 游戏设置 */
   settings: Settings
   isPlaying: boolean
+  /** 已播放过音效的 Echo 行 ID（防重复播放） */
+  playedEchoIds: string[]
 }
