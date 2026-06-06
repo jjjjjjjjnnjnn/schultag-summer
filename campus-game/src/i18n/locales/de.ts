@@ -117,8 +117,15 @@ const de: Record<string, string> = {
 
   // Feedback
   'feedback.recorded': '✓ {name} aufgezeichnet',
+  'feedback.recordedSuffix': 'aufgezeichnet',
   'feedback.noticed': 'Jemand hat angefangen, dich zu bemerken.',
   'feedback.watched': 'Du hast zu viel über sie aufgezeichnet.',
+  'feedback.todayWrote': 'Heute hast du geschrieben: {labels}.',
+  'feedback.todayNothing': 'Heute hast du nichts geschrieben. Manche Tage sind so.',
+  'feedback.noWriting': 'Manche Nächte lässt der Stift nicht los.',
+  'feedback.writingLow': 'Du schreibst diese Sätze. Sie scheinen länger zu bleiben als sonst.',
+  'feedback.writingMid': 'Du schreibst diese Sätze.\n\nPlötzlich hat jemand dich gesehen.',
+  'feedback.writingHigh': 'Du schreibst diese Sätze.\n\nAls du das Dokument schließt, zögerst du.',
 
   // Intro/Hilfe
   'intro.title': 'Über dieses Spiel',

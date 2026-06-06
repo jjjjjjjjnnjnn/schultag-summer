@@ -117,8 +117,15 @@ const en: Record<string, string> = {
 
   // Feedback
   'feedback.recorded': '✓ {name} recorded',
+  'feedback.recordedSuffix': 'recorded',
   'feedback.noticed': 'Someone started noticing you.',
   'feedback.watched': 'You recorded too much about her.',
+  'feedback.todayWrote': 'Today you wrote: {labels}.',
+  'feedback.todayNothing': 'You wrote nothing today. Some days are like that.',
+  'feedback.noWriting': 'Some nights, the pen doesn\'t fall.',
+  'feedback.writingLow': 'You write these sentences. They seem to linger longer than usual.',
+  'feedback.writingMid': 'You write these sentences.\n\nSuddenly, someone\'s watching.',
+  'feedback.writingHigh': 'You write these sentences.\n\nWhen you close the document, you hesitate.',
 
   // Intro/Help
   'intro.title': 'About This Game',
