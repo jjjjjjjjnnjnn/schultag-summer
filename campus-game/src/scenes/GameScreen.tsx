@@ -12,7 +12,7 @@ import { characters } from '../data/characters'
 type MenuOverlay = null | 'chapters' | 'achievements' | 'settings'
 
 export function GameScreen() {
-  const { saveGame, resetGame, observedIds, notebook, getCurrentScene, writingTags } = useGameStore()
+  const { saveGame, resetGame, observedIds, allNotebookEntries, getCurrentScene, writingTags } = useGameStore()
   const scene = getCurrentScene()
   const mode = scene?.mode || 'day'
   const [showMenu, setShowMenu] = useState(false)
@@ -57,7 +57,7 @@ export function GameScreen() {
                 : 'border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500'
             }`}
           >
-            ✎ ({notebook.length})
+            ✎ ({allNotebookEntries.length})
           </button>
           <button
             onClick={() => setMenuOverlay('settings')}
@@ -160,7 +160,7 @@ export function GameScreen() {
 
 // ── 笔记本详细内容 ──
 function NotebookContent() {
-  const { notebook, writings } = useGameStore()
+  const { allNotebookEntries, writings } = useGameStore()
   const t = useTranslation()
   const { co } = useContent()
 
@@ -169,13 +169,13 @@ function NotebookContent() {
       <h3 className="text-xs text-stone-500 uppercase tracking-wider mb-3">
         {t('notebook.observations')}
       </h3>
-      {notebook.length === 0 ? (
+      {allNotebookEntries.length === 0 ? (
         <p className="text-sm text-stone-600 italic">
           {t('notebook.empty')}
         </p>
       ) : (
         <div className="space-y-2">
-          {notebook.map(entry => {
+          {allNotebookEntries.map(entry => {
             const entryLabel = entry.cid ? co(entry.cid, 'label', entry.label) : entry.label
             const entryText = entry.cid ? co(entry.cid, 'text', entry.text) : entry.text
             return (

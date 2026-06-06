@@ -32,7 +32,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 export function evaluateAchievements(state: GameState): string[] {
   const unlocked: string[] = []
 
-  if (state.notebook.length >= 1 && !state.unlockedAchievements.includes('first-observation')) {
+  if (state.allNotebookEntries.length >= 1 && !state.unlockedAchievements.includes('first-observation')) {
     unlocked.push('first-observation')
   }
   if (state.writings.length >= 1 && !state.unlockedAchievements.includes('first-writing')) {

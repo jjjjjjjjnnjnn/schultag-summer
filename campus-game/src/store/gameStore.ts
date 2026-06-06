@@ -117,7 +117,7 @@ const initialState: GameState = {
   modalObservationId: null,
   feedback: { text: '', visible: false },
   selectedEntryIds: [],
-  notebook: [],
+  notebook: [],  // legacy field, kept for old saves
   allNotebookEntries: [],
   writings: [],
   writingTags: [],
@@ -248,7 +248,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isExploring: isNextDay,
       observedIds: [],
       selectedEntryIds: [],
-      notebook: isNextDay ? [] : get().notebook,
       writings: [],
       isWritingPhaseReady: false,
       writingFeedback: '',
@@ -280,7 +279,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isExploring: isDay,
       observedIds: [],
       selectedEntryIds: [],
-      notebook: [],
       writings: [],
       writingTags: [],
       isWritingPhaseReady: false,
@@ -321,7 +319,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   confirmObservation: () => {
-    const { modalObservationId, observedIds, notebook, impressions, imprints, exposure, currentFocus, attentionRemaining, settings } = get()
+    const { modalObservationId, observedIds, allNotebookEntries, impressions, imprints, exposure, currentFocus, attentionRemaining, settings } = get()
     if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
@@ -360,7 +358,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const invasionGain = obs.invasionLevel || 0
     const newExposure = Math.min(exposure + invasionGain, 100)
 
-    const entryExists = notebook.find(e => e.id === obs.notebookEntry.id)
+    const entryExists = allNotebookEntries.find(e => e.id === obs.notebookEntry.id)
 
     const newEntry = entryExists ? null : {
       ...obs.notebookEntry,
@@ -385,7 +383,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     set({
       observedIds: [...observedIds, modalObservationId],
-      notebook: newEntry ? [...notebook, newEntry] : notebook,
       allNotebookEntries: newEntry ? [...get().allNotebookEntries, newEntry] : get().allNotebookEntries,
       impressions: newImpressions,
       imprints: newImprints,
@@ -614,7 +611,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
         observedIds: s.observedIds,
         isExploring: s.isExploring,
         selectedEntryIds: s.selectedEntryIds,
-        notebook: s.notebook,
         allNotebookEntries: s.allNotebookEntries,
         writings: s.writings,
         writingTags: s.writingTags,
