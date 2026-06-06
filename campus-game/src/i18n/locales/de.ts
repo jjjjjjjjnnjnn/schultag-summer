@@ -23,6 +23,12 @@ const de: Record<string, string> = {
   'game.achievements': 'Errungenschaften',
   'game.settings': 'Einstellungen',
   'game.returnTitle': 'Zum Titel zurück',
+  'ui.volumeComplete': 'Erster Band abgeschlossen',
+  'ui.gameTitle': 'Fremdes Campus: Sommer',
+  'ui.clickHotspot': 'Klicke auf Objekte, die dich interessieren',
+  'ui.clickToObserve': 'Klicke unten, um Objekte zu beobachten',
+  'ui.observed': 'Aufgezeichnet',
+  'ui.clickContinue': 'Klicke um fortzufahren →',
 
   // Beobachtung
   'observe.title': 'Was fällt dir auf?',
@@ -81,6 +87,7 @@ const de: Record<string, string> = {
   'settings.fontSize': 'Schriftgröße',
   'settings.language': 'Sprache',
   'settings.preview': 'Vorschau',
+  'settings.previewText': 'Das Licht vom Fenster am Ende schneidet einen hellen Streifen über den Steinboden.',
   'settings.sound': 'Sound',
   'settings.sfxOn': 'An',
   'settings.sfxOff': 'Aus',

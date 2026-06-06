@@ -23,6 +23,12 @@ const en: Record<string, string> = {
   'game.achievements': 'Achievements',
   'game.settings': 'Settings',
   'game.returnTitle': 'Return to Title',
+  'ui.volumeComplete': 'Volume One Complete',
+  'ui.gameTitle': 'Foreign Campus: Summer',
+  'ui.clickHotspot': 'Click on objects that interest you',
+  'ui.clickToObserve': 'Click below to observe objects that interest you',
+  'ui.observed': 'Recorded',
+  'ui.clickContinue': 'Click to continue →',
 
   // Observation
   'observe.title': 'What do you notice?',
@@ -81,6 +87,7 @@ const en: Record<string, string> = {
   'settings.fontSize': 'Font Size',
   'settings.language': 'Language',
   'settings.preview': 'Preview',
+  'settings.previewText': 'The light from the far window cuts a bright stripe across the stone floor.',
   'settings.sound': 'Sound',
   'settings.sfxOn': 'On',
   'settings.sfxOff': 'Off',
