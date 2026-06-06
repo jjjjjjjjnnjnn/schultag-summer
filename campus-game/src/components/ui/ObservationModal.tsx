@@ -18,15 +18,16 @@ export function ObservationModal() {
       onClick={closeObservation}
     >
       <div
-        className="bg-stone-900 border border-stone-700 rounded-lg max-w-lg w-full mx-4 scene-fade-in"
+        className="bg-[#2a2520] max-w-lg w-full mx-4 scene-fade-in rounded-lg overflow-hidden shadow-2xl border border-stone-700/50"
+        style={{ fontFamily: 'var(--font-serif-cn)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* 头部 */}
         <div className="px-6 pt-6 pb-2 flex items-center gap-3">
-          <span className="text-amber-500 text-lg">👁</span>
+          <span className="text-amber-600 text-lg">👁</span>
           <span className="text-xs text-stone-500 uppercase tracking-wider">观察</span>
           <span className="text-xs text-stone-600">·</span>
-          <span className="text-sm text-stone-300 font-medium">{obs.name}</span>
+          <span className="text-sm text-stone-300 font-semibold">{obs.name}</span>
         </div>
 
         {/* 观察文本 — 打字机效果 */}
@@ -36,7 +37,7 @@ export function ObservationModal() {
 
         {/* 分割线 */}
         <div className="px-6">
-          <div className="h-px bg-stone-800" />
+          <div className="h-px bg-stone-700/50" />
         </div>
 
         {/* 底部按钮 */}
@@ -49,7 +50,7 @@ export function ObservationModal() {
           </button>
           <button
             onClick={confirmObservation}
-            className="px-4 py-2 bg-amber-800/20 border border-amber-700 text-amber-400 hover:bg-amber-800/40 transition-all text-sm rounded"
+            className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 text-amber-400 hover:bg-amber-900/50 transition-all text-sm rounded"
           >
             加入笔记本
           </button>
@@ -65,7 +66,7 @@ function ObservationText({ text }: { text: string }) {
   return (
     <div onClick={!isComplete ? skip : undefined} className="cursor-pointer">
       <p
-        className="text-stone-200 leading-relaxed text-sm"
+        className="text-stone-300 leading-[1.9] text-sm"
         style={{ fontFamily: 'var(--font-serif-cn)' }}
       >
         {displayed}

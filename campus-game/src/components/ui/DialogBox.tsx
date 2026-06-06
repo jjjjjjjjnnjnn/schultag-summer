@@ -2,12 +2,15 @@ import { useTypewriter } from '../../hooks/useTypewriter'
 import { characters } from '../../data/characters'
 
 interface Props {
-  line: { type: string; text: string; speaker?: string }
+  line: { type: string; text: string; speaker?: string; speed?: 'slow' | 'normal' | 'fast' | number }
   onAdvance: () => void
 }
 
+const SPEED_MAP = { slow: 55, normal: 35, fast: 25 }
+
 export function DialogBox({ line, onAdvance }: Props) {
-  const { displayed, isComplete, skip } = useTypewriter(line.text, 35)
+  const speed = typeof line.speed === 'number' ? line.speed : SPEED_MAP[line.speed || 'normal'] || 35
+  const { displayed, isComplete, skip } = useTypewriter(line.text, speed)
   const character = line.speaker ? characters[line.speaker] : null
 
   const handleClick = () => {
@@ -41,15 +44,15 @@ export function DialogBox({ line, onAdvance }: Props) {
       onClick={handleClick}
       className="w-full text-left cursor-pointer focus:outline-none"
     >
-      <div className="pl-4 py-2 min-h-[3rem]"
+      <div className="pl-4 py-3 min-h-[3rem]"
         style={character ? { borderLeft: `2px solid ${character.color}` } : { borderLeft: '2px solid transparent' }}
       >
         {character && line.type === 'dialogue' && (
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-sm font-medium" style={{ color: character.color }}>
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="text-sm font-semibold" style={{ color: character.color }}>
               {character.name}
             </span>
-            <span className="text-xs text-stone-500">{character.nameEn}</span>
+            <span className="text-xs text-stone-500" style={{ fontFamily: 'var(--font-serif-en)' }}>{character.nameEn}</span>
           </div>
         )}
 
@@ -57,14 +60,17 @@ export function DialogBox({ line, onAdvance }: Props) {
           <span className="text-xs mr-2 opacity-60">{typeIcon()}</span>
         )}
 
-        <span className={`text-base leading-relaxed ${getLineColor()} ${!isComplete ? 'cursor-blink' : ''}`}>
+        <span
+          className={`text-base leading-[1.9] ${getLineColor()} ${!isComplete ? 'cursor-blink' : ''}`}
+          style={{ fontFamily: 'var(--font-serif-cn)' }}
+        >
           {line.type === 'thought' && !displayed.startsWith('（') ? '（' : ''}
           {displayed}
           {line.type === 'thought' && isComplete && !displayed.endsWith('）') ? '）' : ''}
         </span>
 
         {isComplete && (
-          <span className="text-xs text-stone-600 block mt-2">点击继续 →</span>
+          <span className="text-xs text-stone-600 block mt-3" style={{ fontFamily: 'var(--font-serif-cn)' }}>点击继续 →</span>
         )}
       </div>
     </button>

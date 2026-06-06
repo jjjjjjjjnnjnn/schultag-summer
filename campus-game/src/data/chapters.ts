@@ -9,6 +9,7 @@ const prologueDay: DayScene = {
   mode: 'day',
   location: '学校走廊 → 食堂',
   timeOfDay: '放学后',
+  titleCard: { day: '周五', time: '16:20' },
   intro: [
     { type: 'narration', text: '我叫荣加俊。今年十五岁。写了九十万字。' },
     { type: 'narration', text: '没有人知道这件事。直到今天。' },
@@ -132,6 +133,7 @@ const ch01Day: DayScene = {
   mode: 'day',
   location: '英语教室',
   timeOfDay: '上午',
+  titleCard: { day: '周三', time: '10:23' },
   intro: [
     { type: 'narration', text: '周三。英语课。教室里的光从窗户斜着照进来。' },
     { type: 'dialogue', speaker: 'ludwig', text: '哎呀，又是小飞飞的课。' },
@@ -200,6 +202,7 @@ const ch01Day: DayScene = {
         category: 'action',
       },
       relationshipEffect: { characterId: 'maya', delta: 1 },
+      position: { x: 65, y: 35 },
     },
     {
       id: 'ch01-ludwig-lambda',
@@ -213,6 +216,7 @@ const ch01Day: DayScene = {
         category: 'action',
       },
       relationshipEffect: { characterId: 'ludwig', delta: 1 },
+      position: { x: 35, y: 40 },
     },
     {
       id: 'ch01-maya-voice',
@@ -225,6 +229,7 @@ const ch01Day: DayScene = {
         text: '她说话的声音不大，但每个字都很清晰。像一把干净的尺子在纸上划出直线。',
         category: 'sound',
       },
+      position: { x: 70, y: 55 },
     },
     {
       id: 'ch01-window-light',
@@ -237,6 +242,7 @@ const ch01Day: DayScene = {
         text: '光从窗户斜着打进来。灰尘在光柱里浮动，随着云层慢慢偏移。整间教室的光线像一个正在呼吸的东西。',
         category: 'visual',
       },
+      position: { x: 85, y: 25 },
     },
     {
       id: 'ch01-maya-appearance',
@@ -249,6 +255,7 @@ const ch01Day: DayScene = {
         text: '白色冲锋衣，马尾辫。目测1米5，看着不像18。自我介绍时表情很平，像在陈述一个事实。',
         category: 'visual',
       },
+      position: { x: 60, y: 60 },
     },
     {
       id: 'ch01-silence',
@@ -261,6 +268,7 @@ const ch01Day: DayScene = {
         text: '坐下后有两三秒的安静。翻纸声，笔碰桌面声，窗外风声。突然变清楚了，像把音量旋钮往回调了一格。',
         category: 'sound',
       },
+      position: { x: 20, y: 65 },
     },
   ],
   outro: [

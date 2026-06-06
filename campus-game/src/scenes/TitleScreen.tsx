@@ -24,7 +24,7 @@ export function TitleScreen() {
           </h1>
           <div className="flex items-center justify-center gap-4">
             <div className="h-px w-12 bg-stone-700" />
-            <span className="text-sm text-stone-500 tracking-widest">SCHULTAG</span>
+            <span className="text-sm text-stone-500 tracking-widest" style={{ fontFamily: 'var(--font-serif-en)' }}>SCHULTAG</span>
             <div className="h-px w-12 bg-stone-700" />
           </div>
           <p className="text-lg text-amber-500/80" style={{ fontFamily: 'var(--font-serif-cn)' }}>
@@ -33,7 +33,7 @@ export function TitleScreen() {
         </div>
 
         {/* 副标题 */}
-        <p className="text-sm text-stone-500 max-w-md leading-relaxed">
+        <p className="text-sm text-stone-500 max-w-md leading-[2]" style={{ fontFamily: 'var(--font-serif-cn)' }}>
           在德国的寄宿学校里，荣加俊把每一天的观察写进一本秘密的小说。
           <br />
           走廊里的光，食堂的味道，朋友说的话。
@@ -62,7 +62,7 @@ export function TitleScreen() {
 
         {/* 版本号 */}
         <p className="text-xs text-stone-700 mt-12">
-          v0.1 — Demo · 观察 · 记录 · 写作
+          v0.1 — 观察 · 记录 · 写作
         </p>
       </div>
     </div>

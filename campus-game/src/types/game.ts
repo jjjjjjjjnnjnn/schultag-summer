@@ -13,6 +13,8 @@ export interface ObservationPoint {
   relationshipEffect?: { characterId: string; delta: number }
   /** 侵入度：0=环境 1=对话 2=行为 3=习惯 5=内心推测 */
   invasionLevel?: number
+  /** 热点位置（百分比坐标，用于空间化场景） */
+  position?: { x: number; y: number }
 }
 
 // ── 笔记本素材条目 ──
@@ -41,6 +43,8 @@ export interface StoryLine {
     type: 'observation' | 'writing'
     threshold: number
   }
+  /** 打字机速度：'slow'=55ms 'normal'=35ms 'fast'=25ms 或直接指定数字 */
+  speed?: 'slow' | 'normal' | 'fast' | number
 }
 
 // ── 写作配方：玩家从笔记本选择素材后自动组合成文 ──
@@ -59,6 +63,8 @@ export interface DayScene {
   mode: 'day'
   location: string
   timeOfDay?: string
+  /** 场景标题卡：进入时先显示 */
+  titleCard?: { day: string; time: string }
   /** 固定叙事（开场、过渡等不可跳过的文本） */
   intro?: StoryLine[]
   /** 玩家可自由点击的观察点 */

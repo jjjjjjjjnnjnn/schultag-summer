@@ -1,19 +1,40 @@
-import { useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { useGameStore, getVisibleLines } from '../../store/gameStore'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
 import type { NightScene } from '../../types/game'
 
+const SCENE_BG: Record<string, string> = {
+  'prologue-day': 'scene-bg-prologue-day',
+  'prologue-night': 'scene-bg-prologue-night',
+  'ch01-day': 'scene-bg-ch01-day',
+  'ch02-day': 'scene-bg-ch02-day',
+  'ch03-day': 'scene-bg-ch03-day',
+  'ch04-day': 'scene-bg-ch04-day',
+}
+
+const ENV_LAYER: Record<string, string> = {
+  'prologue-day': 'env-light-warm',
+  'prologue-night': 'env-light-cool',
+  'ch01-day': 'env-light-warm',
+  'ch02-day': 'env-light-warm',
+  'ch03-day': 'env-light-warm',
+  'ch04-day': 'env-light-screen',
+}
+
 export function SceneView() {
   const { getCurrentScene, currentLine, advanceLine, isExploring, goToNextScene } = useGameStore()
   const scene = getCurrentScene()
   const line = currentLine()
+  const prevSceneId = useRef<string | null>(null)
+  const [showTitleCard, setShowTitleCard] = useState(false)
+  const titleCardTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // 用 ref 稳定 goToNextScene 引用，避免 useEffect 反复重置 timeout
+  // 用 ref 稳定 goToNextScene 引用
   const goToNextRef = useRef(goToNextScene)
   goToNextRef.current = goToNextScene
 
-  // 自动转场：当 line 为 null 时切换到下一场景
+  // 自动转场
   useEffect(() => {
     if (!scene || isExploring || line !== null) return
     const nextId = 'nextSceneId' in scene ? scene.nextSceneId : undefined
@@ -21,6 +42,19 @@ export function SceneView() {
     const t = setTimeout(() => goToNextRef.current(), 50)
     return () => clearTimeout(t)
   }, [scene, line, isExploring])
+
+  // 标题卡：场景切换时显示，2.2秒后隐藏
+  useEffect(() => {
+    if (!scene) return
+    if (prevSceneId.current === scene.id) return
+    prevSceneId.current = scene.id
+    setShowTitleCard(true)
+    if (titleCardTimer.current) clearTimeout(titleCardTimer.current)
+    titleCardTimer.current = setTimeout(() => setShowTitleCard(false), 3000)
+    return () => {
+      if (titleCardTimer.current) clearTimeout(titleCardTimer.current)
+    }
+  }, [scene?.id])
 
   if (!scene) {
     return (
@@ -35,19 +69,40 @@ export function SceneView() {
     )
   }
 
+  const bgClass = SCENE_BG[scene.id] || 'scene-bg-default'
+  const envClass = ENV_LAYER[scene.id] || ''
+
   return (
-    <div className="flex-1 flex flex-col relative">
+    <div className={`flex-1 flex flex-col relative ${bgClass}`}>
+      {/* 环境层 */}
+      {envClass && <div className={`env-layer ${envClass}`} />}
+
+      {/* 标题卡 */}
+      {showTitleCard && 'titleCard' in scene && scene.titleCard && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+          <div className="text-center title-card">
+            <p className="text-stone-400 text-sm tracking-widest">{scene.titleCard.day}</p>
+            <p className="text-stone-300 text-lg mt-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+              {scene.location}
+            </p>
+            <p className="text-stone-600 text-xs mt-1">{scene.titleCard.time}</p>
+          </div>
+        </div>
+      )}
+
       {/* 观察弹窗 */}
       <ObservationModal />
 
-      {/* 场景信息栏 */}
-      <div className="px-6 py-3 border-b border-stone-800/50 flex items-center gap-3">
+      {/* 场景信息栏（标题卡期间隐藏） */}
+      {!showTitleCard && (
+      <div className="px-6 py-3 border-b border-stone-800/50 flex items-center gap-3 relative z-10">
         <span className="text-sm">{scene.mode === 'day' ? '☀' : '🌙'}</span>
         <span className="text-sm text-stone-400">{scene.location}</span>
         {'timeOfDay' in scene && scene.timeOfDay && (
           <span className="text-xs text-stone-600">· {scene.timeOfDay}</span>
         )}
       </div>
+      )}
 
       {scene.mode === 'day' ? (
         <DaySceneView line={line} onAdvance={advanceLine} isExploring={isExploring} />
@@ -98,14 +153,49 @@ function DaySceneView({
             <div className="text-center mb-8">
               <p className="text-amber-500/80 text-sm mb-2">观察模式</p>
               <p className="text-stone-500 text-xs">
-                点击下方你感兴趣的对象进行观察
+                {dayScene.observations.some(o => o.position)
+                  ? '点击场景中你感兴趣的对象'
+                  : '点击下方你感兴趣的对象进行观察'}
                 {observedCount > 0 && ` · 已观察 ${observedCount}/${totalObservations}`}
               </p>
             </div>
 
-            {/* 观察点列表 */}
-            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-              {dayScene.observations.map(obs => {
+            {/* 热点模式：有 position 的观察点 */}
+            {dayScene.observations.some(o => o.position) ? (
+              <div className="relative w-full aspect-[16/9] bg-stone-800/30 rounded-lg border border-stone-700/30 overflow-hidden">
+                {dayScene.observations.map(obs => {
+                  if (!obs.position) return null
+                  const isObserved = observedIds.includes(obs.id)
+                  const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
+                  return (
+                    <button
+                      key={obs.id}
+                      disabled={isLocked}
+                      onClick={() => useGameStore.getState().openObservation(obs.id)}
+                      className={`absolute w-3 h-3 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2
+                        ${isLocked
+                          ? 'bg-stone-700 cursor-not-allowed opacity-30'
+                          : isObserved
+                            ? 'bg-amber-500/60 shadow-[0_0_8px_rgba(217,119,6,0.4)]'
+                            : 'bg-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.3)] hover:scale-150 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] cursor-pointer'
+                        }
+                      `}
+                      style={{ left: `${obs.position.x}%`, top: `${obs.position.y}%` }}
+                      title={obs.name}
+                    />
+                  )
+                })}
+                {/* 热点名称提示 */}
+                {dayScene.observations.filter(o => o.position && !observedIds.includes(o.id)).length > 0 && (
+                  <div className="absolute bottom-2 left-2 text-xs text-stone-500">
+                    {dayScene.observations.filter(o => o.position && !observedIds.includes(o.id)).length} 个可观察对象
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* 列表模式：无 position 的观察点 */
+              <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                {dayScene.observations.map(obs => {
                 const isObserved = observedIds.includes(obs.id)
                 const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
 
@@ -140,7 +230,8 @@ function DaySceneView({
                   </button>
                 )
               })}
-            </div>
+              </div>
+            )}
 
             {/* 观察完毕按钮 */}
             {observedCount >= 2 && (
