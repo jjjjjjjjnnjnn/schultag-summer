@@ -1,9 +1,17 @@
+import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
+import { MenuModal } from '../components/menu/MenuModal'
+import { ChapterSelect } from '../components/menu/ChapterSelect'
+import { AchievementView } from '../components/menu/AchievementView'
+import { SettingsPanel } from '../components/menu/SettingsPanel'
+
+type Overlay = null | 'chapters' | 'achievements' | 'settings'
 
 export function TitleScreen() {
   const { startGame, loadGame } = useGameStore()
+  const [overlay, setOverlay] = useState<Overlay>(null)
 
-  const hasSave = localStorage.getItem('schultag-save') !== null
+  const hasSave = localStorage.getItem('schultag-save-v2') !== null
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center relative overflow-hidden">
@@ -60,11 +68,52 @@ export function TitleScreen() {
           )}
         </div>
 
+        {/* 菜单链接 */}
+        <div className="flex items-center justify-center gap-4 text-xs text-stone-600">
+          <button
+            onClick={() => setOverlay('chapters')}
+            className="hover:text-stone-400 transition-colors"
+          >
+            章节选择
+          </button>
+          <span>·</span>
+          <button
+            onClick={() => setOverlay('achievements')}
+            className="hover:text-stone-400 transition-colors"
+          >
+            成就
+          </button>
+          <span>·</span>
+          <button
+            onClick={() => setOverlay('settings')}
+            className="hover:text-stone-400 transition-colors"
+          >
+            设置
+          </button>
+        </div>
+
         {/* 版本号 */}
-        <p className="text-xs text-stone-700 mt-12">
-          v0.1 — 观察 · 记录 · 写作
+        <p className="text-xs text-stone-700 mt-8">
+          v0.6 — 观察 · 记录 · 写作 · 选择
         </p>
       </div>
+
+      {/* 覆盖层 */}
+      {overlay === 'chapters' && (
+        <MenuModal title="章节选择" onClose={() => setOverlay(null)}>
+          <ChapterSelect onSelect={() => setOverlay(null)} />
+        </MenuModal>
+      )}
+      {overlay === 'achievements' && (
+        <MenuModal title="成就" onClose={() => setOverlay(null)}>
+          <AchievementView />
+        </MenuModal>
+      )}
+      {overlay === 'settings' && (
+        <MenuModal title="设置" onClose={() => setOverlay(null)}>
+          <SettingsPanel />
+        </MenuModal>
+      )}
     </div>
   )
 }

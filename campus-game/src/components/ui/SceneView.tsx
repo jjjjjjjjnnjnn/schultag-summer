@@ -2,7 +2,8 @@ import { useEffect, useRef, useMemo, useState } from 'react'
 import { useGameStore, getVisibleLines } from '../../store/gameStore'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
-import type { NightScene } from '../../types/game'
+import { FocusSelector } from './FocusSelector'
+import type { NightScene, SceneLayout } from '../../types/game'
 
 const SCENE_BG: Record<string, string> = {
   'prologue-day': 'scene-bg-prologue-day',
@@ -113,6 +114,30 @@ export function SceneView() {
   )
 }
 
+// ── 场景骨架：渲染空间布局参考线 ──
+function SceneSkeleton({ layout }: { layout: SceneLayout }) {
+  return (
+    <>
+      {layout.elements.map((el, i) => (
+        <div
+          key={i}
+          className={`pointer-events-none ${el.className || ''}`}
+          style={el.style}
+        >
+          {el.label && (
+            <span
+              className="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-stone-600 whitespace-nowrap select-none"
+              style={{ fontFamily: 'var(--font-sans-cn)' }}
+            >
+              {el.label}
+            </span>
+          )}
+        </div>
+      ))}
+    </>
+  )
+}
+
 // ── 白天场景：固定叙事 + 观察点 ──
 function DaySceneView({
   line,
@@ -123,7 +148,7 @@ function DaySceneView({
   onAdvance: () => void
   isExploring: boolean
 }) {
-  const { observedIds, currentLineIndex, feedback, writingTags, imprints } = useGameStore()
+  const { observedIds, currentLineIndex, feedback, writingTags, imprints, currentFocus, attentionRemaining, selectFocus, focusHistory, exposure, focusPulseColor, allNotebookEntries } = useGameStore()
   const dayScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'day' ? scene : null
@@ -132,7 +157,7 @@ function DaySceneView({
   if (!dayScene) return null
 
   const intro = dayScene.intro || []
-  const visibleIntroLength = getVisibleLines(intro, writingTags, imprints).length
+  const visibleIntroLength = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure).length
   const totalObservations = dayScene.observations.length
   const observedCount = observedIds.length
   const introDone = currentLineIndex >= visibleIntroLength - 1
@@ -147,11 +172,27 @@ function DaySceneView({
           </div>
         )}
 
-        {/* 观察面板：intro 播完且处于探索模式时显示 */}
-        {isExploring && introDone && (
+        {/* 焦点选择：intro 播完后、观察前 */}
+        {isExploring && introDone && !currentFocus && (
+          <FocusSelector onSelect={selectFocus} />
+        )}
+
+        {/* 观察面板：intro 播完且选了焦点后显示 */}
+        {isExploring && introDone && currentFocus && (
           <div className="max-w-2xl mx-auto mt-8 scene-fade-in">
             <div className="text-center mb-8">
               <p className="text-amber-500/80 text-sm mb-2">观察模式</p>
+              {/* 注意力指示器 */}
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                {Array.from({ length: dayScene.attentionBudget ?? 3 }).map((_, i) => (
+                  <span key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i < attentionRemaining
+                      ? 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.4)]'
+                      : 'bg-stone-700'
+                  }`} />
+                ))}
+                <span className="text-xs text-stone-600 ml-1">注意力</span>
+              </div>
               <p className="text-stone-500 text-xs">
                 {dayScene.observations.some(o => o.position)
                   ? '点击场景中你感兴趣的对象'
@@ -162,26 +203,36 @@ function DaySceneView({
 
             {/* 热点模式：有 position 的观察点 */}
             {dayScene.observations.some(o => o.position) ? (
-              <div className="relative w-full aspect-[16/9] bg-stone-800/30 rounded-lg border border-stone-700/30 overflow-hidden">
+              <div className={`relative w-full aspect-[16/9] rounded-lg border border-stone-700/30 overflow-hidden ${
+                dayScene.sceneLayout ? 'bg-stone-900/40' : 'bg-stone-800/30'
+              } ${focusPulseColor ? `animate-focus-pulse-${focusPulseColor}` : ''}`}>
+                {/* 场景骨架 */}
+                {dayScene.sceneLayout && <SceneSkeleton layout={dayScene.sceneLayout} />}
                 {dayScene.observations.map(obs => {
                   if (!obs.position) return null
                   const isObserved = observedIds.includes(obs.id)
                   const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
+                  const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+                  const tooExpensive = attentionRemaining < cost
+                  const isFocused = currentFocus === obs.focusGroup
+                  const isDisabled = isLocked || tooExpensive
                   return (
                     <button
                       key={obs.id}
-                      disabled={isLocked}
+                      disabled={isDisabled}
                       onClick={() => useGameStore.getState().openObservation(obs.id)}
                       className={`absolute w-3 h-3 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2
-                        ${isLocked
+                        ${isDisabled
                           ? 'bg-stone-700 cursor-not-allowed opacity-30'
                           : isObserved
                             ? 'bg-amber-500/60 shadow-[0_0_8px_rgba(217,119,6,0.4)]'
-                            : 'bg-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.3)] hover:scale-150 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] cursor-pointer'
+                            : isFocused
+                              ? 'bg-amber-300/90 shadow-[0_0_14px_rgba(251,191,36,0.5)] hover:scale-150 cursor-pointer animate-pulse'
+                              : 'bg-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.3)] hover:scale-150 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] cursor-pointer'
                         }
                       `}
                       style={{ left: `${obs.position.x}%`, top: `${obs.position.y}%` }}
-                      title={obs.name}
+                      title={`${obs.name}（消耗 ${cost} 注意力）`}
                     />
                   )
                 })}
@@ -198,15 +249,18 @@ function DaySceneView({
                 {dayScene.observations.map(obs => {
                 const isObserved = observedIds.includes(obs.id)
                 const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
+                const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+                const tooExpensive = attentionRemaining < cost
+                const isDisabled = isLocked || tooExpensive
 
                 return (
                   <button
                     key={obs.id}
-                    disabled={isLocked}
+                    disabled={isDisabled}
                     onClick={() => useGameStore.getState().openObservation(obs.id)}
                     className={`
                       w-full text-left px-4 py-3 rounded-lg border transition-all duration-300
-                      ${isLocked
+                      ${isDisabled
                         ? 'border-stone-800 text-stone-700 cursor-not-allowed opacity-40'
                         : isObserved
                           ? 'border-amber-800/50 bg-amber-900/10 text-stone-300'
@@ -216,11 +270,11 @@ function DaySceneView({
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-sm">
-                        {isObserved ? '✓' : isLocked ? '🔒' : '👁'}
+                        {isObserved ? '✓' : isLocked ? '🔒' : tooExpensive ? '·' : '👁'}
                       </span>
                       <span className="text-sm font-medium">{obs.name}</span>
-                      {!isObserved && !isLocked && (
-                        <span className="text-xs text-stone-600 ml-auto">观察</span>
+                      {!isObserved && !isDisabled && (
+                        <span className="text-xs text-stone-600 ml-auto">{cost} 注意力</span>
                       )}
                       {isObserved && (
                         <span className="text-xs text-amber-600 ml-auto">已记录</span>
@@ -233,8 +287,20 @@ function DaySceneView({
               </div>
             )}
 
+            {/* 暴露度提示 */}
+            {exposure >= 32 && (
+              <p className="text-xs text-amber-700 italic text-center mt-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                你开始在意自己观察的方式。
+              </p>
+            )}
+            {exposure >= 16 && exposure < 32 && (
+              <p className="text-xs text-stone-600 italic text-center mt-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+                你感觉有人在看你。
+              </p>
+            )}
+
             {/* 观察完毕按钮 */}
-            {observedCount >= 2 && (
+            {observedCount >= 1 && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => useGameStore.getState().finishExploring()}
@@ -251,7 +317,7 @@ function DaySceneView({
       {/* 观察成功反馈 */}
       {feedback.visible && (
         <div className="absolute top-16 right-6 z-20 scene-fade-in">
-          <div className="bg-amber-900/30 border border-amber-700/50 text-amber-300 px-4 py-2 rounded-lg text-sm shadow-lg">
+          <div className="bg-amber-900/30 border border-amber-700/50 text-amber-300 px-4 py-2 rounded-lg text-sm shadow-lg whitespace-pre-line">
             {feedback.text}
           </div>
         </div>
@@ -262,14 +328,14 @@ function DaySceneView({
 
 // ── 夜晚场景：固定叙事 + 写作阶段 ──
 function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
-  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints } = useGameStore()
+  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = useGameStore()
   const nightScene = useGameStore(s => {
     const scene = s.getCurrentScene()
     return scene?.mode === 'night' ? scene : null
   })
   const filteredLines = useMemo(() => {
     if (!nightScene) return []
-    return getVisibleLines(nightScene.lines, writingTags, imprints)
+    return getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
   }, [nightScene, writingTags, imprints])
 
   if (!nightScene) return null
@@ -330,7 +396,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
-  const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting } = useGameStore()
+  const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
   const wp = nightScene.writingPhase!
   const lastWriting = writings[writings.length - 1]
   const hasWritten = writings.length > 0 && !!lastWriting
@@ -406,6 +472,11 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
               <span className="mr-2">{selectedEntryIds.includes(entry.id) ? '■' : '□'}</span>
               <span className="font-medium">{entry.label}</span>
               <span className="text-xs text-stone-600 ml-2">· {entry.category}</span>
+              {currentFocus && entry.focusGroup === currentFocus && (
+                <span className="w-1.5 h-1.5 rounded-full inline-block ml-2" style={{
+                  backgroundColor: entry.focusGroup === 'maya' ? '#8b5cf6' : entry.focusGroup === 'ludwig' ? '#3b82f6' : '#a8a29e'
+                }} />
+              )}
             </button>
           ))}
         </div>

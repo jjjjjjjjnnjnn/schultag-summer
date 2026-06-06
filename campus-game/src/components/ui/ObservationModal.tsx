@@ -2,7 +2,7 @@ import { useTypewriter } from '../../hooks/useTypewriter'
 import { useGameStore } from '../../store/gameStore'
 
 export function ObservationModal() {
-  const { modalObservationId, closeObservation, confirmObservation } = useGameStore()
+  const { modalObservationId, closeObservation, confirmObservation, previousFocus, focusHistory } = useGameStore()
 
   if (!modalObservationId) return null
 
@@ -11,6 +11,23 @@ export function ObservationModal() {
 
   const obs = dayScene.observations.find(o => o.id === modalObservationId)
   if (!obs) return null
+
+  // 计算焦点连续 streak
+  let streak = 0
+  let lastFocus: string | null = null
+  for (const f of focusHistory) {
+    if (f === lastFocus) { streak++ } else { streak = 1; lastFocus = f }
+  }
+
+  // 观察偏见：根据 streak 显示不同深度的追加文本
+  let addon = ''
+  if (obs.focusAddendum && previousFocus === obs.focusGroup) {
+    addon = obs.focusAddendum
+  }
+  if (obs.focusAddendumDeep && previousFocus === obs.focusGroup && streak >= 2) {
+    addon = obs.focusAddendumDeep
+  }
+  const fullText = addon ? obs.observationText + '\n\n' + addon : obs.observationText
 
   return (
     <div
@@ -32,7 +49,7 @@ export function ObservationModal() {
 
         {/* 观察文本 — 打字机效果 */}
         <div className="px-6 py-4">
-          <ObservationText text={obs.observationText} />
+          <ObservationText text={fullText} />
         </div>
 
         {/* 分割线 */}

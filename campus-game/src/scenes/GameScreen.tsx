@@ -2,7 +2,13 @@ import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { SceneView } from '../components/ui/SceneView'
 import { NotebookView } from '../components/ui/NotebookView'
+import { MenuModal } from '../components/menu/MenuModal'
+import { ChapterSelect } from '../components/menu/ChapterSelect'
+import { AchievementView } from '../components/menu/AchievementView'
+import { SettingsPanel } from '../components/menu/SettingsPanel'
 import { characters } from '../data/characters'
+
+type MenuOverlay = null | 'chapters' | 'achievements' | 'settings'
 
 export function GameScreen() {
   const { saveGame, resetGame, observedIds, notebook, getCurrentScene, writingTags } = useGameStore()
@@ -10,6 +16,7 @@ export function GameScreen() {
   const mode = scene?.mode || 'day'
   const [showMenu, setShowMenu] = useState(false)
   const [showNotebook, setShowNotebook] = useState(false)
+  const [menuOverlay, setMenuOverlay] = useState<MenuOverlay>(null)
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden">
@@ -81,7 +88,7 @@ export function GameScreen() {
           onClick={() => setShowMenu(false)}
         >
           <div
-            className="bg-stone-900 border border-stone-800 rounded-lg p-8 space-y-4 min-w-[200px]"
+            className="bg-stone-900 border border-stone-800 rounded-lg p-8 space-y-3 min-w-[200px]"
             onClick={e => e.stopPropagation()}
           >
             <h2 className="text-lg text-stone-200 mb-4" style={{ fontFamily: 'var(--font-serif-cn)' }}>
@@ -94,6 +101,25 @@ export function GameScreen() {
               存档
             </button>
             <button
+              onClick={() => { setShowMenu(false); setMenuOverlay('chapters') }}
+              className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
+            >
+              章节选择
+            </button>
+            <button
+              onClick={() => { setShowMenu(false); setMenuOverlay('achievements') }}
+              className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
+            >
+              成就
+            </button>
+            <button
+              onClick={() => { setShowMenu(false); setMenuOverlay('settings') }}
+              className="block w-full text-left px-4 py-2 text-sm text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded transition-colors"
+            >
+              设置
+            </button>
+            <div className="border-t border-stone-800 my-2" />
+            <button
               onClick={() => { resetGame(); setShowMenu(false) }}
               className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-stone-800 rounded transition-colors"
             >
@@ -101,6 +127,23 @@ export function GameScreen() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* 菜单子面板 */}
+      {menuOverlay === 'chapters' && (
+        <MenuModal title="章节选择" onClose={() => setMenuOverlay(null)}>
+          <ChapterSelect onSelect={() => setMenuOverlay(null)} />
+        </MenuModal>
+      )}
+      {menuOverlay === 'achievements' && (
+        <MenuModal title="成就" onClose={() => setMenuOverlay(null)}>
+          <AchievementView />
+        </MenuModal>
+      )}
+      {menuOverlay === 'settings' && (
+        <MenuModal title="设置" onClose={() => setMenuOverlay(null)}>
+          <SettingsPanel />
+        </MenuModal>
       )}
     </div>
   )

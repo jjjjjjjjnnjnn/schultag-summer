@@ -105,3 +105,34 @@ body {
   70% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-8px); }
 }
+
+/* ── 焦点脉动动画 ── */
+@keyframes focusPulseMaya {
+  0% { box-shadow: inset 0 0 0 0 rgba(139,92,246,0); }
+  30% { box-shadow: inset 0 0 30px 2px rgba(139,92,246,0.08); }
+  100% { box-shadow: inset 0 0 0 0 rgba(139,92,246,0); }
+}
+@keyframes focusPulseLudwig {
+  0% { box-shadow: inset 0 0 0 0 rgba(59,130,246,0); }
+  30% { box-shadow: inset 0 0 30px 2px rgba(59,130,246,0.08); }
+  100% { box-shadow: inset 0 0 0 0 rgba(59,130,246,0); }
+}
+@keyframes focusPulseEnvironment {
+  0% { box-shadow: inset 0 0 0 0 rgba(168,162,158,0); }
+  30% { box-shadow: inset 0 0 30px 2px rgba(168,162,158,0.06); }
+  100% { box-shadow: inset 0 0 0 0 rgba(168,162,158,0); }
+}
+.animate-focus-pulse-maya { animation: focusPulseMaya 1.5s ease-out; }
+.animate-focus-pulse-ludwig { animation: focusPulseLudwig 1.5s ease-out; }
+.animate-focus-pulse-environment { animation: focusPulseEnvironment 1.5s ease-out; }
+
+/* ── Day→Night 过渡 ── */
+.scene-transition {
+  animation: transitionFade 2s ease-in-out forwards;
+}
+@keyframes transitionFade {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}

@@ -1,14 +1,32 @@
 import { create } from 'zustand'
-import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint } from '../types/game'
-import { scenes } from '../data/chapters'
+import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, Settings } from '../types/game'
+import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
+import { evaluateAchievements } from '../data/achievements'
 
-/** 统一的行可见性过滤：requiresTag + requiresImprint */
+/** 统一的行可见性过滤：requiresTag + requiresImprint + requiresFocusHistory + requiresObservation + requiresExposure */
 export function getVisibleLines(
   lines: StoryLine[],
   writingTags: string[],
   imprints: Record<string, CharacterImprint>,
+  focusHistory: FocusType[] = [],
+  allNotebookEntries: import('../types/game').NotebookEntry[] = [],
+  exposure: number = 0,
 ): StoryLine[] {
+  // 计算连续焦点 streak
+  const streakMap: Record<string, number> = {}
+  let streak = 0
+  let lastFocus: FocusType | null = null
+  for (const f of focusHistory) {
+    if (f === lastFocus) {
+      streak++
+    } else {
+      streak = 1
+      lastFocus = f
+    }
+    streakMap[f] = Math.max(streakMap[f] || 0, streak)
+  }
+
   return lines.filter(l => {
     if (l.requiresTag && !writingTags.includes(l.requiresTag)) return false
     if (l.requiresImprint) {
@@ -19,6 +37,16 @@ export function getVisibleLines(
         : imprint.writingCount
       if (count < l.requiresImprint.threshold) return false
     }
+    if (l.requiresFocusHistory) {
+      const s = streakMap[l.requiresFocusHistory.characterId] || 0
+      if (s < l.requiresFocusHistory.count) return false
+    }
+    if (l.requiresObservation) {
+      if (!allNotebookEntries.some(e => e.id === l.requiresObservation)) return false
+    }
+    if (l.requiresExposure !== undefined) {
+      if (exposure < l.requiresExposure) return false
+    }
     return true
   })
 }
@@ -28,11 +56,13 @@ interface GameStore extends GameState {
   startGame: () => void
   advanceLine: () => void
   goToNextScene: () => void
+  jumpToChapter: (chapterId: string) => void
   saveGame: () => void
   loadGame: () => boolean
   resetGame: () => void
 
   // ── 白天：观察系统 ──
+  selectFocus: (focus: FocusType) => void
   openObservation: (observationId: string) => void
   closeObservation: () => void
   confirmObservation: () => void
@@ -41,6 +71,12 @@ interface GameStore extends GameState {
   // ── 夜晚：写作系统 ──
   toggleEntrySelection: (entryId: string) => void
   submitWriting: () => void
+
+  // ── 成就系统 ──
+  unlockAchievement: (id: string) => void
+
+  // ── 设置系统 ──
+  updateSettings: (patch: Partial<Settings>) => void
 
   // ── 查询 ──
   getCurrentScene: () => Scene | null
@@ -51,6 +87,17 @@ interface GameStore extends GameState {
 }
 
 const SAVE_KEY = 'schultag-save-v2'
+const SETTINGS_KEY = 'schultag-settings'
+
+const defaultSettings: Settings = { textSpeed: 'normal', fontSize: 'medium' }
+
+function loadSettingsFromStorage(): Settings {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY)
+    if (raw) return { ...defaultSettings, ...JSON.parse(raw) }
+  } catch { /* corrupted */ }
+  return defaultSettings
+}
 
 const initialState: GameState = {
   currentSceneId: 'prologue-day',
@@ -61,6 +108,7 @@ const initialState: GameState = {
   feedback: { text: '', visible: false },
   selectedEntryIds: [],
   notebook: [],
+  allNotebookEntries: [],
   writings: [],
   writingTags: [],
   flags: {},
@@ -72,6 +120,16 @@ const initialState: GameState = {
   isWritingPhaseReady: false,
   writingFeedback: '',
   exposure: 0,
+  attentionRemaining: 3,
+  currentFocus: null,
+  previousFocus: null,
+  focusHistory: [],
+  focusPulseColor: null,
+  isTransitioning: false,
+  transitionText: '',
+  unlockedAchievements: [],
+  completedChapters: [],
+  settings: loadSettingsFromStorage(),
   isPlaying: false,
 }
 
@@ -86,8 +144,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ ...initialState, isPlaying: true })
   },
 
+  selectFocus: (focus: FocusType) => {
+    const scene = get().getCurrentScene()
+    const budget = scene?.mode === 'day' ? ((scene as DayScene).attentionBudget ?? 3) : 3
+    set({
+      currentFocus: focus,
+      focusHistory: [...get().focusHistory, focus],
+      attentionRemaining: budget,
+      isExploring: true,
+    })
+  },
+
   advanceLine: () => {
-    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints } = get()
+    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return
 
@@ -98,7 +167,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       // intro 播完且正在探索 → 停住（等待观察面板）
       if (isExploring) {
         const intro = dayScene.intro || []
-        const visibleIntro = getVisibleLines(intro, writingTags, imprints)
+        const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
         if (currentLineIndex >= visibleIntro.length - 1) return
         set({ currentLineIndex: currentLineIndex + 1 })
         return
@@ -145,13 +214,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   goToNextScene: () => {
-    const { currentSceneId } = get()
+    const { currentSceneId, currentFocus, completedChapters } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return
+
+    // 记录已完成的章节
+    const sceneChapterId = currentSceneId.replace(/-day|-night/, '')
+    const newCompleted = completedChapters.includes(sceneChapterId)
+      ? completedChapters
+      : [...completedChapters, sceneChapterId]
+
     const nextId = 'nextSceneId' in scene ? scene.nextSceneId : undefined
     if (!nextId) return
     const nextScene = scenes[nextId]
     const isNextDay = nextScene?.mode === 'day'
+    const nextBudget = isNextDay && nextScene.mode === 'day'
+      ? ((nextScene as DayScene).attentionBudget ?? 3)
+      : 3
     set({
       currentSceneId: nextId,
       currentLineIndex: 0,
@@ -162,7 +241,58 @@ export const useGameStore = create<GameStore>((set, get) => ({
       writings: [],
       isWritingPhaseReady: false,
       writingFeedback: '',
+      previousFocus: currentFocus,
+      currentFocus: null,
+      attentionRemaining: nextBudget,
+      focusPulseColor: null,
+      isTransitioning: false,
+      transitionText: '',
+      completedChapters: newCompleted,
     })
+
+    // 成就检查
+    const newAchievements = evaluateAchievements(get())
+    newAchievements.forEach(id => get().unlockAchievement(id))
+  },
+
+  jumpToChapter: (chapterId: string) => {
+    const chapter = CHAPTERS.find(c => c.id === chapterId)
+    if (!chapter) return
+    const nextScene = scenes[chapter.startSceneId]
+    const isDay = nextScene?.mode === 'day'
+    const budget = isDay && nextScene.mode === 'day'
+      ? ((nextScene as DayScene).attentionBudget ?? 3)
+      : 3
+    set({
+      currentSceneId: chapter.startSceneId,
+      currentLineIndex: 0,
+      isExploring: isDay,
+      observedIds: [],
+      selectedEntryIds: [],
+      notebook: [],
+      writings: [],
+      writingTags: [],
+      isWritingPhaseReady: false,
+      writingFeedback: '',
+      currentFocus: null,
+      attentionRemaining: budget,
+      focusPulseColor: null,
+      isPlaying: true,
+    })
+  },
+
+  unlockAchievement: (id: string) => {
+    const { unlockedAchievements } = get()
+    if (unlockedAchievements.includes(id)) return
+    const updated = [...unlockedAchievements, id]
+    set({ unlockedAchievements: updated })
+    localStorage.setItem('schultag-achievements', JSON.stringify(updated))
+  },
+
+  updateSettings: (patch: Partial<Settings>) => {
+    const newSettings = { ...get().settings, ...patch }
+    set({ settings: newSettings })
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(newSettings))
   },
 
   // ══════════════════════════════════════
@@ -180,7 +310,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   confirmObservation: () => {
-    const { modalObservationId, observedIds, notebook, impressions, imprints, exposure } = get()
+    const { modalObservationId, observedIds, notebook, impressions, imprints, exposure, currentFocus, attentionRemaining } = get()
     if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
@@ -188,6 +318,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const obs = scene.observations.find(o => o.id === modalObservationId)
     if (!obs) return
+
+    // 注意力消耗：同类 1 点，异类 2 点
+    const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+    if (attentionRemaining < cost) return
 
     // 推进人物印象 + 印记
     const newImpressions = { ...impressions }
@@ -218,31 +352,52 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const newEntry = entryExists ? null : {
       ...obs.notebookEntry,
       invasionLevel: obs.invasionLevel,
+      focusGroup: obs.focusGroup,
+      sceneId: get().currentSceneId,
+      timestamp: Date.now(),
+    }
+
+    // 焦点脉动：焦点匹配时触发视觉反馈
+    const isFocusMatch = currentFocus && obs.focusGroup === currentFocus
+
+    // 暴露度反馈
+    let feedbackText = `✓ ${obs.notebookEntry.label} 已记录`
+    if (newExposure >= 32) {
+      feedbackText += '\n你记录了太多关于她的东西。'
+    } else if (newExposure >= 16) {
+      feedbackText += '\n有人开始注意到你了。'
     }
 
     set({
       observedIds: [...observedIds, modalObservationId],
       notebook: newEntry ? [...notebook, newEntry] : notebook,
+      allNotebookEntries: newEntry ? [...get().allNotebookEntries, newEntry] : get().allNotebookEntries,
       impressions: newImpressions,
       imprints: newImprints,
       exposure: newExposure,
+      attentionRemaining: attentionRemaining - cost,
       modalObservationId: null,
-      feedback: { text: `✓ ${obs.notebookEntry.label} 已记录`, visible: true },
+      focusPulseColor: isFocusMatch ? currentFocus : null,
+      feedback: { text: feedbackText, visible: true },
     })
 
-    // 自动隐藏反馈 2 秒后
+    // 自动隐藏反馈 + 脉动 1.5 秒后
     setTimeout(() => {
-      set({ feedback: { text: '', visible: false } })
-    }, 2000)
+      set({ feedback: { text: '', visible: false }, focusPulseColor: null })
+    }, 1500)
+
+    // 成就检查
+    const newAchievements = evaluateAchievements(get())
+    newAchievements.forEach(id => get().unlockAchievement(id))
   },
 
   finishExploring: () => {
-    const { isExploring, writingTags, imprints } = get()
+    const { isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
     if (!isExploring) return
     const scene = get().getDayScene()
     if (!scene) return
     const intro = scene.intro || []
-    const visibleIntro = getVisibleLines(intro, writingTags, imprints)
+    const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
     set({
       isExploring: false,
       currentLineIndex: visibleIntro.length,
@@ -263,7 +418,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   submitWriting: () => {
-    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId, imprints, exposure } = get()
+    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId, imprints, exposure, currentFocus } = get()
     const scene = scenes[currentSceneId]
     if (!scene || scene.mode !== 'night') return
 
@@ -274,15 +429,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .filter(e => selectedEntryIds.includes(e.id))
       .map(e => e.label)
 
-    // 检查是否有匹配的配方
+    // 检查是否有匹配的配方（焦点专属优先）
     let composedText = nightScene.writingPhase.defaultText
     let matchedTag: string | undefined
+    // 先尝试焦点专属配方
     for (const recipe of nightScene.writingPhase.recipes) {
+      if (recipe.requiresFocus && recipe.requiresFocus !== currentFocus) continue
       const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
       if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
         composedText = recipe.composedText
         matchedTag = recipe.influenceTag
         break
+      }
+    }
+    // 若无焦点专属匹配，尝试通用配方
+    if (!matchedTag) {
+      for (const recipe of nightScene.writingPhase.recipes) {
+        if (recipe.requiresFocus) continue
+        const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
+        if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
+          composedText = recipe.composedText
+          matchedTag = recipe.influenceTag
+          break
+        }
       }
     }
 
@@ -338,6 +507,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedEntryIds: [],
       isWritingPhaseReady: false,
     })
+
+    // 成就检查
+    const newAchievements = evaluateAchievements(get())
+    newAchievements.forEach(id => get().unlockAchievement(id))
   },
 
   // ══════════════════════════════════════
@@ -359,7 +532,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   currentLine: () => {
-    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints } = get()
+    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return null
 
@@ -367,7 +540,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const dayScene = scene as DayScene
       const intro = dayScene.intro || []
       const outro = dayScene.outro || []
-      const visibleIntro = getVisibleLines(intro, writingTags, imprints)
+      const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
 
       if (isExploring || currentLineIndex < visibleIntro.length) {
         return visibleIntro[currentLineIndex] || null
@@ -387,19 +560,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   /** 返回过滤后的场景行数组（requiresTag + requiresImprint） */
   getFilteredLines: () => {
-    const { currentSceneId, writingTags, imprints } = get()
+    const { currentSceneId, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return []
 
     if (scene.mode === 'day') {
       const dayScene = scene as DayScene
       return [
-        ...getVisibleLines(dayScene.intro || [], writingTags, imprints),
-        ...getVisibleLines(dayScene.outro || [], writingTags, imprints),
+        ...getVisibleLines(dayScene.intro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure),
+        ...getVisibleLines(dayScene.outro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure),
       ]
     }
     if (scene.mode === 'night') {
-      return getVisibleLines((scene as NightScene).lines, writingTags, imprints)
+      return getVisibleLines((scene as NightScene).lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
     }
     return []
   },
@@ -420,6 +593,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         isExploring: s.isExploring,
         selectedEntryIds: s.selectedEntryIds,
         notebook: s.notebook,
+        allNotebookEntries: s.allNotebookEntries,
         writings: s.writings,
         writingTags: s.writingTags,
         flags: s.flags,
@@ -428,6 +602,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         isWritingPhaseReady: s.isWritingPhaseReady,
         writingFeedback: s.writingFeedback,
         exposure: s.exposure,
+        attentionRemaining: s.attentionRemaining,
+        currentFocus: s.currentFocus,
+        previousFocus: s.previousFocus,
+        focusHistory: s.focusHistory,
+        completedChapters: s.completedChapters,
         isPlaying: s.isPlaying,
       },
     }
@@ -440,7 +619,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
     try {
       const save = JSON.parse(raw)
       if (save.version === 2) {
-        set({ ...initialState, ...save.state, isPlaying: true })
+        // 兼容旧存档：缺失字段用默认值
+        const savedAchievements = localStorage.getItem('schultag-achievements')
+        set({
+          ...initialState,
+          ...save.state,
+          unlockedAchievements: savedAchievements ? JSON.parse(savedAchievements) : (save.state.unlockedAchievements || []),
+          completedChapters: save.state.completedChapters || [],
+          allNotebookEntries: save.state.allNotebookEntries || [],
+          settings: loadSettingsFromStorage(),
+          isPlaying: true,
+        })
         return true
       }
     } catch { /* corrupted */ }

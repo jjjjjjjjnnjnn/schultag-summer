@@ -1,3 +1,12 @@
+// ── 焦点类型 ──
+export type FocusType = 'maya' | 'ludwig' | 'environment'
+
+// ── 游戏设置 ──
+export interface Settings {
+  textSpeed: 'slow' | 'normal' | 'fast'
+  fontSize: 'small' | 'medium' | 'large'
+}
+
 // ── 观察点：白天场景中玩家可以自由点击观察的对象 ──
 export interface ObservationPoint {
   id: string
@@ -15,6 +24,12 @@ export interface ObservationPoint {
   invasionLevel?: number
   /** 热点位置（百分比坐标，用于空间化场景） */
   position?: { x: number; y: number }
+  /** 焦点分类：此观察点属于哪个焦点 */
+  focusGroup: FocusType
+  /** 若存在，仅当上一章焦点匹配时显示此追加文本 */
+  focusAddendum?: string
+  /** 若存在，焦点叠加 2+ 章时显示此深度偏见文本 */
+  focusAddendumDeep?: string
 }
 
 // ── 笔记本素材条目 ──
@@ -28,6 +43,12 @@ export interface NotebookEntry {
   category: 'visual' | 'dialogue' | 'thought' | 'sound' | 'smell' | 'action'
   /** 侵入度：0=环境 1=对话 2=行为 3=习惯 5=内心推测 */
   invasionLevel?: number
+  /** 焦点分类（由观察点传入） */
+  focusGroup?: FocusType
+  /** 来源场景 ID */
+  sceneId?: string
+  /** 时间戳（排序用） */
+  timestamp?: number
 }
 
 // ── 场景叙事行（固定推进的剧情线） ──
@@ -45,6 +66,15 @@ export interface StoryLine {
   }
   /** 打字机速度：'slow'=55ms 'normal'=35ms 'fast'=25ms 或直接指定数字 */
   speed?: 'slow' | 'normal' | 'fast' | number
+  /** 若存在，仅当焦点历史连续达到阈值时才渲染 */
+  requiresFocusHistory?: {
+    characterId: string
+    count: number
+  }
+  /** 若存在，仅当玩家观察过此笔记本条目时才渲染 */
+  requiresObservation?: string
+  /** 若存在，仅当暴露度 >= 此阈值时才渲染 */
+  requiresExposure?: number
 }
 
 // ── 写作配方：玩家从笔记本选择素材后自动组合成文 ──
@@ -55,6 +85,20 @@ export interface WritingRecipe {
   composedText: string
   /** 若存在，写入此标签，影响后续场景叙事 */
   influenceTag?: string
+  /** 若存在，仅当玩家焦点匹配时才匹配此配方 */
+  requiresFocus?: FocusType
+}
+
+// ── 场景骨架元素 ──
+export interface SceneLayoutElement {
+  className?: string
+  style: React.CSSProperties
+  label?: string
+}
+
+// ── 场景骨架布局 ──
+export interface SceneLayout {
+  elements: SceneLayoutElement[]
 }
 
 // ── 白天场景 ──
@@ -73,6 +117,10 @@ export interface DayScene {
   outro?: StoryLine[]
   /** 观察结束/进入夜晚后的下一场景 */
   nextSceneId: string
+  /** 场景骨架：空间布局参考线和固定元素 */
+  sceneLayout?: SceneLayout
+  /** 每日注意力预算（默认 3） */
+  attentionBudget?: number
 }
 
 // ── 夜晚场景 ──
@@ -130,8 +178,10 @@ export interface GameState {
   feedback: { text: string; visible: boolean }
   /** 夜晚场景：已选中的笔记本素材 ID */
   selectedEntryIds: string[]
-  /** 笔记本中所有素材 */
+  /** 笔记本中所有素材（当前章，用于写作选择） */
   notebook: NotebookEntry[]
+  /** 永久笔记本（全部历史素材，用于笔记本展示） */
+  allNotebookEntries: NotebookEntry[]
   /** 已写成的文字 */
   writings: string[]
   /** 写作产生的标签（影响后续场景叙事） */
@@ -148,5 +198,24 @@ export interface GameState {
   writingFeedback: string
   /** 暴露度：被看见的程度 (0-100) */
   exposure: number
+  /** 当前注意力剩余 */
+  attentionRemaining: number
+  /** 当天选择的焦点 */
+  currentFocus: FocusType | null
+  /** 上一章的焦点（影响观察文本） */
+  previousFocus: FocusType | null
+  /** 焦点历史（跨章保留） */
+  focusHistory: FocusType[]
+  /** 焦点脉动颜色（观察确认时触发） */
+  focusPulseColor: FocusType | null
+  /** Day→Night 过渡状态 */
+  isTransitioning: boolean
+  transitionText: string
+  /** 已解锁的成就 ID 列表 */
+  unlockedAchievements: string[]
+  /** 已完成的章节 ID 列表 */
+  completedChapters: string[]
+  /** 游戏设置 */
+  settings: Settings
   isPlaying: boolean
 }
