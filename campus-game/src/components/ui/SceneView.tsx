@@ -174,14 +174,14 @@ function DaySceneView({
 
         {/* 焦点选择：intro 播完后、观察前 */}
         {isExploring && introDone && !currentFocus && (
-          <FocusSelector onSelect={selectFocus} />
+          <FocusSelector onSelect={selectFocus} budget={dayScene.attentionBudget ?? 3} />
         )}
 
         {/* 观察面板：intro 播完且选了焦点后显示 */}
         {isExploring && introDone && currentFocus && (
           <div className="max-w-2xl mx-auto mt-8 scene-fade-in">
             <div className="text-center mb-8">
-              <p className="text-amber-500/80 text-sm mb-2">观察模式</p>
+              <p className="text-amber-500/80 text-sm mb-2">你看到了什么？</p>
               {/* 注意力指示器 */}
               <div className="flex items-center justify-center gap-1.5 mb-2">
                 {Array.from({ length: dayScene.attentionBudget ?? 3 }).map((_, i) => (
@@ -221,7 +221,7 @@ function DaySceneView({
                       key={obs.id}
                       disabled={isDisabled}
                       onClick={() => useGameStore.getState().openObservation(obs.id)}
-                      className={`absolute w-3 h-3 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2
+                      className={`absolute w-5 h-5 rounded-full transition-all duration-300 -translate-x-1/2 -translate-y-1/2
                         ${isDisabled
                           ? 'bg-stone-700 cursor-not-allowed opacity-30'
                           : isObserved
@@ -438,6 +438,12 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
           <div className="text-center mt-8">
             <p className="text-xs text-stone-600">Demo 结束</p>
             <p className="text-xs text-stone-700 mt-1">感谢试玩</p>
+            <button
+              onClick={() => useGameStore.getState().resetGame()}
+              className="mt-4 px-4 py-2 border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-all text-xs rounded"
+            >
+              返回标题
+            </button>
           </div>
         )}
       </div>

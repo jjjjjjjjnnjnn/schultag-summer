@@ -541,18 +541,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const intro = dayScene.intro || []
       const outro = dayScene.outro || []
       const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+      const visibleOutro = getVisibleLines(outro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
 
       if (isExploring || currentLineIndex < visibleIntro.length) {
         return visibleIntro[currentLineIndex] || null
       }
 
       const outroIndex = currentLineIndex - visibleIntro.length
-      return outro[outroIndex] || null
+      return visibleOutro[outroIndex] || null
     }
 
     if (scene.mode === 'night') {
       const nightScene = scene as NightScene
-      return nightScene.lines[currentLineIndex] || null
+      const filteredLines = getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+      return filteredLines[currentLineIndex] || null
     }
 
     return null

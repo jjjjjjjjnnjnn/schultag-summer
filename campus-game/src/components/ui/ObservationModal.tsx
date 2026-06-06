@@ -41,9 +41,6 @@ export function ObservationModal() {
       >
         {/* 头部 */}
         <div className="px-6 pt-6 pb-2 flex items-center gap-3">
-          <span className="text-amber-600 text-lg">👁</span>
-          <span className="text-xs text-stone-500 uppercase tracking-wider">观察</span>
-          <span className="text-xs text-stone-600">·</span>
           <span className="text-sm text-stone-300 font-semibold">{obs.name}</span>
         </div>
 
@@ -63,14 +60,17 @@ export function ObservationModal() {
             onClick={closeObservation}
             className="text-xs text-stone-500 hover:text-stone-300 transition-colors"
           >
-            暂时放过
+            关闭
           </button>
-          <button
-            onClick={confirmObservation}
-            className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 text-amber-400 hover:bg-amber-900/50 transition-all text-sm rounded"
-          >
-            加入笔记本
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] text-stone-600">成为写作素材</span>
+            <button
+              onClick={confirmObservation}
+              className="px-4 py-2 bg-amber-900/30 border border-amber-700/50 text-amber-400 hover:bg-amber-900/50 transition-all text-sm rounded"
+            >
+              加入笔记本
+            </button>
+          </div>
         </div>
       </div>
     </div>

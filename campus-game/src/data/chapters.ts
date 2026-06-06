@@ -132,7 +132,7 @@ const prologueNight: NightScene = {
     recipes: [
       {
         requiredEntries: ['note-light-01', 'note-ludwig-tease-01'],
-        composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。走过那道光的时候，有一瞬间整个人都是亮的，然后暗下去，继续走。\n\n"中二病晚期。现实里的reclusive，内心世界里的护国公。"\n\n被照亮的那一瞬间，好像什么都暴露了。\n\n——\n\n我把它写下来了。关于光，关于他怎么形容我。\n\n这些句子放进文档里的时候，好像变成了某种证据。证明今天真的发生了这些事。',
+        composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。走过那道光的时候，有一瞬间整个人都是亮的，然后暗下去，继续走。\n\n"中二病晚期。现实里的reclusive，内心世界里的护国公。"\n\n被照亮的那一瞬间，好像什么都暴露了。\n\n——\n\n我把它写下来了。关于光，关于王嘉亿怎么形容我。\n\n这些句子放进文档里的时候，好像变成了某种证据。证明今天真的发生了这些事。',
         influenceTag: 'wrote-ludwig',
       },
       {
@@ -373,6 +373,7 @@ const ch02Day: DayScene = {
   mode: 'day',
   location: '自习室 → 户外乒乓球台',
   timeOfDay: '暑假傍晚',
+  titleCard: { day: '暑假', time: '傍晚' },
   intro: [
     { type: 'narration', text: '作业写了一下午，写不动了。' },
     { type: 'narration', text: '我把笔往桌上一搁，食指上那道被笔压出来的红印子还在。窗外远处操场边，几个绿色乒乓球台在太阳底下晒着。' },
@@ -542,7 +543,7 @@ const ch02Night: NightScene = {
     recipes: [
       {
         requiredEntries: ['note-ch02-maya-bush-01', 'note-ch02-maya-lip-01'],
-        composedText: '她找球的时候钻进灌木丛，袖口沾了几片碎叶子。\n\n她发球前会抿一下嘴。很轻，很快。\n\n我不知道自己为什么会记住这种细节。\n\n——\n\n我把它写下来了。关于她不怕脏，关于她抿嘴。\n\n这些句子放进文档里的时候，好像变成了某种证据。',
+        composedText: '她找球的时候钻进灌木丛，袖口沾了几片碎叶子。\n\n她发球前会抿一下嘴。很轻，很快。\n\n我不知道自己为什么会记住这种细节。\n\n——\n\n我把它写下来了。关于兰若瑶不怕脏，关于她抿嘴。\n\n这些句子放进文档里的时候，好像变成了某种证据。',
         influenceTag: 'wrote-maya-pingpong',
       },
       {
@@ -574,6 +575,7 @@ const ch03Day: DayScene = {
   mode: 'day',
   location: '食堂',
   timeOfDay: '中午',
+  titleCard: { day: '周四', time: '12:15' },
   intro: [
     { type: 'narration', text: '中午，食堂。我们坐在靠窗的位置。' },
     { type: 'narration', text: '兰若瑶坐在对面，低头吃饭。' },
@@ -752,6 +754,7 @@ const ch04Day: DayScene = {
   mode: 'day',
   location: '食堂二楼',
   timeOfDay: '周六下午',
+  titleCard: { day: '周六', time: '16:20' },
   intro: [
     { type: 'narration', text: '兰若瑶说想看纪录片。' },
     { type: 'narration', text: '约了周六下午四点。结果五点二十才出门。' },

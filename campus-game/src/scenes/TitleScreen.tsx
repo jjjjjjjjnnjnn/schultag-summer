@@ -53,7 +53,7 @@ export function TitleScreen() {
         <div className="space-y-3">
           <button
             onClick={startGame}
-            className="block w-48 mx-auto px-6 py-3 border border-stone-700 hover:border-amber-700 hover:text-amber-400 transition-all duration-300 text-sm tracking-wider"
+            className="block w-48 mx-auto px-6 py-3 border border-amber-700 bg-amber-900/20 text-amber-300 hover:bg-amber-900/40 hover:text-amber-200 transition-all duration-300 text-sm tracking-wider rounded"
           >
             开始游戏
           </button>
@@ -61,7 +61,7 @@ export function TitleScreen() {
           {hasSave && (
             <button
               onClick={() => loadGame()}
-              className="block w-48 mx-auto px-6 py-3 text-stone-500 hover:text-stone-300 transition-colors text-sm"
+              className="block w-48 mx-auto px-6 py-3 border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-all text-sm rounded"
             >
               继续上次
             </button>
