@@ -437,7 +437,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
-  const { selectedEntryIds, notebook, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
+  const { selectedEntryIds, allNotebookEntries, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
   const t = useTranslation()
   const { c, co } = useContent()
   const wp = nightScene.writingPhase!
@@ -472,7 +472,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
           <div className="text-center mt-8">
             <button
               onClick={() => useGameStore.getState().goToNextScene()}
-              className="px-6 py-2.5 border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-stone-100 transition-all text-sm rounded"
+              className="px-6 py-2.5 border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-stone-100 transition-all text-sm rounded btn-press"
             >
               {t('write.nextDay')}
             </button>
@@ -484,7 +484,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
             <p className="text-xs text-stone-700 mt-1">{t('write.thanks')}</p>
             <button
               onClick={() => useGameStore.getState().resetGame()}
-              className="mt-4 px-4 py-2 border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-all text-xs rounded"
+              className="mt-4 px-4 py-2 border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-all text-xs rounded btn-press"
             >
               {t('write.returnTitle')}
             </button>
@@ -507,7 +507,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
           {t('write.materials')}
         </h3>
         <div className="space-y-1.5">
-          {notebook.map(entry => (
+          {allNotebookEntries.map(entry => (
             <button
               key={entry.id}
               onClick={() => toggleEntrySelection(entry.id)}

@@ -433,7 +433,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   submitWriting: () => {
-    const { selectedEntryIds, notebook, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings } = get()
+    const { selectedEntryIds, allNotebookEntries, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings } = get()
     const scene = scenes[currentSceneId]
     if (!scene || scene.mode !== 'night') return
 
@@ -442,7 +442,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const lang = settings.language
 
-    const selectedLabels = notebook
+    const selectedLabels = allNotebookEntries
       .filter(e => selectedEntryIds.includes(e.id))
       .map(e => e.cid ? getC(lang, e.cid + '.label', e.label) : e.label)
 
@@ -514,8 +514,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       : writingTags
 
     // 暴露度：基于所选素材的侵入度增加
-    const selectedEntries = notebook.filter(e => selectedEntryIds.includes(e.id))
-    const invasionGain = selectedEntries.reduce((sum, e) => sum + (e.invasionLevel || 0), 0)
+    const selectedEntries = allNotebookEntries.filter(e => selectedEntryIds.includes(e.id))
+    const invasionGain = selectedEntries.reduce((sum: number, e: { invasionLevel?: number }) => sum + (e.invasionLevel || 0), 0)
     const newExposure = Math.min(exposure + invasionGain, 100)
 
     set({
