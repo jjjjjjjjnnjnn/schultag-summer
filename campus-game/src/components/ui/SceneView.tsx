@@ -403,7 +403,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
   if (!nightScene) return null
 
   const showWritingPhase = isWritingPhaseReady && !!nightScene.writingPhase
-  const isEnding = safeLineIndex >= displayLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
+  const isEnding = currentLineIndex >= displayLines.length && !nightScene.writingPhase && !nightScene.nextSceneId
 
   // 卷一结尾：显示"第一卷 完"
   if (isEnding) {
@@ -432,8 +432,8 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
             </div>
           )}
 
-          {/* 固定叙事 */}
-          {displayLines.map((l, i) => {
+          {/* 固定叙事 — 终章时不渲染 */}
+          {!isEnding && displayLines.map((l, i) => {
             if (i > safeLineIndex && !showWritingPhase) return null
             return i === safeLineIndex && !showWritingPhase ? (
               <div key={i} className="scene-fade-in">
