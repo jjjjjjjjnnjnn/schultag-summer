@@ -332,6 +332,8 @@ export interface GameState {
   perceptions: Perception[]
   /** V1.2: 认知快照历史（每个章节结束时保存） */
   perceptionHistory: PerceptionSnapshot[]
+  /** 观察确认代数（用于防止 setTimeout 跨场景覆盖） */
+  observationGeneration: number
 }
 
 // ── 存档数据结构 ──

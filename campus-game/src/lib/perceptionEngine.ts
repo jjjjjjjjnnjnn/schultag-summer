@@ -11,7 +11,7 @@ export function evaluatePerceptions(state: GameState): Perception[] {
     ? [...state.perceptionHistory[state.perceptionHistory.length - 1].perceptions]
     : [...INITIAL_PERCEPTIONS]
 
-  const perceptions = [...basePerceptions]
+  const perceptions = basePerceptions.map(p => ({ ...p, tags: [...p.tags] }))
   const { writingTags, activatedConsequences, imprints } = state
 
   for (const trigger of PERCEPTION_TRIGGERS) {

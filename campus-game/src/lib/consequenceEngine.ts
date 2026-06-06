@@ -91,14 +91,17 @@ export function distributeEffects(effects: BehaviorEffect[]): Record<string, Beh
   const states: Record<string, BehaviorEffect[]> = {}
 
   for (const effect of effects) {
-    // 从 affectedObservations 推断角色 ID
-    // 观察点 ID 格式：obs-{角色}-{描述}
-    const parts = effect.affectedObservations[0]?.split('-')
-    if (parts && parts.length >= 2) {
-      const characterId = parts[1]
-      if (!states[characterId]) states[characterId] = []
-      states[characterId].push(effect)
+    // 从 triggerTag 推断角色 ID
+    // triggerTag 格式：wrote-{角色名}-{描述}
+    const tagParts = effect.triggerTag.split('-')
+    let characterId = 'unknown'
+
+    if (tagParts.length >= 2) {
+      characterId = tagParts[1] // wrote-maya-class → maya
     }
+
+    if (!states[characterId]) states[characterId] = []
+    states[characterId].push(effect)
   }
 
   return states

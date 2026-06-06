@@ -152,6 +152,7 @@ const initialState: GameState = {
   activatedConsequences: [],
   perceptions: [],
   perceptionHistory: [],
+  observationGeneration: 0,
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -346,6 +347,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   confirmObservation: () => {
     const { modalObservationId, observedIds, allNotebookEntries, impressions, imprints, exposure, currentFocus, attentionRemaining, settings } = get()
+    const observationGeneration = get().observationGeneration || 0
     if (!modalObservationId || observedIds.includes(modalObservationId)) return
 
     const scene = get().getDayScene()
@@ -417,11 +419,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
       modalObservationId: null,
       focusPulseColor: isFocusMatch ? currentFocus : null,
       feedback: { text: feedbackText, visible: true },
+      observationGeneration: observationGeneration + 1,
     })
 
-    // 自动隐藏反馈 + 脉动 1.5 秒后
+    // 自动隐藏反馈 + 脉动 1.5 秒后（仅在同一观察确认周期内才清除）
+    const currentGen = observationGeneration + 1
     setTimeout(() => {
-      set({ feedback: { text: '', visible: false }, focusPulseColor: null })
+      if (get().observationGeneration === currentGen) {
+        set({ feedback: { text: '', visible: false }, focusPulseColor: null })
+      }
     }, 1500)
 
     // 成就检查
@@ -551,8 +557,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       isWritingPhaseReady: false,
     })
 
-    // V1.1: 评估后果
-    const newEffects = evaluateConsequences(get())
+    // V1.1: 评估后果 — 使用计算出的新状态而非 get() 以避免读取过期状态
+    const newWritingTags = matchedTag && !writingTags.includes(matchedTag)
+      ? [...writingTags, matchedTag]
+      : writingTags
+    const stateForConsequences = {
+      ...get(),
+      writingTags: newWritingTags,
+      writings: [...writings, composedText],
+    }
+    const newEffects = evaluateConsequences(stateForConsequences)
     if (newEffects.length > 0) {
       const distributed = distributeEffects(newEffects)
       const currentStates = get().behaviorStates
