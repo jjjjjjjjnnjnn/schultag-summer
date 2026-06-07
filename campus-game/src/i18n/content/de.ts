@@ -596,6 +596,57 @@ const de: Record<string, string> = {
   'evidence.ev-deviation': 'Die Kluft zwischen Dokument und Realität wächst. Robert kann nicht mehr unterscheiden, was er geschrieben hat und was das Dokument selbst geschrieben hat.',
   'evidence.ev-mirror': 'Mayas Reaktionen fühlen sich nicht mehr an wie die einer Person, über die geschrieben wird. Sie beginnt, Roberts Handlungen vorherzusagen. Wie eine Figur, die gegen ihren Autor kämpft. Oder—vielleicht ist der Autor nicht Robert.',
   'evidence.ev-dual-writers': 'Fazit: Dieses Dokument hatte von Anfang an zwei Autoren. Robert schreibt Maya. Maya schreibt Robert. Sie schreiben beide in diesem selben Dokument. Jede Zeile ist eine Fortsetzung der Geschichte des anderen. Keiner von ihnen weiß es.',
+
+  // ═══════════════════════════════════════
+  // SCHREIBPERSPEKTIVEN-MODIFIKATOREN
+  // ═══════════════════════════════════════
+  // prologue-night recipe 0
+  'prologue.night.wp.recipe.0.perspective.objective': 'Ich habe diese Dinge bemerkt und aufgeschrieben.',
+  'prologue.night.wp.recipe.0.perspective.literary': 'Es fühlte sich an, als hätte jemand eine Ecke von etwas Langverborgenen aufgeklappt.',
+  'prologue.night.wp.recipe.0.perspective.analytical': 'Offengelegt zu werden stört mich mehr als das, was offengelegt wurde.',
+  'prologue.night.wp.recipe.0.perspective.projection': 'Vielleicht fürchte ich mich nicht davor, gesehen zu werden. Ich fürchte mich davor, dass niemand hinschaut.',
+
+  // prologue-night recipe 1
+  'prologue.night.wp.recipe.1.perspective.objective': 'Ich schrieb das Licht und die Wörter auf.',
+  'prologue.night.wp.recipe.1.perspective.literary': 'Wie ein kleiner Haufen sonnengetrockneter Blätter, ausgebreitet in der Sonne.',
+  'prologue.night.wp.recipe.1.perspective.analytical': 'Laut sagen und aufschreiben haben unterschiedliches Gewicht.',
+  'prologue.night.wp.recipe.1.perspective.projection': 'Manchmal denke ich, gesehen zu werden ist nicht so schlimm.',
+
+  // prologue-night recipe 2
+  'prologue.night.wp.recipe.2.perspective.objective': 'Er lebt in seinem Gruppenchat. Ich lebe in meinem Dokument.',
+  'prologue.night.wp.recipe.2.perspective.literary': 'Wir gehen nebeneinander her, aber nicht in derselben Welt.',
+  'prologue.night.wp.recipe.2.perspective.analytical': 'Gleicher Moment, völlig unterschiedliche Daseinsformen.',
+  'prologue.night.wp.recipe.2.perspective.projection': 'Vielleicht schreibt er auch etwas. Er hat es mir nur nicht erzählt.',
+
+  // ch01-night recipe 0
+  'ch01.night.wp.recipe.0.perspective.objective': '"Soll ich die Satzstruktur zitieren?" — Sie fragte. Professionell.',
+  'ch01.night.wp.recipe.0.perspective.literary': 'Ihre Existenz war wie ein schon geschriebener Satz.',
+  'ch01.night.wp.recipe.0.perspective.analytical': 'Sie ist nicht nur wegen Glücks hier.',
+  'ch01.night.wp.recipe.0.perspective.projection': 'Mit fünfzehn wusste ich nicht, was Zitationen sind.',
+
+  // ch01-night recipe 2
+  'ch01.night.wp.recipe.2.perspective.objective': 'Er legte das Blatt zwischen sich und sie. Natürlich.',
+  'ch01.night.wp.recipe.2.perspective.literary': 'Als würde er sagen — hier ist auch ein Stück für dich.',
+  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwigs Freundlichkeit braucht kein Nachdenken.',
+  'ch01.night.wp.recipe.2.perspective.projection': 'Das könnte ich nie. Ich würde zuerst nachdenken.',
+
+  // Improvisationsschreibvorlagen
+  'improv.maya': 'Heute habe ich versucht, {labels} aufzuschreiben.\n\nDiese Details drehten sich immer wieder in meinem Kopf.',
+  'improv.ludwig': '{labels} — diese Bilder stapelten sich wie Schnappschüsse vor meinen Augen.',
+  'improv.environment': '{labels}\n\nDiese Beobachtungen sind wie Luft — formlos, aber zweifellos vorhanden.',
+
+  // Echo-Vorschauen
+  'echo.wrote-ludwig': 'Du hast über Ludwig geschrieben.\n\nEr hat sich umgedreht. Als hätte er etwas gespürt.',
+  'echo.wrote-novel': 'Du hast über den Roman geschrieben.\n\nDie Wortanzahl in der Ecke des Dokuments flackerte.',
+  'echo.wrote-phone': 'Du hast über das Handy geschrieben.\n\nEine Benachrichtigung hallte den Flur hinunter.',
+  'echo.wrote-maya-class': 'Du hast über den Unterricht geschrieben.\n\nEtwas blitzte draußen am Fenster auf.',
+  'echo.wrote-maya-pingpong': 'Du hast über Tischtennis geschrieben.\n\nDer Ball hüpfte einmal auf dem Tisch. Niemand fing ihn.',
+  'echo.deep-maya-pingpong': 'Du hast über Maya geschrieben.\n\nEin leises Husten aus dem Nebenraum. Wie eine Antwort.',
+  'echo.observed-maya-inner': 'Du hast über Mayas inneres geschrieben.\n\nDas Dokument flackerte kurz.',
+  'echo.deep-talk-ludwig': 'Du hast über Ludwig geschrieben.\n\nSein Handy leuchtete auf, dann wurde es dunkel.',
+  'echo.wrote-maya-voice': 'Du hast über Mayas Stimme geschrieben.\n\nEtwas im Raum vibrierte sanft.',
+  'echo.wrote-maya-detail': 'Du hast über Mayas Details geschrieben.\n\nDie Details ordneten sich im Dokument neu an.',
+  'echo.default': 'Deine Wörter wurden gespeichert.\n\nDas Dokument fühlt sich jetzt ein wenig schwerer an.',
 }
 
 export default de

@@ -598,6 +598,56 @@ const en: Record<string, string> = {
   'evidence.ev-deviation': 'The gap between the document and reality is growing. Robert can no longer tell what he wrote and what the document wrote itself.',
   'evidence.ev-mirror': 'Maya\'s reactions no longer feel like those of someone being written about. She starts predicting Robert\'s actions. Like a character fighting her author. Or—perhaps the author is not Robert.',
   'evidence.ev-dual-writers': 'Conclusion: This document has had two authors from the very start. Robert writes Maya. Maya writes Robert. They are both writing in this same document. Every line is a continuation of the other\'s story. Neither of them knows.',
+  // ═══════════════════════════════════════
+  // WRITING PERSPECTIVE MODIFIERS
+  // ═══════════════════════════════════════
+  // prologue-night recipe 0
+  'prologue.night.wp.recipe.0.perspective.objective': 'I noticed these things and wrote them down.',
+  'prologue.night.wp.recipe.0.perspective.literary': 'It felt like someone peeled back a corner of something long hidden.',
+  'prologue.night.wp.recipe.0.perspective.analytical': 'Being exposed bothers me more than what was exposed.',
+  'prologue.night.wp.recipe.0.perspective.projection': 'Maybe I am not afraid of being seen. I am afraid no one is looking.',
+
+  // prologue-night recipe 1
+  'prologue.night.wp.recipe.1.perspective.objective': 'I wrote down the light and the words.',
+  'prologue.night.wp.recipe.1.perspective.literary': 'Like a small pile of sun-dried leaves turned out in the open.',
+  'prologue.night.wp.recipe.1.perspective.analytical': 'Saying it out loud and writing it down carry different weight.',
+  'prologue.night.wp.recipe.1.perspective.projection': 'Sometimes I think being seen is not so bad.',
+
+  // prologue-night recipe 2
+  'prologue.night.wp.recipe.2.perspective.objective': 'He lives in his group chat. I live in my document.',
+  'prologue.night.wp.recipe.2.perspective.literary': 'We walk side by side, but not in the same world.',
+  'prologue.night.wp.recipe.2.perspective.analytical': 'Same moment in time, completely different modes of existence.',
+  'prologue.night.wp.recipe.2.perspective.projection': 'Maybe he is writing something too. He just has not told me.',
+
+  // ch01-night recipe 0
+  'ch01.night.wp.recipe.0.perspective.objective': '"Should I cite the sentence structure?" — She asked. Professional.',
+  'ch01.night.wp.recipe.0.perspective.literary': 'Her presence was like a sentence already written.',
+  'ch01.night.wp.recipe.0.perspective.analytical': 'She did not get into this school by luck alone.',
+  'ch01.night.wp.recipe.0.perspective.projection': 'At fifteen, I had no idea what citations were.',
+
+  // ch01-night recipe 2
+  'ch01.night.wp.recipe.2.perspective.objective': 'He placed the paper between them. Natural.',
+  'ch01.night.wp.recipe.2.perspective.literary': 'As if saying — there is a share for you here.',
+  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwig\'s kindness requires no thought.',
+  'ch01.night.wp.recipe.2.perspective.projection': 'I could never do that. I would think first.',
+
+  // Improvised writing templates
+  'improv.maya': 'Tonight I tried writing down {labels}.\n\nThese details kept circling in my mind.',
+  'improv.ludwig': '{labels} — these images stacked up like snapshots in front of my eyes.',
+  'improv.environment': '{labels}\n\nThese observations are like air — shapeless, but undeniably present.',
+
+  // Echo previews
+  'echo.wrote-ludwig': 'You wrote about Ludwig.\n\nHe turned over. As if he felt something.',
+  'echo.wrote-novel': 'You wrote about the novel.\n\nThe word count in the corner of the document flickered.',
+  'echo.wrote-phone': 'You wrote about the phone.\n\nA notification sound echoed down the hallway.',
+  'echo.wrote-maya-class': 'You wrote about the classroom.\n\nSomething flashed outside the window.',
+  'echo.wrote-maya-pingpong': 'You wrote about table tennis.\n\nThe ball bounced once on the table. Nobody caught it.',
+  'echo.deep-maya-pingpong': 'You wrote about Maya.\n\nA faint cough from the next room. Like a response.',
+  'echo.observed-maya-inner': 'You wrote about Maya\'s inner world.\n\nThe document flickered briefly.',
+  'echo.deep-talk-ludwig': 'You wrote about Ludwig.\n\nHis phone lit up, then went dark.',
+  'echo.wrote-maya-voice': 'You wrote about Maya\'s voice.\n\nSomething in the room vibrated softly.',
+  'echo.wrote-maya-detail': 'You wrote about Maya\'s details.\n\nThe details rearranged themselves in the document.',
+  'echo.default': 'Your words have been saved.\n\nThe document feels a little heavier now.',
 }
 
 export default en
