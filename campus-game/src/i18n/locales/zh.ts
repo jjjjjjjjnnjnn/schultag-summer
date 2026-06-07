@@ -175,6 +175,11 @@ const zh: Record<string, string> = {
   'quest.chapterGoal': '章节目标',
   'quest.dailyObjectives': '今日目标',
   'quest.noObjectives': '当前场景没有活跃目标。',
+
+  // V1.6 回响 + 记忆
+  'write.echoPreview': '回响',
+  'memory.unlocked': '记忆解锁',
+  'memory.confirm': '收到',
 }
 
 export default zh

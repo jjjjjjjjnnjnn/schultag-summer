@@ -353,6 +353,13 @@ export interface GameState {
   unlockedChapterRewards: string[]
   /** V1.4: 已发现的证据列表 */
   evidence: Evidence[]
+
+  /** V1.6: 上次写作后的回响预告文本 */
+  lastEchoPreview: string
+  /** V1.6: 灵感值（0-100，写作积累，满时解锁隐藏记忆） */
+  inspiration: number
+  /** V1.6: 已解锁的隐藏记忆 ID 列表 */
+  unlockedMemories: string[]
 }
 
 // ── V1.4 证据系统 ──

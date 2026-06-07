@@ -169,6 +169,11 @@ const en: Record<string, string> = {
   'quest.chapterGoal': 'Chapter Goal',
   'quest.dailyObjectives': 'Daily Objectives',
   'quest.noObjectives': 'No active objectives for this scene.',
+
+  // V1.6 Echo + Memory
+  'write.echoPreview': 'Echo',
+  'memory.unlocked': 'Memory Unlocked',
+  'memory.confirm': 'Acknowledge',
 }
 
 export default en

@@ -4,6 +4,7 @@ import { getVisibleLines } from '../../store/selectors'
 import { useTranslation, useContent } from '../../i18n'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'
+import { MemoryModal } from './MemoryModal'
 import { FocusSelector } from './FocusSelector'
 import { audio } from '../../lib/audio'
 import type { NightScene, SceneLayout } from '../../types/game'
@@ -110,6 +111,9 @@ export function SceneView() {
 
       {/* 观察弹窗 */}
       <ObservationModal />
+
+      {/* 记忆解锁弹窗 */}
+      <MemoryModal />
 
       {/* 场景信息栏（标题卡期间隐藏） */}
       {!showTitleCard && (
@@ -472,7 +476,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
-  const { selectedEntryIds, allNotebookEntries, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus, selectedPerspective, togglePerspective } = useGameStore()
+  const { selectedEntryIds, allNotebookEntries, writings, writingFeedback, lastEchoPreview, toggleEntrySelection, submitWriting, currentFocus, selectedPerspective, togglePerspective } = useGameStore()
   const t = useTranslation()
   const { c, co } = useContent()
   const wp = nightScene.writingPhase!
@@ -503,6 +507,18 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
             <p className="text-sm text-stone-400 italic leading-relaxed"
                style={{ fontFamily: 'var(--font-serif-cn)' }}>
               {writingFeedback}
+            </p>
+          </div>
+        )}
+
+        {/* V1.6: 回响预告 */}
+        {lastEchoPreview && (
+          <div className="mt-4 px-4 py-3 border-l-2 border-amber-800/50 bg-amber-900/10 scene-fade-in">
+            <p className="text-xs text-amber-600/70 mb-1" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+              {c('write.echoPreview', '回响')}
+            </p>
+            <p className="text-sm text-amber-300/80 italic leading-relaxed" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+              {lastEchoPreview}
             </p>
           </div>
         )}

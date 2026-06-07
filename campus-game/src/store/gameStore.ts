@@ -6,6 +6,7 @@ import { evaluateAchievements } from '../data/achievements'
 import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
 import { evaluatePerceptions } from '../lib/perceptionEngine'
 import { evaluateEvidence } from '../lib/evidenceEngine'
+import { HIDDEN_MEMORIES } from '../data/memories'
 import { DAILY_OBJECTIVES, CHAPTER_GOALS, MAIN_QUESTS } from '../data/quests'
 import { evaluateDailyObjectives, evaluateChapterGoal } from '../lib/questLogic'
 import { calculateObservationCost, applyImprint, applyExposure, applyImpression } from '../lib/observationLogic'
@@ -48,6 +49,9 @@ interface GameStore extends GameState {
 
   // ── 成就系统 ──
   unlockAchievement: (id: string) => void
+
+  // ── V1.6 记忆系统 ──
+  unlockMemory: (memoryId: string) => void
 
   // ── 设置系统 ──
   updateSettings: (patch: Partial<Settings>) => void
@@ -120,6 +124,9 @@ const initialState: GameState = {
   completedDailyObjectives: [],
   unlockedChapterRewards: [],
   evidence: [],
+  lastEchoPreview: '',
+  inspiration: 0,
+  unlockedMemories: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -506,6 +513,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ selectedPerspective: p })
   },
 
+  // ══════════════════════════════════════
+  // V1.6 记忆系统
+  // ══════════════════════════════════════
+
+  unlockMemory: (memoryId: string) => {
+    const memory = HIDDEN_MEMORIES.find(m => m.id === memoryId)
+    if (!memory) return
+    if (get().unlockedMemories.includes(memoryId)) return
+    set({
+      unlockedMemories: [...get().unlockedMemories, memoryId],
+      inspiration: get().inspiration - memory.inspirationCost,
+    })
+  },
+
   submitWriting: () => {
     const { selectedEntryIds, allNotebookEntries, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings, selectedPerspective } = get()
     const scene = scenes[currentSceneId]
@@ -557,6 +578,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
       ? [...writingTags, matchedTag]
       : writingTags
 
+    // V1.6: 生成回响预告
+    let echoPreview = ''
+    if (matchedTag) {
+      const previews: Record<string, string> = {
+        'wrote-ludwig': '你写下了关于Ludwig的文字。\n\n他翻了个身。好像感觉到了什么。',
+        'wrote-novel': '你写下了关于小说的文字。\n\n文档右下角的字数统计跳动了一下。',
+        'wrote-phone': '你写下了关于手机的文字。\n\n走廊里传来一声消息提示音。',
+        'wrote-maya-class': '你写下了关于课堂的文字。\n\n窗外有什么东西闪了一下。',
+        'wrote-maya-pingpong': '你写下了关于乒乓球的文字。\n\n球在桌面上弹跳了一下，没有人接。',
+        'deep-maya-pingpong': '你写下了关于Maya的文字。\n\n隔壁传来一声很轻的咳嗽。像是回应。',
+        'observed-maya-inner': '你写下了关于Maya内心的文字。\n\n文档微微闪烁了一下。',
+        'deep-talk-ludwig': '你写下了关于Ludwig的文字。\n\n他的手机亮了，又暗了。',
+        'wrote-maya-voice': '你写下了关于Maya声音的文字。\n\n有什么东西在房间里轻轻震动。',
+        'wrote-maya-detail': '你写下了关于Maya细节的文字。\n\n那些细节在文档里自己换了一行。',
+      }
+      echoPreview = previews[matchedTag] || '你写下的文字保存了。\n\n文档比刚才重了一点。'
+    }
+
+    // V1.6: 灵感值
+    const inspirationGain = matchedTag ? 5 : 1
+    const newInspiration = Math.min(100, get().inspiration + inspirationGain)
+
     // 暴露度：基于所选素材的侵入度增加
     const invasionGain = selectedEntries.reduce((sum: number, e: { invasionLevel?: number }) => sum + (e.invasionLevel || 0), 0)
     const newExposure = Math.min(exposure + invasionGain, 100)
@@ -567,6 +610,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       imprints: newImprints,
       writingFeedback: feedback,
       exposure: newExposure,
+      lastEchoPreview: echoPreview,
+      inspiration: newInspiration,
       selectedEntryIds: [],
       selectedPerspective: 'objective',
       isWritingPhaseReady: false,
@@ -709,6 +754,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         perceptions: state.perceptions,
         perceptionHistory: state.perceptionHistory,
         evidence: state.evidence,
+        lastEchoPreview: state.lastEchoPreview,
+        inspiration: state.inspiration,
+        unlockedMemories: state.unlockedMemories,
       },
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData))

@@ -169,6 +169,11 @@ const de: Record<string, string> = {
   'quest.chapterGoal': 'Kapitelziel',
   'quest.dailyObjectives': 'Tägliche Ziele',
   'quest.noObjectives': 'Keine aktiven Ziele für diese Szene.',
+
+  // V1.6 Echo + Erinnerung
+  'write.echoPreview': 'Echo',
+  'memory.unlocked': 'Erinnerung entsperrt',
+  'memory.confirm': 'Verstanden',
 }
 
 export default de

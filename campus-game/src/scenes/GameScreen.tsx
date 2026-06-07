@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { useTranslation, useContent } from '../i18n'
 import { SceneView } from '../components/ui/SceneView'
+import { GameHUD } from '../components/ui/GameHUD'
 import { NotebookView } from '../components/ui/NotebookView'
 import { QuestTracker } from '../components/ui/QuestTracker'
 import { MenuModal } from '../components/menu/MenuModal'
@@ -119,6 +120,9 @@ export function GameScreen() {
 
       {/* 移动端底部人物栏 */}
       <MobileCharacterBar />
+
+      {/* V1.6: HUD */}
+      <GameHUD />
 
       {/* 游戏菜单覆盖层 */}
       {showMenu && (
