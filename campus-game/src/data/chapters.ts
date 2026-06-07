@@ -286,12 +286,12 @@ const ch01Day: DayScene = {
   observations: [
     {
       id: 'ch01-maya-notebook',
-      name: '兰若瑶在记笔记',
+      name: '那个女生在记笔记',
       description: '她做笔记的方式',
       observationText: '她的笔在纸上划过的声音很轻，但节奏很稳。每记一行，停顿一下，确认格式，再继续。不像王嘉亿那样随手乱写。她用的是活页纸，字迹很小，排列得像表格一样整齐。问了一句"要不要写句式引用"——连文章分析都知道要做引用，真专业。',
       notebookEntry: {
         id: 'note-maya-note-01',
-        label: '兰若瑶的笔记',
+        label: '那个女生的笔记',
         text: '她问了一句"要不要写句式引用"。连文章分析都知道要做引用。字迹很小，排列得像表格一样整齐。',
         category: 'action',
         cid: 'ch01.day.obs.0.nb',
@@ -321,12 +321,12 @@ const ch01Day: DayScene = {
     },
     {
       id: 'ch01-maya-voice',
-      name: '兰若瑶的声音',
+      name: '那个女生的声音',
       description: '她说话的方式',
       observationText: '她说话的声音不大，但每个字都很清晰。不像王嘉亿那样连珠炮，也不像我自己那样吞吞吐吐。像一把干净的尺子在纸上划出直线——不快不慢，没有弯。',
       notebookEntry: {
         id: 'note-maya-voice-01',
-        label: '兰若瑶的声音',
+        label: '那个女生的声音',
         text: '她说话的声音不大，但每个字都很清晰。像一把干净的尺子在纸上划出直线。',
         category: 'sound',
         cid: 'ch01.day.obs.2.nb',
@@ -359,7 +359,7 @@ const ch01Day: DayScene = {
       observationText: '白色加淡蓝色的冲锋衣，看起来挺干净。头发不是很长，正好扎个马尾辫。目测1米5左右，看着完全不像18。自我介绍的时候表情很平，没有紧张也没有刻意的微笑。就像在陈述一个事实。',
       notebookEntry: {
         id: 'note-maya-look-02',
-        label: '兰若瑶的样子',
+        label: '新同学的样子',
         text: '白色冲锋衣，马尾辫。目测1米5，看着不像18。自我介绍时表情很平，像在陈述一个事实。',
         category: 'visual',
         cid: 'ch01.day.obs.4.nb',

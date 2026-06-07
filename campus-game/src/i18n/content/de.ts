@@ -101,10 +101,10 @@ const de: Record<string, string> = {
   'ch01.day.intro.24': 'Ludwig schob das Blatt zwischen sich und sie.',
 
   // obs.0 — Mayas Notizen
-  'ch01.day.obs.0.name': 'Maya beim Mitschreiben',
+  'ch01.day.obs.0.name': 'Die Neue beim Mitschreiben',
   'ch01.day.obs.0.desc': 'Ihre Art zu notieren',
   'ch01.day.obs.0.text': 'Der Klang ihres Stifts auf dem Papier ist ganz leise, aber das Rhythmus ist gleichmäßig. Nach jeder Zeile hält sie kurz inne, überprüft die Formatierung, dann geht es weiter. Nicht wie Ludwigs hastiges Gekritzel. Sie benutzt loser-Blatt-Papier, ihre Schrift ist winzig, angeordnet so ordentlich wie eine Tabelle. Sie fragte: „Soll ich ein Zitat für die Satzstruktur angeben?" — Sie weiß sogar, dass man in einer Textanalyse Zitate braucht. Wirklich professionell.',
-  'ch01.day.obs.0.nb.label': 'Mayas Notizen',
+  'ch01.day.obs.0.nb.label': 'Notizen der Neuen',
   'ch01.day.obs.0.nb.text': 'Sie fragte: „Soll ich ein Zitat für die Satzstruktur angeben?" Sie weiß sogar, dass man in einer Textanalyse Zitate braucht. Ihre Schrift ist winzig, angeordnet so ordentlich wie eine Tabelle.',
 
   // obs.1 — Ludwig teilt Aufgabe
@@ -115,10 +115,10 @@ const de: Record<string, string> = {
   'ch01.day.obs.1.nb.text': 'Er legte das Blatt zwischen sich und sie, ohne zu zögern. Kein angestrengtes Wohlwollen — einfach eine selbstverständliche Natürlichkeit.',
 
   // obs.2 — Mayas Stimme
-  'ch01.day.obs.2.name': 'Mayas Stimme',
+  'ch01.day.obs.2.name': 'Stimme der Neuen',
   'ch01.day.obs.2.desc': 'Die Art, wie sie spricht',
   'ch01.day.obs.2.text': 'Sie spricht leise, aber jedes Wort ist glasklar. Nicht wie Ludwigs Schwall, und nicht wie mein eigenes Murmeln. Wie ein sauberes Lineal, das eine gerade Linie über Papier zieht — nicht zu schnell, nicht zu langsam, keine Kurven.',
-  'ch01.day.obs.2.nb.label': 'Mayas Stimme',
+  'ch01.day.obs.2.nb.label': 'Stimme der Neuen',
   'ch01.day.obs.2.nb.text': 'Sie spricht leise, aber jedes Wort ist glasklar. Wie ein sauberes Lineal, das eine gerade Linie über Papier zieht.',
 
   // obs.3 — Klassenzimmerlicht
@@ -132,7 +132,7 @@ const de: Record<string, string> = {
   'ch01.day.obs.4.name': 'Das Aussehen der neuen Mitschülerin',
   'ch01.day.obs.4.desc': 'Wie sie aussieht',
   'ch01.day.obs.4.text': 'Eine hellblaue-weiße Windjacke, sieht sauber aus. Haare nicht zu lang, gerade genug für einen Pferdeschwanz. Ungefähr 150 cm, sieht überhaupt nicht nach 18 aus. Bei ihrer Vorstellung war ihr Gesicht völlig ausdruckslos — keine Nervosität, kein erzwungenes Lächeln. Als würde sie einfach einen Fakt benennen.',
-  'ch01.day.obs.4.nb.label': 'Mayas Aussehen',
+  'ch01.day.obs.4.nb.label': 'Aussehen der Neuen',
   'ch01.day.obs.4.nb.text': 'Weiße Windjacke, Pferdeschwanz. Ungefähr 150 cm, sieht nicht nach 18 aus. Bei ihrer Vorstellung war ihr Gesicht völlig ausdruckslos — als würde sie einen Fakt benennen.',
 
   // obs.5 — Stille nach der Vorstellung

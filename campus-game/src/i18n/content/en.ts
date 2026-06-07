@@ -101,10 +101,10 @@ const en: Record<string, string> = {
   'ch01.day.intro.24': 'Ludwig placed the paper between them.',
 
   // obs.0 — Maya's notes
-  'ch01.day.obs.0.name': 'Maya taking notes',
+  'ch01.day.obs.0.name': 'The new student taking notes',
   'ch01.day.obs.0.desc': 'Her way of taking notes',
   'ch01.day.obs.0.text': 'The sound of her pen on paper is very soft, but the rhythm is steady. After each line, she pauses, checks the formatting, then continues. Nothing like Ludwig\'s hasty scrawl. She uses loose-leaf paper, her handwriting tiny, arranged as neatly as a spreadsheet. She asked, "Should I include a citation for the sentence structure?"—she even knows to cite sources in an essay analysis. Truly professional.',
-  'ch01.day.obs.0.nb.label': "Maya's notes",
+  'ch01.day.obs.0.nb.label': "The new student's notes",
   'ch01.day.obs.0.nb.text': 'She asked, "Should I include a citation for the sentence structure?" She even knows to cite sources in essay analysis. Her handwriting is tiny, arranged as neatly as a spreadsheet.',
 
   // obs.1 — Ludwig sharing assignment
@@ -115,10 +115,10 @@ const en: Record<string, string> = {
   'ch01.day.obs.1.nb.text': 'He placed the paper between them without a moment\'s hesitation. Not deliberate kindness—just a natural, matter-of-fact ease.',
 
   // obs.2 — Maya's voice
-  'ch01.day.obs.2.name': "Maya's voice",
+  'ch01.day.obs.2.name': "The new student's voice",
   'ch01.day.obs.2.desc': 'The way she speaks',
   'ch01.day.obs.2.text': 'She speaks softly, but every word is perfectly clear. Not like Ludwig\'s rapid-fire delivery, and not like my own mumbled half-sentences. Like a clean ruler drawing a straight line across paper—not too fast, not too slow, no curves.',
-  'ch01.day.obs.2.nb.label': "Maya's voice",
+  'ch01.day.obs.2.nb.label': "The new student's voice",
   'ch01.day.obs.2.nb.text': 'She speaks softly, but every word is perfectly clear. Like a clean ruler drawing a straight line across paper.',
 
   // obs.3 — Classroom light
@@ -132,7 +132,7 @@ const en: Record<string, string> = {
   'ch01.day.obs.4.name': "The new classmate's appearance",
   'ch01.day.obs.4.desc': 'What she looks like',
   'ch01.day.obs.4.text': 'A white-and-light-blue windbreaker, looks clean. Hair not too long, just enough for a ponytail. Approximately 150 cm, does not look 18 at all. During her introduction, her expression was perfectly flat—no nervousness, no forced smile. Like she was simply stating a fact.',
-  'ch01.day.obs.4.nb.label': "Maya's appearance",
+  'ch01.day.obs.4.nb.label': "The new student's appearance",
   'ch01.day.obs.4.nb.text': 'White windbreaker, ponytail. About 150 cm, does not look 18. During her introduction, her expression was perfectly flat—like stating a fact.',
 
   // obs.5 — Silence after introduction
