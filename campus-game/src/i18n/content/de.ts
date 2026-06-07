@@ -630,10 +630,24 @@ const de: Record<string, string> = {
   'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwigs Freundlichkeit gegenüber der neuen Schülerin braucht kein Nachdenken.\n\nIhre Annahme dieser Freundlichkeit auch nicht.\n\nZwei völlig unterschiedliche soziale Stile, beide perfekt in ihrer Komfortzone.\n\nUnd ich saß in der dritten Reihe, außerhalb beider.',
   'ch01.night.wp.recipe.2.perspective.projection': 'Ich habe das früher auch gemacht. Jemand kommt ins Klassenzimmer, alle schauen hin, und ich tue so, als hätte ich es nicht bemerkt.\n\nLudwig ist anders. Er schiebt einfach das Papier rüber.\n\nDas könnte ich nicht. Nicht weil ich nicht will, sondern weil ich erst die richtigen Worte planen muss.\n\nWenn ich sie geplant habe, ist der Moment schon vorbei.',
 
-  // Improvisationsschreibvorlagen
-  'improv.maya': 'Heute habe ich versucht, {labels} aufzuschreiben.\n\nDiese Details drehten sich immer wieder in meinem Kopf.',
-  'improv.ludwig': '{labels} — diese Bilder stapelten sich wie Schnappschüsse vor meinen Augen.',
-  'improv.environment': '{labels}\n\nDiese Beobachtungen sind wie Luft — formlos, aber zweifellos vorhanden.',
+  // Improvisationsschreibvorlagen (3 Fokus × 4 Perspektiven = 12)
+  'improv.maya.objective': 'Ich habe {labels} aufgeschrieben.\n\nHeute habe ich mehr über sie erfahren.',
+  'improv.maya.literary': '{labels} — wie ein Schimmer Mondlicht, der auf dem Papier nicht schmilzt.',
+  'improv.maya.analytical': 'Was {labels} betrifft, habe ich ein Muster bemerkt.\n\nSie hält bewusst eine bestimmte Distanz aufrecht.',
+  'improv.maya.projection': 'Beim Schreiben über {labels} erinnerte ich mich an mein erstes Hiersein.\n\nDieses Gefühl, nicht zu wissen, wohin man schauen soll.',
+
+  'improv.ludwig.objective': 'Eintrag: {labels}.\n\nMein Umgang mit Ludwig war wie immer.',
+  'improv.ludwig.literary': '{labels} — wie ein unscharf aufgenommenes Foto. Unklar, aber warm.',
+  'improv.ludwig.analytical': 'Sein Verhalten folgt einem Muster.\n\n{labels} — diese Details weisen alle auf dieselbe Schlussfolgerung hin.',
+  'improv.ludwig.projection': 'Manchmal denke ich, er versteht das Leben besser als ich.\n\n{labels}.',
+
+  'improv.environment.objective': 'Heute beobachtet: {labels}.',
+  'improv.environment.literary': '{labels} — wie ein Lied ohne Text, das in meinem Kopf kreist.',
+  'improv.environment.analytical': 'Diese Umgebungsdetails sind nicht zufällig.\n\n{labels} — sie bilden eine Art Rhythmus.',
+  'improv.environment.projection': 'Ich fange an, diese Dinge zu bemerken.\n\n{labels}.\n\nVielleicht habe ich sie die ganze Zeit übersehen.',
+
+  'improv.single': 'Heute habe ich aufgeschrieben: {labels}.',
+  'improv.empty': 'Heute habe ich nichts geschrieben. Manche Tage sind so.',
 
   // Echo-Vorschauen
   'echo.wrote-ludwig': 'Du hast über Ludwig geschrieben.\n\nEr hat sich umgedreht. Als hätte er etwas gespürt.',

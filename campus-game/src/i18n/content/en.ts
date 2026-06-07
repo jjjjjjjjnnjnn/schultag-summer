@@ -631,10 +631,25 @@ const en: Record<string, string> = {
   'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwig\'s kindness toward the new student requires no thought.\n\nHer acceptance of that kindness requires no thought either.\n\nTwo completely different social styles, both perfectly within their comfort zones.\n\nAnd I was sitting in the third row, outside both.',
   'ch01.night.wp.recipe.2.perspective.projection': 'I used to do this too. Someone walks into the classroom, everyone looks, and I pretend not to notice.\n\nLudwig is different. He just pushes the paper over.\n\nI cannot do that. Not because I do not want to, but because I need to plan my words first.\n\nBy the time I have planned them, the moment has passed.',
 
-  // Improvised writing templates
-  'improv.maya': 'Tonight I tried writing down {labels}.\n\nThese details kept circling in my mind.',
-  'improv.ludwig': '{labels} — these images stacked up like snapshots in front of my eyes.',
-  'improv.environment': '{labels}\n\nThese observations are like air — shapeless, but undeniably present.',
+  // Improvised writing templates (3 focuses × 4 perspectives = 12)
+  'improv.maya.objective': 'I wrote down {labels}.\n\nI learned a little more about her today.',
+  'improv.maya.literary': '{labels} — like a sliver of moonlight that will not melt once it touches paper.',
+  'improv.maya.analytical': 'About {labels}, I noticed a pattern.\n\nShe is deliberately maintaining a certain distance.',
+  'improv.maya.projection': 'Writing about {labels}, I remembered how I felt when I first arrived.\n\nThat feeling of not knowing where to look.',
+
+  'improv.ludwig.objective': 'Record: {labels}.\n\nMy interaction with Ludwig was as usual.',
+  'improv.ludwig.literary': '{labels} — like a photo taken out of focus. Blurry, but warm.',
+  'improv.ludwig.analytical': 'His behavior follows a pattern.\n\n{labels} — these details all point to the same conclusion.',
+  'improv.ludwig.projection': 'Sometimes I think he knows how to live better than I do.\n\n{labels}.',
+
+  'improv.environment.objective': 'Observed today: {labels}.',
+  'improv.environment.literary': '{labels} — like a song without lyrics, looping in my head.',
+  'improv.environment.analytical': 'These environmental details are not random.\n\n{labels} — they form a kind of rhythm.',
+  'improv.environment.projection': 'I am starting to notice these things.\n\n{labels}.\n\nMaybe I always overlooked them.',
+
+  // Single/empty improv (unchanged)
+  'improv.single': 'Today I wrote down: {labels}.',
+  'improv.empty': 'I wrote nothing today. Some days are like that.',
 
   // Echo previews
   'echo.wrote-ludwig': 'You wrote about Ludwig.\n\nHe turned over. As if he felt something.',

@@ -555,7 +555,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 无配方匹配时生成即兴文本
     if (!matchedTag) {
-      composedText = generateImprovText(selectedEntries, selectedLabels, selectedEntryIds, getC, lang)
+      composedText = generateImprovText(selectedEntries, selectedLabels, selectedEntryIds, selectedPerspective, getC, lang)
     }
 
     // 收集印记：扫描写作中提及的角色
