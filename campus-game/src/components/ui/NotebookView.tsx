@@ -213,7 +213,7 @@ function CharactersTab() {
                   <p className="text-[10px] text-stone-600 uppercase tracking-wider">{t('char.recentObs')}</p>
                   {recentObs.map(entry => (
                     <p key={entry.id} className="text-xs text-stone-400 leading-relaxed pl-2 border-l border-stone-700/30">
-                      {entry.label}
+                      {entry.cid ? co(entry.cid, 'label', entry.label) : entry.label}
                     </p>
                   ))}
                 </div>
