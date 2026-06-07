@@ -206,6 +206,12 @@ const ch01Day: DayScene = {
   intro: [
     { type: 'narration', text: '周三。英语课。教室里的光从窗户斜着照进来。',
         cid: 'ch01.day.intro.0' },
+    {
+      type: 'narration',
+      text: '关上文档的时候，我注意到一件事。\n\n文档属性里，创建日期是上周。\n\n我确定上周还没有开始写这本。',
+      requiresMilestone: 'first-writing',
+      cid: 'ch01.day.intro.milestone.0',
+    },
     { type: 'dialogue', speaker: 'ludwig', text: '哎呀，又是小飞飞的课。',
         cid: 'ch01.day.intro.1' },
     // 即时反噬：根据序章写作方向触发不同异常
@@ -589,12 +595,12 @@ const ch02Day: DayScene = {
     
     },
     {
-      id: 'ch02-ludwing-smash',
+      id: 'ch02-ludwig-smash',
       name: 'Ludwig 扣杀后的得意',
       description: '王嘉亿扣杀成功后的表情',
       observationText: '王嘉亿来了一个扣杀。球拍从下往上抡了个大圈，啪的一声把球扇到了操场方向。他把两手一摊，往墙上靠，笑眯眯地看着兰若瑶。"你来捡。""你打飞的我捡？""你现在站在裁判位，闲着也是闲着。"',
       notebookEntry: {
-        id: 'note-ch02-ludwing-smash-01',
+        id: 'note-ch02-ludwig-smash-01',
         label: 'Ludwig 的得意',
         text: '他扣杀成功后把两手一摊，往墙上靠，笑眯眯地看着她。"你来捡。"',
         category: 'action',
@@ -699,7 +705,7 @@ const ch02Night: NightScene = {
         cid: 'ch02.night.wp.recipe.2',
       },
       {
-        requiredEntries: ['note-ch02-ludwing-smash-01', 'note-ch02-maya-lose-01'],
+        requiredEntries: ['note-ch02-ludwig-smash-01', 'note-ch02-maya-lose-01'],
         composedText: '他扣杀成功后把两手一摊，往墙上靠，笑眯眯地看着她。\n\n"这桌子不平。"她输了球之后说了一句。\n\n在王嘉亿的得意和兰若瑶的不服气之间，我靠着树站着，什么都没说。',
       
         cid: 'ch02.night.wp.recipe.3',
@@ -904,6 +910,12 @@ const ch03Night: NightScene = {
         cid: 'ch03.night.lines.6' },
     { type: 'dialogue', speaker: 'ludwig', text: '就是觉得……你好像也不知道怎么和她说话。',
         cid: 'ch03.night.lines.7' },
+    {
+      type: 'narration',
+      text: '我翻到文档的开头。\n\n第一行不是我写的。\n\n但那是Maya来的第一天。',
+      requiresMilestone: 'meet-maya',
+      cid: 'ch03.night.lines.milestone.0',
+    },
   ],
   writingPhase: {
     prompt: '深夜的对话。你想写什么？',
@@ -1132,6 +1144,12 @@ const ch04Night: NightScene = {
         cid: 'ch04.night.lines.1' },
     { type: 'narration', text: '但她看纪录片时皱眉的样子，比鱼群更清楚。',
         cid: 'ch04.night.lines.2' },
+    {
+      type: 'thought',
+      text: '我开始翻前面的内容。\n\n不是所有的段落都是我写的。\n\n有些段落里的Maya，比我还了解她自己。',
+      requiresMilestone: 'understand-dynamics',
+      cid: 'ch04.night.lines.milestone.0',
+    },
   ],
   writingPhase: {
     prompt: '今天看纪录片。你想写什么？',

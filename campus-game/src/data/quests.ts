@@ -162,6 +162,30 @@ export const DAILY_OBJECTIVES: DailyObjective[] = [
       },
     ],
   },
+  {
+    sceneId: 'ch02-day',
+    objectives: [
+      { id: 'ch02-obj-1', description: '观察乒乓球台的样子', condition: { type: 'observe', targetId: 'ch02-table' }, completionText: '球台是水泥的，边缘有缺口。' },
+      { id: 'ch02-obj-2', description: '看 Maya 怎么打球', condition: { type: 'observe', targetId: 'ch02-maya-lip' }, completionText: '她发球前会抿嘴。很轻。' },
+      { id: 'ch02-obj-3', description: '注意 Ludwig 的反应', condition: { type: 'observe', targetId: 'ch02-ludwig-smash' }, completionText: '他把两手一摊，往墙上靠。' },
+    ],
+  },
+  {
+    sceneId: 'ch03-day',
+    objectives: [
+      { id: 'ch03-obj-1', description: '听 Ludwig 在聊什么', condition: { type: 'observe', targetId: 'ch03-ludwig-ask' }, completionText: '他在试探你的态度。' },
+      { id: 'ch03-obj-2', description: '观察 Maya 的习惯', condition: { type: 'observe', targetId: 'ch03-maya-voice' }, completionText: '她说话的时候会用手比划。' },
+      { id: 'ch03-obj-3', description: '注意食堂的氛围', condition: { type: 'observe', targetId: 'ch03-food' }, completionText: '窗外的光透过窗户照到桌上。' },
+    ],
+  },
+  {
+    sceneId: 'ch04-day',
+    objectives: [
+      { id: 'ch04-obj-1', description: '看纪录片的内容', condition: { type: 'observe', targetId: 'ch04-ocean' }, completionText: '鱼群在屏幕上转。' },
+      { id: 'ch04-obj-2', description: '观察 Maya 的表情', condition: { type: 'observe', targetId: 'ch04-maya-watch' }, completionText: '她看纪录片的时候很安静。' },
+      { id: 'ch04-obj-3', description: '注意光线的变化', condition: { type: 'observe', targetId: 'ch04-light' }, completionText: '窗外的天色在变。' },
+    ],
+  },
 ]
 
 /** 检查每日目标完成状态 */

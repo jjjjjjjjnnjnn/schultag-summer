@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { useTranslation } from '../../i18n'
-import { MAIN_QUESTS, CHAPTER_GOALS, DAILY_OBJECTIVES, evaluateDailyObjectives } from '../../data/quests'
+import { MAIN_QUESTS, CHAPTER_GOALS, DAILY_OBJECTIVES } from '../../data/quests'
 import { CHAPTERS } from '../../data/chapters'
 
 export function QuestTracker() {
   const {
     completedMilestones,
     completedDailyObjectives,
-    observedIds,
-    allNotebookEntries,
     currentSceneId,
     completedChapters,
   } = useGameStore()
@@ -26,11 +24,11 @@ export function QuestTracker() {
 
   // 计算已完成每日目标数（仅当前场景）
   const currentCompletedDaily = dailyObj
-    ? evaluateDailyObjectives(dailyObj.objectives, observedIds, allNotebookEntries).length
+    ? dailyObj.objectives.filter(obj => completedDailyObjectives.includes(obj.id)).length
     : 0
 
   // 当前章节目标
-  const currentChapterId = currentSceneId.replace(/-day|-night$/, '')
+  const currentChapterId = currentSceneId.replace(/-(day|night)$/, '')
   const currentGoal = CHAPTER_GOALS.find(g => g.chapterId === currentChapterId)
 
   const novelCompleted = completedChapters.includes(currentChapterId)

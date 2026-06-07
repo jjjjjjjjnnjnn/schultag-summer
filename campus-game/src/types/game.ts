@@ -161,6 +161,8 @@ export interface StoryLine {
   requiresObservation?: string
   /** 若存在，仅当暴露度 >= 此阈值时才渲染 */
   requiresExposure?: number
+  /** 若存在，仅当玩家完成了此主线里程碑时才渲染 */
+  requiresMilestone?: string
   /** 内容翻译 key（用于多语言查找） */
   cid?: string
 }

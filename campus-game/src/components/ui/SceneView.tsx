@@ -165,7 +165,7 @@ function DaySceneView({
   onAdvance: () => void
   isExploring: boolean
 }) {
-  const { observedIds, currentLineIndex, feedback, writingTags, imprints, currentFocus, attentionRemaining, selectFocus, focusHistory, exposure, focusPulseColor, allNotebookEntries } = useGameStore()
+  const { observedIds, currentLineIndex, feedback, writingTags, imprints, currentFocus, attentionRemaining, selectFocus, focusHistory, exposure, focusPulseColor, allNotebookEntries, completedMilestones } = useGameStore()
   const t = useTranslation()
   const { c, co } = useContent()
   const dayScene = useGameStore(s => {
@@ -176,7 +176,7 @@ function DaySceneView({
   if (!dayScene) return null
 
   const intro = dayScene.intro || []
-  const visibleIntroLength = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure).length
+  const visibleIntroLength = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones).length
   const totalObservations = dayScene.observations.length
   const observedCount = observedIds.length
   const introDone = currentLineIndex >= visibleIntroLength - 1
@@ -367,7 +367,7 @@ function DaySceneView({
 
 // ── 夜晚场景：固定叙事 + 写作阶段 ──
 function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
-  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure, settings, writings } = useGameStore()
+  const { currentLineIndex, isWritingPhaseReady, writingTags, imprints, focusHistory, allNotebookEntries, exposure, settings, writings, completedMilestones } = useGameStore()
   const { c } = useContent()
   const isForeignLang = settings.language === 'en' || settings.language === 'de'
   const nightScene = useGameStore(s => {
@@ -376,8 +376,8 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
   })
   const filteredLines = useMemo(() => {
     if (!nightScene) return []
-    return getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
-  }, [nightScene, writingTags, imprints, focusHistory, allNotebookEntries, exposure])
+    return getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
+  }, [nightScene, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones])
 
   // Safety: if filteredLines is empty but nightScene has lines, use them directly
   const displayLines = filteredLines.length > 0 ? filteredLines : (nightScene?.lines || [])

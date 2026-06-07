@@ -17,7 +17,7 @@ function getC(lang: string, cid: string, fallback: string): string {
   return (t && t[cid]) || fallback
 }
 
-/** 统一的行可见性过滤：requiresTag + requiresImprint + requiresFocusHistory + requiresObservation + requiresExposure */
+/** 统一的行可见性过滤：requiresTag + requiresImprint + requiresFocusHistory + requiresObservation + requiresExposure + requiresMilestone */
 export function getVisibleLines(
   lines: StoryLine[],
   writingTags: string[],
@@ -25,6 +25,7 @@ export function getVisibleLines(
   focusHistory: FocusType[] = [],
   allNotebookEntries: import('../types/game').NotebookEntry[] = [],
   exposure: number = 0,
+  completedMilestones: string[] = [],
 ): StoryLine[] {
   // 计算连续焦点 streak
   const streakMap: Record<string, number> = {}
@@ -60,6 +61,7 @@ export function getVisibleLines(
     if (l.requiresExposure !== undefined) {
       if (exposure < l.requiresExposure) return false
     }
+    if (l.requiresMilestone && !completedMilestones.includes(l.requiresMilestone)) return false
     return true
   })
 }
@@ -182,7 +184,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   advanceLine: () => {
-    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
+    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return
 
@@ -193,7 +195,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       // intro 播完且正在探索 → 停住（等待观察面板）
       if (isExploring) {
         const intro = dayScene.intro || []
-        const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+        const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
         if (currentLineIndex >= visibleIntro.length - 1) return
         set({ currentLineIndex: currentLineIndex + 1 })
         return
@@ -301,8 +303,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         sceneChapterId,
       )
       if (goalMet && !get().unlockedChapterRewards.includes(chapterGoal.reward.value)) {
+        const newRewards = [...get().unlockedChapterRewards, chapterGoal.reward.value]
+        const newWritingTags = [...get().writingTags]
+        if (!newWritingTags.includes(chapterGoal.reward.value)) {
+          newWritingTags.push(chapterGoal.reward.value)
+        }
         set({
-          unlockedChapterRewards: [...get().unlockedChapterRewards, chapterGoal.reward.value],
+          unlockedChapterRewards: newRewards,
+          writingTags: newWritingTags,
         })
       }
     }
@@ -313,7 +321,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (!get().completedMilestones.includes(milestone.id)) {
         const allMet = milestone.requiresChapters.every(c => allCompleted.includes(c))
         if (allMet) {
-          set({ completedMilestones: [...get().completedMilestones, milestone.id] })
+          const newMilestones = [...get().completedMilestones, milestone.id]
+          const newWritingTags = [...get().writingTags]
+
+          // 处理奖励
+          if (milestone.reward.type === 'writingTag') {
+            if (!newWritingTags.includes(milestone.reward.value)) {
+              newWritingTags.push(milestone.reward.value)
+            }
+          }
+
+          set({
+            completedMilestones: newMilestones,
+            writingTags: newWritingTags,
+          })
         }
       }
     }
@@ -489,14 +510,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   finishExploring: () => {
-    const { isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
+    const { isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones } = get()
     if (!isExploring) return
     const scene = get().getDayScene()
     if (!scene) return
     const intro = scene.intro || []
-    const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+    const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
     set({
-      isExploring: false,
       currentLineIndex: visibleIntro.length,
     })
   },
@@ -660,7 +680,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   currentLine: () => {
-    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
+    const { currentSceneId, currentLineIndex, isExploring, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return null
 
@@ -668,8 +688,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const dayScene = scene as DayScene
       const intro = dayScene.intro || []
       const outro = dayScene.outro || []
-      const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
-      const visibleOutro = getVisibleLines(outro, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+      const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
+      const visibleOutro = getVisibleLines(outro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
 
       if (isExploring || currentLineIndex < visibleIntro.length) {
         return visibleIntro[currentLineIndex] || null
@@ -681,28 +701,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     if (scene.mode === 'night') {
       const nightScene = scene as NightScene
-      const filteredLines = getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+      const filteredLines = getVisibleLines(nightScene.lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
       return filteredLines[currentLineIndex] || null
     }
 
     return null
   },
 
-  /** 返回过滤后的场景行数组（requiresTag + requiresImprint） */
+  /** 返回过滤后的场景行数组（requiresTag + requiresImprint + requiresMilestone） */
   getFilteredLines: () => {
-    const { currentSceneId, writingTags, imprints, focusHistory, allNotebookEntries, exposure } = get()
+    const { currentSceneId, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones } = get()
     const scene = scenes[currentSceneId]
     if (!scene) return []
 
     if (scene.mode === 'day') {
       const dayScene = scene as DayScene
       return [
-        ...getVisibleLines(dayScene.intro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure),
-        ...getVisibleLines(dayScene.outro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure),
+        ...getVisibleLines(dayScene.intro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones),
+        ...getVisibleLines(dayScene.outro || [], writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones),
       ]
     }
     if (scene.mode === 'night') {
-      return getVisibleLines((scene as NightScene).lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure)
+      return getVisibleLines((scene as NightScene).lines, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
     }
     return []
   },
