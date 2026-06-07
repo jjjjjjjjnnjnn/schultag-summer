@@ -53,6 +53,7 @@ const zh: Record<string, string> = {
   'notebook.writings': '写作',
   'notebook.characters': '人物',
   'notebook.stats': '统计',
+  'notebook.evidence': '证据',
   'notebook.empty': '还没有观察记录。在白天模式下观察周围的事物。',
   'notebook.emptyWriting': '还没有写作。在夜晚场景中选择素材写成文字。',
 
@@ -101,6 +102,11 @@ const zh: Record<string, string> = {
 
   // 成就
   'achievement.locked': '???',
+
+  // 证据
+  'evidence.title': '证据',
+  'evidence.none': '还没有发现证据。继续观察和写作。',
+  'evidence.chapter': '第',
 
   // 人物
   'char.observations': '观察 {n} 次',

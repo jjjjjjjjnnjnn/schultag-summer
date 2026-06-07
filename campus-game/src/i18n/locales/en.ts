@@ -59,6 +59,7 @@ const en: Record<string, string> = {
   'notebook.writings': 'Writings',
   'notebook.characters': 'Characters',
   'notebook.stats': 'Stats',
+  'notebook.evidence': 'Evidence',
   'notebook.empty': 'No observations yet. Observe your surroundings during daytime.',
   'notebook.emptyWriting': 'No writings yet. Select materials and write during nighttime.',
 
@@ -108,6 +109,11 @@ const en: Record<string, string> = {
 
   // Achievements
   'achievement.locked': '???',
+
+  // Evidence
+  'evidence.title': 'Evidence',
+  'evidence.none': 'No evidence discovered yet. Keep observing and writing.',
+  'evidence.chapter': 'Ch.',
 
   // Characters
   'char.observations': '{n} observations',

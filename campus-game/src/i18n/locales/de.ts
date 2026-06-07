@@ -59,6 +59,7 @@ const de: Record<string, string> = {
   'notebook.writings': 'Texte',
   'notebook.characters': 'Charaktere',
   'notebook.stats': 'Statistiken',
+  'notebook.evidence': 'Beweise',
   'notebook.empty': 'Noch keine Beobachtungen. Beobachte deine Umgebung tagsüber.',
   'notebook.emptyWriting': 'Noch keine Texte. Wähle Materialien und schreibe nachts.',
 
@@ -108,6 +109,11 @@ const de: Record<string, string> = {
 
   // Errungenschaften
   'achievement.locked': '???',
+
+  // Beweise
+  'evidence.title': 'Beweise',
+  'evidence.none': 'Noch keine Beweise entdeckt. Beobachte und schreibe weiter.',
+  'evidence.chapter': 'Kap.',
 
   // Charaktere
   'char.observations': '{n} Beobachtungen',

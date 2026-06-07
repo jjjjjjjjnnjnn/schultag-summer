@@ -5,6 +5,7 @@ import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
 import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
 import { evaluatePerceptions } from '../lib/perceptionEngine'
+import { evaluateEvidence } from '../lib/evidenceEngine'
 import { DAILY_OBJECTIVES, CHAPTER_GOALS, MAIN_QUESTS, evaluateDailyObjectives, evaluateChapterGoal } from '../data/quests'
 import enContent from '../i18n/content/en'
 import deContent from '../i18n/content/de'
@@ -159,6 +160,7 @@ const initialState: GameState = {
   completedMilestones: [],
   completedDailyObjectives: [],
   unlockedChapterRewards: [],
+  evidence: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -339,6 +341,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     }
 
+    // V1.4: 证据检查
+    const newEvidence = evaluateEvidence(get())
+    if (newEvidence.length > 0) {
+      set({ evidence: [...get().evidence, ...newEvidence] })
+    }
+
     // 成就检查
     const newAchievements = evaluateAchievements(get())
     newAchievements.forEach(id => get().unlockAchievement(id))
@@ -372,6 +380,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activatedConsequences: [],
       perceptions: [],
       perceptionHistory: [],
+      evidence: [],
     })
   },
 
@@ -507,6 +516,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 成就检查
     const newAchievements = evaluateAchievements(get())
     newAchievements.forEach(id => get().unlockAchievement(id))
+
+    // V1.4: 证据检查
+    const newEvidence = evaluateEvidence(get())
+    if (newEvidence.length > 0) {
+      set({ evidence: [...get().evidence, ...newEvidence] })
+    }
   },
 
   finishExploring: () => {
@@ -765,6 +780,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         activatedConsequences: state.activatedConsequences,
         perceptions: state.perceptions,
         perceptionHistory: state.perceptionHistory,
+        evidence: state.evidence,
       },
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData))
@@ -790,6 +806,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           unlockedAchievements: savedAchievements.length > 0 ? savedAchievements : (save.state.unlockedAchievements || []),
           completedChapters: save.state.completedChapters || [],
           allNotebookEntries: save.state.allNotebookEntries || [],
+          evidence: save.state.evidence || [],
           settings: loadSettingsFromStorage(),
           isPlaying: true,
           playTimeMs: save.playTimeMs || 0,

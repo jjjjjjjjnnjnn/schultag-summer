@@ -1,3 +1,4 @@
+import { EvidenceTab } from './EvidenceTab'
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { useTranslation, useContent } from '../../i18n'
@@ -6,22 +7,26 @@ import { CHAPTERS } from '../../data/chapters'
 import { audio } from '../../lib/audio'
 import { PERCEPTION_TAG_LABELS } from '../../lib/perceptionEngine'
 
-type Tab = 'observations' | 'writings' | 'characters' | 'stats'
+type Tab = 'observations' | 'writings' | 'characters' | 'stats' | 'evidence'
 
 export function NotebookView() {
   const t = useTranslation()
   const [activeTab, setActiveTab] = useState<Tab>('observations')
+  const evidence = useGameStore(s => s.evidence)
 
   const handleTabChange = (tab: Tab) => {
     audio.play('page')
     setActiveTab(tab)
   }
 
+  const showEvidenceTab = evidence.length > 0
+
   const TABS: { id: Tab; label: string }[] = [
     { id: 'observations', label: t('notebook.observations') },
     { id: 'writings', label: t('notebook.writings') },
     { id: 'characters', label: t('notebook.characters') },
     { id: 'stats', label: t('notebook.stats') },
+    ...(showEvidenceTab ? [{ id: 'evidence' as Tab, label: t('notebook.evidence') }] : []),
   ]
 
   return (
@@ -53,6 +58,7 @@ export function NotebookView() {
         {activeTab === 'writings' && <WritingsTab />}
         {activeTab === 'characters' && <CharactersTab />}
         {activeTab === 'stats' && <StatsTab />}
+        {activeTab === 'evidence' && <EvidenceTab />}
       </div>
     </div>
   )

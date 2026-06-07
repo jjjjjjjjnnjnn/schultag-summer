@@ -343,6 +343,21 @@ export interface GameState {
   completedDailyObjectives: string[]
   /** 已解锁的章节目标奖励 */
   unlockedChapterRewards: string[]
+  /** V1.4: 已发现的证据列表 */
+  evidence: Evidence[]
+}
+
+// ── V1.4 证据系统 ──
+
+export type EvidenceType = 'anomaly' | 'contradiction' | 'prediction' | 'origin'
+
+export interface Evidence {
+  id: string
+  title: string
+  description: string
+  type: EvidenceType
+  chapterId: string
+  isKeyEvidence: boolean
 }
 
 // ── 存档数据结构 ──
