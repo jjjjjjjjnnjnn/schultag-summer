@@ -516,6 +516,20 @@ const en: Record<string, string> = {
 
   // SETTINGS
   'settings.previewText': 'Light pours in from the window at the end of the hallway, cutting a bright diagonal across the stone floor.',
+
+  // ═══════════════════════════════════════
+  // TUTORIAL HINTS (used via c() fallback)
+  // ═══════════════════════════════════════
+  'tutorial.focusHint': 'Choose who to pay more attention to today. This affects what you observe.',
+  'tutorial.observeHint': 'Click on bright spots in the scene to record what you notice.',
+  'tutorial.writeHint': 'Select materials from today and combine them into prose. Different combinations create different stories.',
+  'tutorial.echoHint': 'What you wrote is beginning to change what you see. Notice the changes.',
+
+  // ═══════════════════════════════════════
+  // PROLOGUE TUTORIAL NARRATION
+  // ═══════════════════════════════════════
+  'prologue.day.intro.tutorial.0': 'Light pours in from the window at the end of the hallway. That time of day again.',
+  'prologue.day.intro.tutorial.1': 'You can choose who to pay more attention to today.',
 }
 
 export default en

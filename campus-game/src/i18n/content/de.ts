@@ -516,6 +516,20 @@ const de: Record<string, string> = {
 
   // SETTINGS
   'settings.previewText': 'Das Licht dringt vom Fenster am Ende des Korridors herein und schneidet eine helle Diagonale über den Steinboden.',
+
+  // ═══════════════════════════════════════
+  // TUTORIAL HINTS
+  // ═══════════════════════════════════════
+  'tutorial.focusHint': 'Wem schenkst du heute Aufmerksamkeit? Das beeinflusst, was du beobachtest.',
+  'tutorial.observeHint': 'Klicke auf helle Stellen in der Szene, um das zu notieren, was dir auffällt.',
+  'tutorial.writeHint': 'Wähle Materialien von heute und kombiniere sie zu Prosa. Verschiedene Kombinationen erzeugen verschiedene Geschichten.',
+  'tutorial.echoHint': 'Das, was du geschrieben hast, beginnt zu verändern, was du siehst. Achte auf die Veränderungen.',
+
+  // ═══════════════════════════════════════
+  // PROLOGUE TUTORIAL NARRATION
+  // ═══════════════════════════════════════
+  'prologue.day.intro.tutorial.0': 'Licht fällt durch das Fenster am Ende des Korridors. Wieder diese Zeit.',
+  'prologue.day.intro.tutorial.1': 'Du kannst wählen, wem du heute mehr Aufmerksamkeit schenkst.',
 }
 
 export default de
