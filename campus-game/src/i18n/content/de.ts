@@ -600,35 +600,35 @@ const de: Record<string, string> = {
   // ═══════════════════════════════════════
   // SCHREIBPERSPEKTIVEN-MODIFIKATOREN
   // ═══════════════════════════════════════
-  // prologue-night recipe 0
-  'prologue.night.wp.recipe.0.perspective.objective': 'Ich habe diese Dinge bemerkt und aufgeschrieben.',
-  'prologue.night.wp.recipe.0.perspective.literary': 'Es fühlte sich an, als hätte jemand eine Ecke von etwas Langverborgenen aufgeklappt.',
-  'prologue.night.wp.recipe.0.perspective.analytical': 'Offengelegt zu werden stört mich mehr als das, was offengelegt wurde.',
-  'prologue.night.wp.recipe.0.perspective.projection': 'Vielleicht fürchte ich mich nicht davor, gesehen zu werden. Ich fürchte mich davor, dass niemand hinschaut.',
+  // prologue-night recipe 0 (wrote-ludwig)
+  'prologue.night.wp.recipe.0.perspective.objective': 'Das sind die Fakten, die ich beobachtet habe.\n\nDas Licht, Ludwigs Worte, meine eigene Reaktion. Objektive Beobachtungen, nichts Beschönigtes.',
+  'prologue.night.wp.recipe.0.perspective.literary': 'Das Licht war eine Klinge. Ludwigs Worte waren ein Spiegel.\n\nIch stand zwischen beiden, und jeder spiegelte etwas anderes wider.',
+  'prologue.night.wp.recipe.0.perspective.analytical': 'Als Ludwig „Lord Protector" sagte, hat er mich getestet.\n\nEr wollte sehen, ob ich böse werde. Das wurde ich nicht.\n\nDas ist an sich schon ein Signal.',
+  'prologue.night.wp.recipe.0.perspective.projection': 'Wenn er ich wäre, hätte er dann auch in diesem Licht gestanden und eine Sekunde lang gezögert?\n\nWenn ich er wäre, hätte ich dann auch den Flur entlanggegangen und fremde Geheimnisse als Witz erzählt?\n\nIch weiß es nicht. Aber ich fange an, darüber nachzudenken.',
 
-  // prologue-night recipe 1
-  'prologue.night.wp.recipe.1.perspective.objective': 'Ich schrieb das Licht und die Wörter auf.',
-  'prologue.night.wp.recipe.1.perspective.literary': 'Wie ein kleiner Haufen sonnengetrockneter Blätter, ausgebreitet in der Sonne.',
-  'prologue.night.wp.recipe.1.perspective.analytical': 'Laut sagen und aufschreiben haben unterschiedliches Gewicht.',
-  'prologue.night.wp.recipe.1.perspective.projection': 'Manchmal denke ich, gesehen zu werden ist nicht so schlimm.',
+  // prologue-night recipe 1 (wrote-novel)
+  'prologue.night.wp.recipe.1.perspective.objective': '„So ein paar hunderttausend." Ich habe es gesagt. Ich habe es aufgeschrieben.\n\nZahlen lügen nicht. Licht auch nicht.',
+  'prologue.night.wp.recipe.1.perspective.literary': 'Das Licht schnitt eine Linie über den Stein. Wörter türmten sich zu einem Berg in mir.\n\nBeide sagten dasselbe: Du kannst dich nicht verstecken.',
+  'prologue.night.wp.recipe.1.perspective.analytical': 'Das Gewicht von „so ein paar hunderttausend" hängt davon ab, wer zuhört.\n\nLudwig hörte einen Witz. Ich hörte eine Entblößung.\n\nDasselbe Wort, völlig unterschiedliches Gewicht für zwei Personen.',
+  'prologue.night.wp.recipe.1.perspective.projection': 'Wenn Ludwig neunhunderttausend Wörter geschrieben hätte, würde ich ihn auslachen?\n\nWahrscheinlich.\n\nAber ich habe mich nicht selbst ausgelachen. Was sagt das?',
 
-  // prologue-night recipe 2
-  'prologue.night.wp.recipe.2.perspective.objective': 'Er lebt in seinem Gruppenchat. Ich lebe in meinem Dokument.',
-  'prologue.night.wp.recipe.2.perspective.literary': 'Wir gehen nebeneinander her, aber nicht in derselben Welt.',
-  'prologue.night.wp.recipe.2.perspective.analytical': 'Gleicher Moment, völlig unterschiedliche Daseinsformen.',
-  'prologue.night.wp.recipe.2.perspective.projection': 'Vielleicht schreibt er auch etwas. Er hat es mir nur nicht erzählt.',
+  // prologue-night recipe 2 (wrote-phone)
+  'prologue.night.wp.recipe.2.perspective.objective': 'Er lebt in seinem Gruppenchat. Ich lebe in meinem Dokument.\n\nZwei Welten laufen parallel, ohne sich gegenseitig zu stören. Das ist die Tatsache, die ich beobachtet habe.',
+  'prologue.night.wp.recipe.2.perspective.literary': 'Seine Welt sind hundert ungelesene Nachrichten. Meine Welt ist ein unvollendeter Absatz.\n\nZwei Stille, getrennt durch einen Bildschirm.',
+  'prologue.night.wp.recipe.2.perspective.analytical': 'Er hat schnell gelacht, während er durch den Chat scrollte.\n\nIch lache schnell, während ich im Dokument schreibe.\n\nZwei völlig verschiedene Quellen von Glück, ungefähr gleiche Dauer.\n\nDas hat mich veranlasst, die Definition von „Glück" nochmal zu überdenken.',
+  'prologue.night.wp.recipe.2.perspective.projection': 'Wenn er mit Emojis antwortet, denkt er dann, dass jemand über ihn schreibt?\n\nWahrscheinlich nicht.\n\nAber wenn ich über ihn schreibe, denke ich dann daran, was er ansieht?\n\nAuch nicht.\n\nWir kennen uns nicht. Wir denken nur, wir tun es.',
 
-  // ch01-night recipe 0
-  'ch01.night.wp.recipe.0.perspective.objective': '"Soll ich die Satzstruktur zitieren?" — Sie fragte. Professionell.',
-  'ch01.night.wp.recipe.0.perspective.literary': 'Ihre Existenz war wie ein schon geschriebener Satz.',
-  'ch01.night.wp.recipe.0.perspective.analytical': 'Sie ist nicht nur wegen Glücks hier.',
-  'ch01.night.wp.recipe.0.perspective.projection': 'Mit fünfzehn wusste ich nicht, was Zitationen sind.',
+  // ch01-night recipe 0 (wrote-maya-class)
+  'ch01.night.wp.recipe.0.perspective.objective': '„Soll ich die Satzstruktur zitieren?" — Sie fragte. Ihre Notizen waren ordentlich. Ihre Stimme war leise. Das sind die Fakten, die ich beobachtet habe.',
+  'ch01.night.wp.recipe.0.perspective.literary': 'Als sie diese Frage stellte, war ihre Stimme wie ein Faden, der durch Papier gezogen wird.\n\nIhr Notizbuch war wie ein Labyrinth, das niemals falsch laufen konnte — jede Seite hatte einen klaren Ein- und Ausgang.\n\nZum ersten Mal fühlte ich, dass die Existenz eines Menschen so sauber sein kann.',
+  'ch01.night.wp.recipe.0.perspective.analytical': 'Eine achtzehnjährige neue Schülerin, fragt am ersten Tag nach „Zitation".\n\nSie entweder eine sehr gute Schule besucht oder sich vorher informiert.\n\nEgal wie — sie ist nicht zufällig an diese Schule gekommen.',
+  'ch01.night.wp.recipe.0.perspective.projection': 'Was habe ich mit fünfzehn gemacht? Im Flur auf und ab gelaufen, so getan, als wäre ich eine Figur in einem Roman.\n\nSie hat mit fünfzehn wahrscheinlich schon sorgfältig Notizen gemacht.\n\nDas, was uns unterscheidet, ist nicht das Alter. Es ist etwas, das ich noch nicht verstanden habe.',
 
-  // ch01-night recipe 2
-  'ch01.night.wp.recipe.2.perspective.objective': 'Er legte das Blatt zwischen sich und sie. Natürlich.',
-  'ch01.night.wp.recipe.2.perspective.literary': 'Als würde er sagen — hier ist auch ein Stück für dich.',
-  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwigs Freundlichkeit braucht kein Nachdenken.',
-  'ch01.night.wp.recipe.2.perspective.projection': 'Das könnte ich nie. Ich würde zuerst nachdenken.',
+  // ch01-night recipe 2 (maya+kind)
+  'ch01.night.wp.recipe.2.perspective.objective': 'Ludwig legte das Blatt zwischen sich und sie, ohne zu zögern.\n\nIhr Ausdruck hat sich nicht verändert.\n\nBeide waren natürlich. Ich bin es nicht.',
+  'ch01.night.wp.recipe.2.perspective.literary': 'Als er das Papier über schob, war es wie ein Sagen: Hier ist auch ein Stück für dich.\n\nAls sie es annahm, war es wie ein Sagen: Ich war schon immer hier.\n\nDie zwei am besten harmonierenden Personen im Klassenzimmer waren nicht diejenigen, die sich am längsten kannten.',
+  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwigs Freundlichkeit gegenüber der neuen Schülerin braucht kein Nachdenken.\n\nIhre Annahme dieser Freundlichkeit auch nicht.\n\nZwei völlig unterschiedliche soziale Stile, beide perfekt in ihrer Komfortzone.\n\nUnd ich saß in der dritten Reihe, außerhalb beider.',
+  'ch01.night.wp.recipe.2.perspective.projection': 'Ich habe das früher auch gemacht. Jemand kommt ins Klassenzimmer, alle schauen hin, und ich tue so, als hätte ich es nicht bemerkt.\n\nLudwig ist anders. Er schiebt einfach das Papier rüber.\n\nDas könnte ich nicht. Nicht weil ich nicht will, sondern weil ich erst die richtigen Worte planen muss.\n\nWenn ich sie geplant habe, ist der Moment schon vorbei.',
 
   // Improvisationsschreibvorlagen
   'improv.maya': 'Heute habe ich versucht, {labels} aufzuschreiben.\n\nDiese Details drehten sich immer wieder in meinem Kopf.',

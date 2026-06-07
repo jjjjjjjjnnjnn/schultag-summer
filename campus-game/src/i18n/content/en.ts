@@ -601,35 +601,35 @@ const en: Record<string, string> = {
   // ═══════════════════════════════════════
   // WRITING PERSPECTIVE MODIFIERS
   // ═══════════════════════════════════════
-  // prologue-night recipe 0
-  'prologue.night.wp.recipe.0.perspective.objective': 'I noticed these things and wrote them down.',
-  'prologue.night.wp.recipe.0.perspective.literary': 'It felt like someone peeled back a corner of something long hidden.',
-  'prologue.night.wp.recipe.0.perspective.analytical': 'Being exposed bothers me more than what was exposed.',
-  'prologue.night.wp.recipe.0.perspective.projection': 'Maybe I am not afraid of being seen. I am afraid no one is looking.',
+  // prologue-night recipe 0 (wrote-ludwig)
+  'prologue.night.wp.recipe.0.perspective.objective': 'These are the facts I observed.\n\nThe light, Ludwig\'s words, my own reaction. Objective observations, nothing embellished.',
+  'prologue.night.wp.recipe.0.perspective.literary': 'The light was a blade. Ludwig\'s words were a mirror.\n\nI stood between the two, and each reflected something different.',
+  'prologue.night.wp.recipe.0.perspective.analytical': 'When Ludwig said "Lord Protector," he was testing me.\n\nHe wanted to see if I would get angry. I did not.\n\nThat itself is a signal.',
+  'prologue.night.wp.recipe.0.perspective.projection': 'If he were me, would he have stood in that light and hesitated for a second?\n\nIf I were him, would I have walked down the hallway turning someone else\'s secret into a joke?\n\nI do not know. But I am starting to wonder.',
 
-  // prologue-night recipe 1
-  'prologue.night.wp.recipe.1.perspective.objective': 'I wrote down the light and the words.',
-  'prologue.night.wp.recipe.1.perspective.literary': 'Like a small pile of sun-dried leaves turned out in the open.',
-  'prologue.night.wp.recipe.1.perspective.analytical': 'Saying it out loud and writing it down carry different weight.',
-  'prologue.night.wp.recipe.1.perspective.projection': 'Sometimes I think being seen is not so bad.',
+  // prologue-night recipe 1 (wrote-novel)
+  'prologue.night.wp.recipe.1.perspective.objective': '"Several hundred thousand." I said it. I wrote it down.\n\nNumbers do not lie. Neither does light.',
+  'prologue.night.wp.recipe.1.perspective.literary': 'Light cut a line across the stone. Words piled into a mountain inside me.\n\nBoth were saying the same thing: you cannot hide.',
+  'prologue.night.wp.recipe.1.perspective.analytical': 'The weight of "several hundred thousand" depends on who hears it.\n\nLudwig heard a joke. I heard an exposure.\n\nThe same word, completely different weight for two people.',
+  'prologue.night.wp.recipe.1.perspective.projection': 'If Ludwig had written nine hundred thousand words, would I laugh at him?\n\nProbably.\n\nBut I did not laugh at myself. What does that mean?',
 
-  // prologue-night recipe 2
-  'prologue.night.wp.recipe.2.perspective.objective': 'He lives in his group chat. I live in my document.',
-  'prologue.night.wp.recipe.2.perspective.literary': 'We walk side by side, but not in the same world.',
-  'prologue.night.wp.recipe.2.perspective.analytical': 'Same moment in time, completely different modes of existence.',
-  'prologue.night.wp.recipe.2.perspective.projection': 'Maybe he is writing something too. He just has not told me.',
+  // prologue-night recipe 2 (wrote-phone)
+  'prologue.night.wp.recipe.2.perspective.objective': 'He lives in his group chat. I live in my document.\n\nTwo worlds running in parallel, never disturbing each other. That is the fact I observed.',
+  'prologue.night.wp.recipe.2.perspective.literary': 'His world is a hundred unread messages. Mine is an unfinished paragraph.\n\nTwo silences, separated by a screen.',
+  'prologue.night.wp.recipe.2.perspective.analytical': 'He laughed fast while scrolling through the chat.\n\nI laugh fast while writing in the document.\n\nTwo entirely different sources of happiness, roughly the same duration.\n\nThat made me reconsider the definition of "happiness."',
+  'prologue.night.wp.recipe.2.perspective.projection': 'When he replies with emojis, does he think someone is writing about him?\n\nProbably not.\n\nBut when I write about him, do I think about what he is looking at?\n\nAlso no.\n\nWe do not know each other. We just think we do.',
 
-  // ch01-night recipe 0
-  'ch01.night.wp.recipe.0.perspective.objective': '"Should I cite the sentence structure?" — She asked. Professional.',
-  'ch01.night.wp.recipe.0.perspective.literary': 'Her presence was like a sentence already written.',
-  'ch01.night.wp.recipe.0.perspective.analytical': 'She did not get into this school by luck alone.',
-  'ch01.night.wp.recipe.0.perspective.projection': 'At fifteen, I had no idea what citations were.',
+  // ch01-night recipe 0 (wrote-maya-class)
+  'ch01.night.wp.recipe.0.perspective.objective': '"Should I cite the sentence structure?" — She asked. Her notes were tidy. Her voice was quiet. These are the facts I observed.',
+  'ch01.night.wp.recipe.0.perspective.literary': 'When she asked that question, her voice was like a thread passing through paper.\n\nHer notebook was like a maze that could not go wrong—every page had a clear entrance and exit.\n\nFor the first time, I felt that a person\'s presence could be that clean.',
+  'ch01.night.wp.recipe.0.perspective.analytical': 'An eighteen-year-old new student, asking about "citation" on her first day.\n\nShe either attended a very good school beforehand, or she did her homework.\n\nEither way, she did not come to this school by accident.',
+  'ch01.night.wp.recipe.0.perspective.projection': 'What was I doing at fifteen? Walking around the hallway, pretending to be a character in a novel.\n\nShe was probably already taking careful notes at fifteen.\n\nThe gap between us is not age. It is something I have not figured out yet.',
 
-  // ch01-night recipe 2
-  'ch01.night.wp.recipe.2.perspective.objective': 'He placed the paper between them. Natural.',
-  'ch01.night.wp.recipe.2.perspective.literary': 'As if saying — there is a share for you here.',
-  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwig\'s kindness requires no thought.',
-  'ch01.night.wp.recipe.2.perspective.projection': 'I could never do that. I would think first.',
+  // ch01-night recipe 2 (maya+kind)
+  'ch01.night.wp.recipe.2.perspective.objective': 'Ludwig placed the paper between them without hesitation.\n\nHer expression did not change.\n\nBoth of them were natural. I am not.',
+  'ch01.night.wp.recipe.2.perspective.literary': 'When he slid the paper over, it was like saying: there is a share for you here.\n\nWhen she took it, it was like saying: I have always been here.\n\nThe two most in-tune people in the classroom were not the ones who had known each other longest.',
+  'ch01.night.wp.recipe.2.perspective.analytical': 'Ludwig\'s kindness toward the new student requires no thought.\n\nHer acceptance of that kindness requires no thought either.\n\nTwo completely different social styles, both perfectly within their comfort zones.\n\nAnd I was sitting in the third row, outside both.',
+  'ch01.night.wp.recipe.2.perspective.projection': 'I used to do this too. Someone walks into the classroom, everyone looks, and I pretend not to notice.\n\nLudwig is different. He just pushes the paper over.\n\nI cannot do that. Not because I do not want to, but because I need to plan my words first.\n\nBy the time I have planned them, the moment has passed.',
 
   // Improvised writing templates
   'improv.maya': 'Tonight I tried writing down {labels}.\n\nThese details kept circling in my mind.',
