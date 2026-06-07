@@ -2,12 +2,12 @@ import type { ObservationPoint, FocusType, CharacterImprint } from '../types/gam
 
 export function calculateObservationCost(
   obs: ObservationPoint,
-  focusCosts: Record<string, number> | undefined,
+  _focusCosts: Record<string, number> | undefined,
   currentFocus: FocusType | null,
 ): number {
-  if (currentFocus && obs.focusGroup === currentFocus) {
-    return focusCosts?.[obs.focusGroup] ?? 1
-  }
+  // 同焦点消耗 1 点，异焦点消耗 2 点
+  // focusCosts 仅用于焦点选择界面显示，不影响观察消耗
+  if (currentFocus && obs.focusGroup === currentFocus) return 1
   return 2
 }
 
