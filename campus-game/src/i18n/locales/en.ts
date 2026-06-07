@@ -55,9 +55,13 @@ const en: Record<string, string> = {
 
   // Perspective
   'perspective.objective': 'Objective',
+  'perspective.objective.hint': 'Focus on actions and facts',
   'perspective.literary': 'Literary',
+  'perspective.literary.hint': 'Express through imagery and metaphor',
   'perspective.analytical': 'Analytical',
+  'perspective.analytical.hint': 'Infer motives and personality',
   'perspective.projection': 'Projection',
+  'perspective.projection.hint': 'Observations mirror Robert himself',
 
   // Notebook
   'notebook.title': 'Notebook',

@@ -55,9 +55,13 @@ const de: Record<string, string> = {
 
   // Perspektive
   'perspective.objective': 'Objektiv',
+  'perspective.objective.hint': 'Fokus auf Handlungen und Fakten',
   'perspective.literary': 'Literarisch',
+  'perspective.literary.hint': 'Durch Bilder und Metaphern ausdrücken',
   'perspective.analytical': 'Analytisch',
+  'perspective.analytical.hint': 'Motive und Persönlichkeit erschließen',
   'perspective.projection': 'Projektion',
+  'perspective.projection.hint': 'Beobachtungen spiegeln Robert selbst wider',
 
   // Notizbuch
   'notebook.title': 'Notizbuch',

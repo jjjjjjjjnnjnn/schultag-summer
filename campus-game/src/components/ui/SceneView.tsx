@@ -616,6 +616,10 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
             </button>
           ))}
         </div>
+        {/* 视角描述提示 */}
+        <p className="text-[11px] text-stone-600 mt-2 italic" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+          {t('perspective.' + selectedPerspective + '.hint')}
+        </p>
       </div>
 
       {/* 提交写作 */}

@@ -49,9 +49,13 @@ const zh: Record<string, string> = {
 
   // 写作视角
   'perspective.objective': '客观记录',
+  'perspective.objective.hint': '关注行为与事实',
   'perspective.literary': '文学修饰',
+  'perspective.literary.hint': '用意象和隐喻表达观察',
   'perspective.analytical': '分析反思',
+  'perspective.analytical.hint': '推测动机与性格',
   'perspective.projection': '换位想象',
+  'perspective.projection.hint': '观察映照 Robert 自己',
 
   // 笔记本
   'notebook.title': '笔记本',
