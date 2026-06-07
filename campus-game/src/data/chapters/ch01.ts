@@ -1,0 +1,286 @@
+import type { DayScene, NightScene } from '../../types/game'
+
+// ═══════════════════════════════════════════════
+// 第一章 · 周三的英语课
+// ═══════════════════════════════════════════════
+
+export const ch01Day: DayScene = {
+  id: 'ch01-day',
+  mode: 'day',
+  location: '英语教室',
+  timeOfDay: '上午',
+  titleCard: { day: '周三', time: '10:23' },
+  intro: [
+    { type: 'narration', text: '周三。英语课。教室里的光从窗户斜着照进来。',
+        cid: 'ch01.day.intro.0' },
+    {
+      type: 'narration',
+      text: '关上文档的时候，我注意到一件事。\n\n文档属性里，创建日期是上周。\n\n我确定上周还没有开始写这本。',
+      requiresMilestone: 'first-writing',
+      cid: 'ch01.day.intro.milestone.0',
+    },
+    { type: 'dialogue', speaker: 'ludwig', text: '哎呀，又是小飞飞的课。',
+        cid: 'ch01.day.intro.1' },
+    // 即时反噬：根据序章写作方向触发不同异常
+    {
+      type: 'dialogue',
+      speaker: 'ludwig',
+      text: '话说，我昨天突然在想——我看手机的时候，是不是笑得特别明显？',
+      requiresTag: 'wrote-ludwig',
+        cid: 'ch01.day.intro.2'
+    },
+    {
+      type: 'thought',
+      text: '他怎么突然问这个？',
+      requiresTag: 'wrote-ludwig',
+        cid: 'ch01.day.intro.3'
+    },
+    {
+      type: 'dialogue',
+      speaker: 'ludwig',
+      text: '你到底写了多少字来着？我昨天突然好奇。',
+      requiresTag: 'wrote-novel',
+        cid: 'ch01.day.intro.4'
+    },
+    {
+      type: 'thought',
+      text: '他怎么突然想起来的？',
+      requiresTag: 'wrote-novel',
+        cid: 'ch01.day.intro.5'
+    },
+    {
+      type: 'dialogue',
+      speaker: 'ludwig',
+      text: '我昨晚做了个怪梦。梦见你当皇帝。',
+      requiresTag: 'wrote-phone',
+        cid: 'ch01.day.intro.6'
+    },
+    {
+      type: 'thought',
+      text: '……',
+      requiresTag: 'wrote-phone',
+        cid: 'ch01.day.intro.7'
+    },
+    { type: 'dialogue', speaker: 'ludwig', text: '嘿，今天那个新同学是不是要来了。',
+        cid: 'ch01.day.intro.8' },
+    { type: 'narration', text: '过了几十分钟。窗外篱笆旁边出现了三个身影。',
+        cid: 'ch01.day.intro.9' },
+    { type: 'dialogue', speaker: 'ludwig', text: '诶诶诶，看窗外，有一个没见过的女生。',
+        cid: 'ch01.day.intro.10' },
+    { type: 'narration', text: '门被敲响了。国际部老师用德语和小飞飞说了几句话，就带着家长走了。',
+        cid: 'ch01.day.intro.11' },
+    { type: 'dialogue', speaker: 'teacher', text: '所以，我们班来了一个新同学。用英语介绍一下自己吧！',
+        cid: 'ch01.day.intro.12' },
+    { type: 'narration', text: '无人回应。小飞飞看向了我。',
+        cid: 'ch01.day.intro.13' },
+    { type: 'dialogue', speaker: 'teacher', text: '看样子Robert很期待啊，对吧。',
+        cid: 'ch01.day.intro.14' },
+    { type: 'narration', text: '我站起来。',
+        cid: 'ch01.day.intro.15' },
+    { type: 'dialogue', speaker: 'ludwig', text: '加油。', requiresImprint: { characterId: 'ludwig', type: 'writing', threshold: 1,
+        cid: 'ch01.day.intro.16' } },
+    { type: 'dialogue', speaker: 'robert', text: '我叫荣加俊，英文名Robert，今年15岁。兴趣爱好是学习生物，对创造性项目感兴趣。现在在写小说和散文，一共写了90万字以上。',
+        cid: 'ch01.day.intro.17' },
+    { type: 'dialogue', speaker: 'teacher', text: 'OK。那接下来Ludwig。',
+        cid: 'ch01.day.intro.18' },
+    { type: 'dialogue', speaker: 'ludwig', text: '我叫王嘉亿，15岁，喜欢语言学，烘焙，经常旅游。',
+        cid: 'ch01.day.intro.19' },
+    { type: 'dialogue', speaker: 'teacher', text: '那你呢。',
+        cid: 'ch01.day.intro.20' },
+    { type: 'narration', text: '新同学站起来。',
+        cid: 'ch01.day.intro.21' },
+    { type: 'dialogue', speaker: 'maya', text: '我叫兰若瑶，也可以叫我Maya。我18岁，喜欢烘焙，对生态学感兴趣，德语不是特别好。',
+        cid: 'ch01.day.intro.22' },
+    { type: 'dialogue', speaker: 'teacher', text: '挺好。Maya，你可以看Ludwig的题目。',
+        cid: 'ch01.day.intro.23' },
+    { type: 'narration', text: '王嘉亿把题目放到他们俩中间。',
+        cid: 'ch01.day.intro.24' },
+  ],
+  observations: [
+    {
+      id: 'ch01-maya-notebook',
+      name: '那个女生在记笔记',
+      description: '她做笔记的方式',
+      observationText: '她的笔在纸上划过的声音很轻，但节奏很稳。每记一行，停顿一下，确认格式，再继续。不像王嘉亿那样随手乱写。她用的是活页纸，字迹很小，排列得像表格一样整齐。问了一句"要不要写句式引用"——连文章分析都知道要做引用，真专业。',
+      notebookEntry: {
+        id: 'note-maya-note-01',
+        label: '那个女生的笔记',
+        text: '她问了一句"要不要写句式引用"。连文章分析都知道要做引用。字迹很小，排列得像表格一样整齐。',
+        category: 'action',
+        cid: 'ch01.day.obs.0.nb',
+      },
+      cid: 'ch01.day.obs.0',
+      relationshipEffect: { characterId: 'maya', delta: 1 },
+      invasionLevel: 1,
+      position: { x: 65, y: 35 },
+      focusGroup: 'maya',
+    },
+    {
+      id: 'ch01-ludwig-lambda',
+      name: '王嘉亿替她看题',
+      description: '他把题目分享给兰若瑶',
+      observationText: '王嘉亿没有犹豫就把题目放到两人中间。不是那种刻意的殷勤，而是一种理所当然的自然——好像帮助新同学看题是世界上最不需要想的事情。他说话的速度没变，语调没变，只是把纸推过去了。',
+      notebookEntry: {
+        id: 'note-ludwig-kind-01',
+        label: '王嘉亿的自然',
+        text: '他没有犹豫就把题目放到两人中间。不是刻意的殷勤，而是一种理所当然的自然。',
+        category: 'action',
+        cid: 'ch01.day.obs.1.nb',
+      },
+      cid: 'ch01.day.obs.1',
+      relationshipEffect: { characterId: 'ludwig', delta: 1 },
+      position: { x: 35, y: 40 },
+      focusGroup: 'ludwig',
+    },
+    {
+      id: 'ch01-maya-voice',
+      name: '那个女生的声音',
+      description: '她说话的方式',
+      observationText: '她说话的声音不大，但每个字都很清晰。不像王嘉亿那样连珠炮，也不像我自己那样吞吞吐吐。像一把干净的尺子在纸上划出直线——不快不慢，没有弯。',
+      notebookEntry: {
+        id: 'note-maya-voice-01',
+        label: '那个女生的声音',
+        text: '她说话的声音不大，但每个字都很清晰。像一把干净的尺子在纸上划出直线。',
+        category: 'sound',
+        cid: 'ch01.day.obs.2.nb',
+      },
+      cid: 'ch01.day.obs.2',
+      invasionLevel: 1,
+      position: { x: 70, y: 55 },
+      focusGroup: 'maya',
+    },
+    {
+      id: 'ch01-window-light',
+      name: '教室窗户的光',
+      description: '今天教室里的光线',
+      observationText: '光从窗户斜着打进来，照在对面那排课桌上。灰尘在光柱里浮动——平时不会注意到的那种。光柱随着云层的移动，慢慢地、几乎看不见地偏移了一点。整间教室的光线像一个正在呼吸的东西。',
+      notebookEntry: {
+        id: 'note-ch01-light-01',
+        label: '教室光柱',
+        text: '光从窗户斜着打进来。灰尘在光柱里浮动，随着云层慢慢偏移。整间教室的光线像一个正在呼吸的东西。',
+        category: 'visual',
+        cid: 'ch01.day.obs.3.nb',
+      },
+      cid: 'ch01.day.obs.3',
+      position: { x: 85, y: 25 },
+      focusGroup: 'environment',
+    },
+    {
+      id: 'ch01-maya-appearance',
+      name: '新同学的外表',
+      description: '她的样子',
+      observationText: '白色加淡蓝色的冲锋衣，看起来挺干净。头发不是很长，正好扎个马尾辫。目测1米5左右，看着完全不像18。自我介绍的时候表情很平，没有紧张也没有刻意的微笑。就像在陈述一个事实。',
+      notebookEntry: {
+        id: 'note-maya-look-02',
+        label: '新同学的样子',
+        text: '白色冲锋衣，马尾辫。目测1米5，看着不像18。自我介绍时表情很平，像在陈述一个事实。',
+        category: 'visual',
+        cid: 'ch01.day.obs.4.nb',
+      },
+      cid: 'ch01.day.obs.4',
+      position: { x: 60, y: 60 },
+      focusGroup: 'maya',
+    },
+    {
+      id: 'ch01-silence',
+      name: '自我介绍后的沉默',
+      description: '你坐下后的那几秒',
+      observationText: '我坐下之后，有两三秒的安静。不是那种尴尬的安静，而是教室里本来就有的安静——翻纸的声音，笔碰桌面的声音，窗外风吹过什么的声音。只是在那两三秒里，这些声音突然变清楚了。像有人把背景噪音的音量旋钮往回调了一格。',
+      notebookEntry: {
+        id: 'note-silence-01',
+        label: '两三秒安静',
+        text: '坐下后有两三秒的安静。翻纸声，笔碰桌面声，窗外风声。突然变清楚了，像把音量旋钮往回调了一格。',
+        category: 'sound',
+        cid: 'ch01.day.obs.5.nb',
+      },
+      cid: 'ch01.day.obs.5',
+      position: { x: 20, y: 65 },
+      focusGroup: 'environment',
+    },
+  ],
+  outro: [
+    { type: 'narration', text: '我们继续写文章分析。教室里只有翻纸和笔在纸上的声音。',
+        cid: 'ch01.day.outro.0' },
+    { type: 'narration', text: '我低着头。脑子里已经在排列今天的素材了。',
+        cid: 'ch01.day.outro.1' },
+    { type: 'narration', text: '今天最重要的一件事——新同学来了。',
+        cid: 'ch01.day.outro.2' },
+  ],
+  nextSceneId: 'ch01-night',
+  attentionBudget: 3,
+  focusCosts: { maya: 2, ludwig: 2, environment: 1 },
+  sceneLayout: {
+    elements: [
+      // 上墙
+      { style: { position: 'absolute', left: 0, top: 0, width: '100%', height: 2, background: 'rgba(168,162,158,0.1)' } },
+      // 下墙（黑板）
+      { style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: 2, background: 'rgba(168,162,158,0.1)' } },
+      { style: { position: 'absolute', left: '30%', bottom: 2, width: '40%', height: 3, background: 'rgba(168,162,158,0.08)' }, label: '黑板' },
+      // 右墙（窗户）
+      { style: { position: 'absolute', right: 0, top: 0, width: 2, height: '100%', background: 'rgba(168,162,158,0.08)' } },
+      { style: { position: 'absolute', right: '5%', top: '10%', width: '12%', height: '60%', background: 'linear-gradient(180deg, rgba(200,150,50,0.06) 0%, transparent 100%)' } },
+      { style: { position: 'absolute', right: 2, top: '20%', width: 2, height: '15%', background: 'rgba(200,150,50,0.12)' }, label: '窗户' },
+      // 三排课桌
+      { style: { position: 'absolute', left: '15%', top: '30%', width: '50%', height: 1, background: 'rgba(168,162,158,0.06)' } },
+      { style: { position: 'absolute', left: '15%', top: '50%', width: '50%', height: 1, background: 'rgba(168,162,158,0.06)' } },
+      { style: { position: 'absolute', left: '15%', top: '70%', width: '50%', height: 1, background: 'rgba(168,162,158,0.06)' } },
+      // 门
+      { style: { position: 'absolute', left: 2, bottom: '15%', width: 2, height: '12%', background: 'rgba(168,162,158,0.1)' }, label: '门' },
+    ],
+  },
+  cid: 'ch01.day',
+}
+
+export const ch01Night: NightScene = {
+  id: 'ch01-night',
+  mode: 'night',
+  location: '宿舍 · 深夜',
+  lines: [
+    { type: 'narration', text: '深夜。宿舍走廊的灯已经灭了一半。',
+        cid: 'ch01.night.lines.0' },
+    { type: 'narration', text: '我坐在桌前。电脑屏幕上，文档打开了。',
+        cid: 'ch01.night.lines.1' },
+    { type: 'narration', text: '今天最重要的事情：新同学来了。但我不确定要写她。',
+        cid: 'ch01.night.lines.2' },
+    { type: 'narration', text: '先看看今天收集到了什么。',
+        cid: 'ch01.night.lines.3' },
+  ],
+  writingPhase: {
+    prompt: '今天在英语课上观察到了这些。选几个素材，写一段今天的文字。',
+    recipes: [
+      {
+        requiredEntries: ['note-maya-note-01', 'note-maya-voice-01'],
+        composedText: '新同学叫兰若瑶。她问了一句"要不要写句式引用"——连文章分析都知道要做引用。\n\n她说话的声音不大，但每个字都很清晰。像一把干净的尺子在纸上划出直线。\n\n我不知道她为什么18岁才来德国。但她的笔记本比王嘉亿整齐一百倍。',
+        influenceTag: 'wrote-maya-class',
+        perspectiveModifiers: {
+          objective: '"要不要写句式引用"——她问了这么一句。专业的。',
+          literary: '她的存在像一句已经写好的句子。',
+          analytical: '她能来这个学校，恐怕不止是运气。',
+          projection: '我十五岁的时候，完全不知道什么是引用。',
+        },
+        cid: 'ch01.night.wp.recipe.0',
+      },
+      {
+        requiredEntries: ['note-ch01-light-01', 'note-silence-01'],
+        composedText: '光从窗户斜着打进来，灰尘在光柱里浮动。\n\n我坐下之后有两三秒的安静。翻纸声，笔碰桌面声，窗外风声。突然变清楚了，像把音量旋钮往回调了一格。\n\n教室是一个每天都在变化但每天都一样的地方。光不同，人不同，安静的方式也不同。',
+
+        cid: 'ch01.night.wp.recipe.1',
+      },
+      {
+        requiredEntries: ['note-maya-look-02', 'note-ludwig-kind-01'],
+        composedText: '白色冲锋衣，马尾辫。自我介绍时表情很平，像在陈述一个事实。\n\n王嘉亿没有犹豫就把题目放到两人中间。不是刻意的殷勤，是一种理所当然的自然。\n\n一个在陈述事实，一个在自然地分享。教室里最自然的两个人，都不是我。',
+        perspectiveModifiers: {
+          objective: '他把题放到中间。很自然。',
+          literary: '像在说——这里有你一份。',
+          analytical: '王嘉亿的友善是不需要思考的那种。',
+          projection: '我做不到这样。我会先想。',
+        },
+        cid: 'ch01.night.wp.recipe.2',
+      },
+    ],
+    defaultText: '今天英语课来了新同学。教室里有一些光，一些声音。我观察了一些事情，但还没想好怎么写。',
+    cid: 'ch01.night.wp',
+  },
+  nextSceneId: 'ch02-day',
+  cid: 'ch01.night',
+}

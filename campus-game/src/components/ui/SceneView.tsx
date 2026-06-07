@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from 'react'
-import { useGameStore, getVisibleLines } from '../../store/gameStore'
+import { useGameStore } from '../../store/gameStore'
+import { getVisibleLines } from '../../store/selectors'
 import { useTranslation, useContent } from '../../i18n'
 import { DialogBox } from './DialogBox'
 import { ObservationModal } from './ObservationModal'

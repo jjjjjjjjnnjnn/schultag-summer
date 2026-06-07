@@ -45,3 +45,5 @@ export const characters: Record<string, Character> = {
     cid: 'char.teacher',
   },
 }
+
+export const FOCUSABLE_CHARACTERS = ['maya', 'ludwig'] as const

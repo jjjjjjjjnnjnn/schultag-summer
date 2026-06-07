@@ -2,12 +2,7 @@ import { useEffect } from 'react'
 import type { FocusType } from '../../types/game'
 import { useTranslation } from '../../i18n'
 import { useGameStore } from '../../store/gameStore'
-
-const FOCUS_KEYS: { type: FocusType; labelKey: string; subKey: string; hintKey: string; color: string }[] = [
-  { type: 'maya', labelKey: 'focus.maya', subKey: 'focus.mayaSub', hintKey: 'focus.mayaHint', color: '#8b5cf6' },
-  { type: 'ludwig', labelKey: 'focus.ludwig', subKey: 'focus.ludwigSub', hintKey: 'focus.ludwigHint', color: '#3b82f6' },
-  { type: 'environment', labelKey: 'focus.env', subKey: 'focus.envSub', hintKey: 'focus.envHint', color: '#a8a29e' },
-]
+import { FOCUS_CONFIG } from '../../data/focusConfig'
 
 interface Props {
   onSelect: (f: FocusType) => void
@@ -49,7 +44,7 @@ export function FocusSelector({ onSelect, budget = 3, focusCosts }: Props) {
       </div>
 
       <div className="flex justify-center gap-4 sm:gap-6">
-        {FOCUS_KEYS.map(f => (
+        {FOCUS_CONFIG.map(f => (
           <button
             key={f.type}
             onClick={() => onSelect(f.type)}

@@ -1,12 +1,16 @@
 import { create } from 'zustand'
-import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, WritingPerspective, Settings, SaveData } from '../types/game'
+import type { GameState, Scene, DayScene, NightScene, FocusType, WritingPerspective, Settings, SaveData } from '../types/game'
 import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
 import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
 import { evaluatePerceptions } from '../lib/perceptionEngine'
 import { evaluateEvidence } from '../lib/evidenceEngine'
-import { DAILY_OBJECTIVES, CHAPTER_GOALS, MAIN_QUESTS, evaluateDailyObjectives, evaluateChapterGoal } from '../data/quests'
+import { DAILY_OBJECTIVES, CHAPTER_GOALS, MAIN_QUESTS } from '../data/quests'
+import { evaluateDailyObjectives, evaluateChapterGoal } from '../lib/questLogic'
+import { calculateObservationCost, applyImprint, applyExposure, applyImpression } from '../lib/observationLogic'
+import { matchRecipe, generateImprovText, scanImprints } from '../lib/writingLogic'
+import { getVisibleLines } from './selectors'
 import enContent from '../i18n/content/en'
 import deContent from '../i18n/content/de'
 
@@ -18,54 +22,7 @@ function getC(lang: string, cid: string, fallback: string): string {
   return (t && t[cid]) || fallback
 }
 
-/** 统一的行可见性过滤：requiresTag + requiresImprint + requiresFocusHistory + requiresObservation + requiresExposure + requiresMilestone */
-export function getVisibleLines(
-  lines: StoryLine[],
-  writingTags: string[],
-  imprints: Record<string, CharacterImprint>,
-  focusHistory: FocusType[] = [],
-  allNotebookEntries: import('../types/game').NotebookEntry[] = [],
-  exposure: number = 0,
-  completedMilestones: string[] = [],
-): StoryLine[] {
-  // 计算连续焦点 streak
-  const streakMap: Record<string, number> = {}
-  let streak = 0
-  let lastFocus: FocusType | null = null
-  for (const f of focusHistory) {
-    if (f === lastFocus) {
-      streak++
-    } else {
-      streak = 1
-      lastFocus = f
-    }
-    streakMap[f] = Math.max(streakMap[f] || 0, streak)
-  }
-
-  return lines.filter(l => {
-    if (l.requiresTag && !writingTags.includes(l.requiresTag)) return false
-    if (l.requiresImprint) {
-      const imprint = imprints[l.requiresImprint.characterId]
-      if (!imprint) return false
-      const count = l.requiresImprint.type === 'observation'
-        ? imprint.observationCount
-        : imprint.writingCount
-      if (count < l.requiresImprint.threshold) return false
-    }
-    if (l.requiresFocusHistory) {
-      const s = streakMap[l.requiresFocusHistory.characterId] || 0
-      if (s < l.requiresFocusHistory.count) return false
-    }
-    if (l.requiresObservation) {
-      if (!allNotebookEntries.some(e => e.id === l.requiresObservation)) return false
-    }
-    if (l.requiresExposure !== undefined) {
-      if (exposure < l.requiresExposure) return false
-    }
-    if (l.requiresMilestone && !completedMilestones.includes(l.requiresMilestone)) return false
-    return true
-  })
-}
+/** 统一的行可见性过滤（已移至 selectors.ts） */
 
 interface GameStore extends GameState {
   // ── 游戏流程 ──
@@ -430,34 +387,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // V1.5: 消耗值由 focusCosts 决定（若存在）
     const dayScene = get().getDayScene()
     const focusCosts = dayScene?.focusCosts
-    const cost = focusCosts && currentFocus && obs.focusGroup === currentFocus
-      ? focusCosts[obs.focusGroup]!
-      : 2
+    const cost = calculateObservationCost(obs, focusCosts, currentFocus)
     if (attentionRemaining < cost) return
 
     // 推进人物印象 + 印记
-    const newImpressions = { ...impressions }
-    const newImprints = { ...imprints }
+    let newImpressions = { ...impressions }
+    let newImprints = { ...imprints }
     if (obs.relationshipEffect) {
       const { characterId } = obs.relationshipEffect
       const char = characters[characterId]
       if (char && char.impressionLevels.length > 0) {
-        const current = newImpressions[characterId] || 0
-        const maxLevel = char.impressionLevels.length - 1
-        newImpressions[characterId] = Math.min(current + 1, maxLevel)
+        newImpressions = applyImpression(newImpressions, characterId)
       }
-      // 收集印记：观察计数 +1
-      if (newImprints[characterId]) {
-        newImprints[characterId] = {
-          ...newImprints[characterId],
-          observationCount: newImprints[characterId].observationCount + 1,
-        }
-      }
+      newImprints = applyImprint(newImprints, characterId)
     }
 
     // 暴露度：基于侵入度增加
     const invasionGain = obs.invasionLevel || 0
-    const newExposure = Math.min(exposure + invasionGain, 100)
+    const newExposure = applyExposure(exposure, invasionGain)
 
     const entryExists = allNotebookEntries.find(e => e.id === obs.notebookEntry.id)
 
@@ -502,7 +449,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const justCompleted = evaluateDailyObjectives(
         currentObjectives.objectives,
         newObservedIds,
-        get().allNotebookEntries,
       )
       if (justCompleted.length > 0) {
         set({
@@ -570,86 +516,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const lang = settings.language
 
-    const selectedLabels = allNotebookEntries
-      .filter(e => selectedEntryIds.includes(e.id))
-      .map(e => e.cid ? getC(lang, e.cid + '.label', e.label) : e.label)
+    const selectedEntries = allNotebookEntries.filter(e => selectedEntryIds.includes(e.id))
+    const selectedLabels = selectedEntries.map(e => e.cid ? getC(lang, e.cid + '.label', e.label) : e.label)
 
-    // 检查是否有匹配的配方（焦点专属优先）
-    const wp = nightScene.writingPhase
-    const wpCid = wp.cid || ''
-    let composedText = wpCid ? getC(lang, wpCid + '.default', wp.defaultText) : wp.defaultText
-    let matchedTag: string | undefined
-    let matchedRecipe: import('../types/game').WritingRecipe | undefined
-    // 先尝试焦点专属配方
-    for (const recipe of nightScene.writingPhase.recipes) {
-      if (recipe.requiresFocus && recipe.requiresFocus !== currentFocus) continue
-      const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
-      if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
-        composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
-        matchedTag = recipe.influenceTag
-        matchedRecipe = recipe
-        break
-      }
-    }
-    // 若无焦点专属匹配，尝试通用配方
+    // 检查是否有匹配的配方（焦点专属优先，然后通用）
+    const { result } = matchRecipe(
+      nightScene.writingPhase.recipes,
+      selectedEntryIds,
+      currentFocus,
+      selectedPerspective,
+      getC,
+      lang,
+    )
+
+    let composedText = result.composedText
+    let matchedTag = result.matchedTag
+
+    // 无配方匹配时生成即兴文本
     if (!matchedTag) {
-      for (const recipe of nightScene.writingPhase.recipes) {
-        if (recipe.requiresFocus) continue
-        const allMatch = recipe.requiredEntries.every(id => selectedEntryIds.includes(id))
-        if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
-          composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
-          matchedTag = recipe.influenceTag
-          matchedRecipe = recipe
-          break
-        }
-      }
-    }
-
-    // V1.5: 视角修饰器（仅配方匹配时应用）
-    if (matchedRecipe?.perspectiveModifiers?.[selectedPerspective]) {
-      composedText += '\n\n' + matchedRecipe.perspectiveModifiers[selectedPerspective]
-    }
-
-    // V1.5: 即兴文本生成（无配方匹配但有素材时）
-    if (!matchedTag && selectedEntryIds.length > 0) {
-      const selectedEntries = allNotebookEntries.filter(e => selectedEntryIds.includes(e.id))
-      const focusCounts: Record<string, number> = {}
-      for (const e of selectedEntries) {
-        const fg = e.focusGroup || 'environment'
-        focusCounts[fg] = (focusCounts[fg] || 0) + 1
-      }
-      const dominantFocus = Object.entries(focusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'environment'
-      const templates: Record<string, string> = {
-        maya: '今晚我试着写下{labels}。\n\n这些细节在脑子里转了好几圈。我不知道为什么记得这么清楚。',
-        ludwig: '{labels}——这些画面像快照一样叠在眼前。\n\n我写的时候发现自己笑了。',
-        environment: '{labels}\n\n这些观察像空气一样——说不出形状，但确实存在。',
-      }
-      const template = templates[dominantFocus] || templates.environment
-      const labels = selectedLabels.join(lang === 'de' ? ', ' : '、')
-      composedText = template.replace('{labels}', labels)
-    }
-
-    // 如果只选了一两个，生成简单版
-    if (selectedEntryIds.length <= 1 && selectedLabels.length > 0) {
-      composedText = getC(lang, 'feedback.todayWrote', `今天记下了：${selectedLabels.join('、')}。`)
-        .replace('{labels}', selectedLabels.join(lang === 'de' ? ', ' : ', '))
-    }
-    if (selectedEntryIds.length === 0) {
-      composedText = getC(lang, 'feedback.todayNothing', '今天什么也没写。有些日子就是这样。')
+      composedText = generateImprovText(selectedEntries, selectedLabels, selectedEntryIds)
     }
 
     // 收集印记：扫描写作中提及的角色
-    const newImprints = { ...imprints }
-    const mentionedChars: string[] = []
-    for (const [charId, char] of Object.entries(characters)) {
-      if (newImprints[charId] && composedText.includes(char.name)) {
-        newImprints[charId] = {
-          ...newImprints[charId],
-          writingCount: newImprints[charId].writingCount + 1,
-        }
-        mentionedChars.push(char.name)
-      }
-    }
+    const { newImprints } = scanImprints(composedText, imprints, characters)
 
     // 生成叙事反馈（基于侵入度）
     let feedback = ''
@@ -669,7 +558,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       : writingTags
 
     // 暴露度：基于所选素材的侵入度增加
-    const selectedEntries = allNotebookEntries.filter(e => selectedEntryIds.includes(e.id))
     const invasionGain = selectedEntries.reduce((sum: number, e: { invasionLevel?: number }) => sum + (e.invasionLevel || 0), 0)
     const newExposure = Math.min(exposure + invasionGain, 100)
 
