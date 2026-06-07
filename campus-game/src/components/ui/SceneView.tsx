@@ -515,7 +515,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
         {lastEchoPreview && (
           <div className="mt-4 px-4 py-3 border-l-2 border-amber-800/50 bg-amber-900/10 scene-fade-in">
             <p className="text-xs text-amber-600/70 mb-1" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-              {c('write.echoPreview', '回响')}
+              {t('write.echoPreview')}
             </p>
             <p className="text-sm text-amber-300/80 italic leading-relaxed" style={{ fontFamily: 'var(--font-serif-cn)' }}>
               {lastEchoPreview}
