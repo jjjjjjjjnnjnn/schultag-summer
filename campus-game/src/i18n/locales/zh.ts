@@ -150,6 +150,14 @@ const zh: Record<string, string> = {
   'tutorial.observeHint': '点击场景中的亮点，记录你观察到的事物。',
   'tutorial.writeHint': '选择今天观察到的素材，组合成文字。不同的组合会产生不同的故事。',
   'tutorial.echoHint': '你写下的文字开始影响你看到的现实。注意观察变化。',
+
+  // Quest System
+  'quest.mainQuest': '主线',
+  'quest.novelProgress': '小说进度',
+  'quest.chaptersCompleted': '章已完成',
+  'quest.chapterGoal': '章节目标',
+  'quest.dailyObjectives': '今日目标',
+  'quest.noObjectives': '当前场景没有活跃目标。',
 }
 
 export default zh

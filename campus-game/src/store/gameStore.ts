@@ -5,6 +5,7 @@ import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
 import { evaluateConsequences, distributeEffects } from '../lib/consequenceEngine'
 import { evaluatePerceptions } from '../lib/perceptionEngine'
+import { DAILY_OBJECTIVES, CHAPTER_GOALS, MAIN_QUESTS, evaluateDailyObjectives, evaluateChapterGoal } from '../data/quests'
 import enContent from '../i18n/content/en'
 import deContent from '../i18n/content/de'
 
@@ -153,6 +154,9 @@ const initialState: GameState = {
   perceptions: [],
   perceptionHistory: [],
   observationGeneration: 0,
+  completedMilestones: [],
+  completedDailyObjectives: [],
+  unlockedChapterRewards: [],
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -285,6 +289,34 @@ export const useGameStore = create<GameStore>((set, get) => ({
       perceptions: newPerceptions,
       perceptionHistory: [...get().perceptionHistory, perceptionSnapshot],
     })
+
+    // 检查章节目标
+    const chapterGoal = CHAPTER_GOALS.find(g => g.chapterId === sceneChapterId)
+    if (chapterGoal) {
+      const goalMet = evaluateChapterGoal(
+        chapterGoal,
+        get().allNotebookEntries,
+        get().writings,
+        get().focusHistory,
+        sceneChapterId,
+      )
+      if (goalMet && !get().unlockedChapterRewards.includes(chapterGoal.reward.value)) {
+        set({
+          unlockedChapterRewards: [...get().unlockedChapterRewards, chapterGoal.reward.value],
+        })
+      }
+    }
+
+    // 检查主线里程碑
+    const allCompleted = [...get().completedChapters, sceneChapterId]
+    for (const milestone of MAIN_QUESTS) {
+      if (!get().completedMilestones.includes(milestone.id)) {
+        const allMet = milestone.requiresChapters.every(c => allCompleted.includes(c))
+        if (allMet) {
+          set({ completedMilestones: [...get().completedMilestones, milestone.id] })
+        }
+      }
+    }
 
     // 成就检查
     const newAchievements = evaluateAchievements(get())
@@ -426,6 +458,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
       feedback: { text: feedbackText, visible: true },
       observationGeneration: observationGeneration + 1,
     })
+
+    // 检查每日目标
+    const newObservedIds = [...observedIds, modalObservationId]
+    const currentObjectives = DAILY_OBJECTIVES.find(d => d.sceneId === get().currentSceneId)
+    if (currentObjectives) {
+      const justCompleted = evaluateDailyObjectives(
+        currentObjectives.objectives,
+        newObservedIds,
+        get().allNotebookEntries,
+      )
+      if (justCompleted.length > 0) {
+        set({
+          completedDailyObjectives: [...new Set([...get().completedDailyObjectives, ...justCompleted])],
+        })
+      }
+    }
 
     // 自动隐藏反馈 + 脉动 1.5 秒后（仅在同一观察确认周期内才清除）
     const currentGen = observationGeneration + 1
@@ -689,6 +737,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         focusHistory: state.focusHistory,
         unlockedAchievements: state.unlockedAchievements,
         completedChapters: state.completedChapters,
+        completedMilestones: state.completedMilestones,
+        completedDailyObjectives: state.completedDailyObjectives,
+        unlockedChapterRewards: state.unlockedChapterRewards,
         playedEchoIds: state.playedEchoIds,
         behaviorStates: state.behaviorStates,
         activatedConsequences: state.activatedConsequences,

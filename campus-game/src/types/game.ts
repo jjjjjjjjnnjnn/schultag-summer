@@ -334,6 +334,13 @@ export interface GameState {
   perceptionHistory: PerceptionSnapshot[]
   /** 观察确认代数（用于防止 setTimeout 跨场景覆盖） */
   observationGeneration: number
+
+  /** 已完成的主线里程碑 */
+  completedMilestones: string[]
+  /** 当前场景已完成的任务目标 */
+  completedDailyObjectives: string[]
+  /** 已解锁的章节目标奖励 */
+  unlockedChapterRewards: string[]
 }
 
 // ── 存档数据结构 ──

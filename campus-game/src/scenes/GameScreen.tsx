@@ -3,6 +3,7 @@ import { useGameStore } from '../store/gameStore'
 import { useTranslation, useContent } from '../i18n'
 import { SceneView } from '../components/ui/SceneView'
 import { NotebookView } from '../components/ui/NotebookView'
+import { QuestTracker } from '../components/ui/QuestTracker'
 import { MenuModal } from '../components/menu/MenuModal'
 import { ChapterSelect } from '../components/menu/ChapterSelect'
 import { AchievementView } from '../components/menu/AchievementView'
@@ -85,6 +86,9 @@ export function GameScreen() {
           >
             ✎ ({allNotebookEntries.length})
           </button>
+          <div className="relative">
+            <QuestTracker />
+          </div>
           <button
             onClick={() => setMenuOverlay('settings')}
             className="text-xs px-2 py-1.5 rounded border border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-500 transition-colors"

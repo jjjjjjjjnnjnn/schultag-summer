@@ -144,6 +144,14 @@ const en: Record<string, string> = {
   'tutorial.observeHint': 'Click on bright spots in the scene to record what you notice.',
   'tutorial.writeHint': 'Select materials from your notebook and combine them into prose. Different combinations create different stories.',
   'tutorial.echoHint': 'What you wrote is beginning to change what you see. Notice the changes.',
+
+  // Quest System
+  'quest.mainQuest': 'Main Quest',
+  'quest.novelProgress': 'Novel Progress',
+  'quest.chaptersCompleted': 'chapters completed',
+  'quest.chapterGoal': 'Chapter Goal',
+  'quest.dailyObjectives': 'Daily Objectives',
+  'quest.noObjectives': 'No active objectives for this scene.',
 }
 
 export default en

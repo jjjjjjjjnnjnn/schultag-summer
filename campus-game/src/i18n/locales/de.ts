@@ -144,6 +144,14 @@ const de: Record<string, string> = {
   'tutorial.observeHint': 'Klicke auf helle Stellen in der Szene, um das zu notieren, was dir auffällt.',
   'tutorial.writeHint': 'Wähle Materialien aus deinem Notizbuch und kombiniere sie zu Prosa. Verschiedene Kombinationen erzeugen verschiedene Geschichten.',
   'tutorial.echoHint': 'Das, was du geschrieben hast, beginnt zu verändern, was du siehst. Achte auf die Veränderungen.',
+
+  // Quest System
+  'quest.mainQuest': 'Hauptauftrag',
+  'quest.novelProgress': 'Romanfortschritt',
+  'quest.chaptersCompleted': 'Kapitel abgeschlossen',
+  'quest.chapterGoal': 'Kapitelziel',
+  'quest.dailyObjectives': 'Tägliche Ziele',
+  'quest.noObjectives': 'Keine aktiven Ziele für diese Szene.',
 }
 
 export default de
