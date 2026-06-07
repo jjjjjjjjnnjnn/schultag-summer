@@ -128,6 +128,7 @@ const prologueDay: DayScene = {
   ],
   nextSceneId: 'prologue-night',
   attentionBudget: 3,
+  focusCosts: { maya: 2, ludwig: 2, environment: 1 },
   sceneLayout: {
     elements: [
       // 左墙
@@ -168,21 +169,36 @@ const prologueNight: NightScene = {
         requiredEntries: ['note-light-01', 'note-ludwig-tease-01'],
         composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。走过那道光的时候，有一瞬间整个人都是亮的，然后暗下去，继续走。\n\n"中二病晚期。现实里的reclusive，内心世界里的护国公。"\n\n被照亮的那一瞬间，好像什么都暴露了。\n\n——\n\n我把它写下来了。关于光，关于王嘉亿怎么形容我。\n\n这些句子放进文档里的时候，好像变成了某种证据。证明今天真的发生了这些事。',
         influenceTag: 'wrote-ludwig',
-      
+        perspectiveModifiers: {
+          objective: '我注意到这些，就这样写下来了。',
+          literary: '像有人把藏了很久的东西掀开了一个角。',
+          analytical: '暴露本身比内容更让我不安。',
+          projection: '也许我不是怕被看见，是怕没人看见。',
+        },
         cid: 'prologue.night.wp.recipe.0',
       },
       {
         requiredEntries: ['note-light-01', 'note-ninety-01'],
         composedText: '走廊里的光从尽头的窗户照进来，在石板地上斜斜地切出一道明晃晃的光带。\n\n"几十万吧。"——那些字像一小堆晒干的叶子，被一把从藏身处翻出来摊在了太阳底下。\n\n光和文字，都在暴露我。',
         influenceTag: 'wrote-novel',
-      
+        perspectiveModifiers: {
+          objective: '光和话，我都记下来了。',
+          literary: '像一小堆晒干的叶子被翻了出来。',
+          analytical: '说出口和写下来，分量不一样。',
+          projection: '我有时候觉得，被看见也没那么糟。',
+        },
         cid: 'prologue.night.wp.recipe.1',
       },
       {
         requiredEntries: ['note-ludwig-phone-01', 'note-ninety-01'],
         composedText: '他走路的时候眼睛一直盯着手机屏幕，嘴角带着笑。\n\n"几十万吧。"——我自己几乎从没对人说过这个数字。\n\n他活在他的群聊里，我活在我的九十万字里。我们走在一起，但不在同一个世界。',
         influenceTag: 'wrote-phone',
-      
+        perspectiveModifiers: {
+          objective: '他活在他的群聊里，我活在我的文档里。',
+          literary: '我们走在一起，但不在同一个世界。',
+          analytical: '同样的时间，完全不同的存在方式。',
+          projection: '也许他也在写什么。只是没告诉我。',
+        },
         cid: 'prologue.night.wp.recipe.2',
       },
     ],
@@ -401,6 +417,7 @@ const ch01Day: DayScene = {
   ],
   nextSceneId: 'ch01-night',
   attentionBudget: 3,
+  focusCosts: { maya: 2, ludwig: 2, environment: 1 },
   sceneLayout: {
     elements: [
       // 上墙
@@ -444,7 +461,12 @@ const ch01Night: NightScene = {
         requiredEntries: ['note-maya-note-01', 'note-maya-voice-01'],
         composedText: '新同学叫兰若瑶。她问了一句"要不要写句式引用"——连文章分析都知道要做引用。\n\n她说话的声音不大，但每个字都很清晰。像一把干净的尺子在纸上划出直线。\n\n我不知道她为什么18岁才来德国。但她的笔记本比王嘉亿整齐一百倍。',
         influenceTag: 'wrote-maya-class',
-      
+        perspectiveModifiers: {
+          objective: '"要不要写句式引用"——她问了这么一句。专业的。',
+          literary: '她的存在像一句已经写好的句子。',
+          analytical: '她能来这个学校，恐怕不止是运气。',
+          projection: '我十五岁的时候，完全不知道什么是引用。',
+        },
         cid: 'ch01.night.wp.recipe.0',
       },
       {
@@ -456,7 +478,12 @@ const ch01Night: NightScene = {
       {
         requiredEntries: ['note-maya-look-02', 'note-ludwig-kind-01'],
         composedText: '白色冲锋衣，马尾辫。自我介绍时表情很平，像在陈述一个事实。\n\n王嘉亿没有犹豫就把题目放到两人中间。不是刻意的殷勤，是一种理所当然的自然。\n\n一个在陈述事实，一个在自然地分享。教室里最自然的两个人，都不是我。',
-      
+        perspectiveModifiers: {
+          objective: '他把题放到中间。很自然。',
+          literary: '像在说——这里有你一份。',
+          analytical: '王嘉亿的友善是不需要思考的那种。',
+          projection: '我做不到这样。我会先想。',
+        },
         cid: 'ch01.night.wp.recipe.2',
       },
     ],
@@ -647,6 +674,7 @@ const ch02Day: DayScene = {
   ],
   nextSceneId: 'ch02-night',
   attentionBudget: 3,
+  focusCosts: { maya: 2, ludwig: 1, environment: 1 },
   sceneLayout: {
     elements: [
       // 球台
@@ -874,6 +902,7 @@ const ch03Day: DayScene = {
   ],
   nextSceneId: 'ch03-night',
   attentionBudget: 3,
+  focusCosts: { maya: 2, ludwig: 1, environment: 1 },
   sceneLayout: {
     elements: [
       // 餐桌
@@ -1115,6 +1144,7 @@ const ch04Day: DayScene = {
   ],
   nextSceneId: 'ch04-night',
   attentionBudget: 3,
+  focusCosts: { maya: 1, ludwig: 2, environment: 1 },
   sceneLayout: {
     elements: [
       // 后墙

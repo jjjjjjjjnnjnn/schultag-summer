@@ -22,30 +22,35 @@ export const MAIN_QUESTS: MainMilestone[] = [
     requiresChapters: ['prologue'],
     reward: { type: 'writingTag', value: 'unlocked-prologue' },
     description: '完成第一篇文字',
+    cid: 'quest.milestone.first-writing',
   },
   {
     id: 'meet-maya',
     requiresChapters: ['prologue', 'ch01'],
     reward: { type: 'dialogue', value: 'quest-meet-maya' },
     description: '认识新同学',
+    cid: 'quest.milestone.meet-maya',
   },
   {
     id: 'understand-dynamics',
     requiresChapters: ['prologue', 'ch01', 'ch02'],
     reward: { type: 'writingTag', value: 'unlocked-ch02' },
     description: '理解三人之间的微妙关系',
+    cid: 'quest.milestone.understand-dynamics',
   },
   {
     id: 'echo-awakening',
     requiresChapters: ['prologue', 'ch01', 'ch02', 'ch03'],
     reward: { type: 'dialogue', value: 'quest-echo-awakening' },
     description: '察觉写作正在改变现实',
+    cid: 'quest.milestone.echo-awakening',
   },
   {
     id: 'final-chapter',
     requiresChapters: ['prologue', 'ch01', 'ch02', 'ch03', 'ch04'],
     reward: { type: 'scene', value: 'ch05-epilogue' },
     description: '面对写作的后果',
+    cid: 'quest.milestone.final-chapter',
   },
 ]
 
@@ -54,6 +59,8 @@ export interface ChapterGoal {
   chapterId: string
   /** 目标描述 */
   description: string
+  /** 内容翻译 key */
+  cid?: string
   /** 与哪个焦点相关 */
   focusRelated?: FocusType
   /** 达成条件 */
@@ -73,12 +80,14 @@ export const CHAPTER_GOALS: ChapterGoal[] = [
   {
     chapterId: 'prologue',
     description: '观察走廊和食堂的氛围',
+    cid: 'quest.goal.prologue',
     condition: { type: 'observationCount', target: 2 },
     reward: { type: 'specialObs', value: '观察敏锐' },
   },
   {
     chapterId: 'ch01',
     description: '了解新同学',
+    cid: 'quest.goal.ch01',
     focusRelated: 'maya',
     condition: { type: 'observationCount', target: 2, focusType: 'maya' },
     reward: { type: 'bonusLine', value: 'quest-maya-first-impression' },
@@ -86,18 +95,21 @@ export const CHAPTER_GOALS: ChapterGoal[] = [
   {
     chapterId: 'ch02',
     description: '理解三个人之间的关系',
+    cid: 'quest.goal.ch02',
     condition: { type: 'observationCount', target: 3 },
     reward: { type: 'bonusLine', value: 'quest-understand-dynamics' },
   },
   {
     chapterId: 'ch03',
     description: '深入观察一个角色',
+    cid: 'quest.goal.ch03',
     condition: { type: 'focusStreak', target: 2 },
     reward: { type: 'bonusLine', value: 'quest-deep-focus' },
   },
   {
     chapterId: 'ch04',
     description: '完成你的观察记录',
+    cid: 'quest.goal.ch04',
     condition: { type: 'writingCount', target: 1 },
     reward: { type: 'bonusLine', value: 'quest-final-observation' },
   },
@@ -128,12 +140,14 @@ export const DAILY_OBJECTIVES: DailyObjective[] = [
       {
         id: 'prologue-obj-1',
         description: '观察走廊的光线',
+        cid: 'quest.obj.prologue.1',
         condition: { type: 'observe', targetId: 'prologue-light' },
         completionText: '你注意到了走廊里的光。',
       },
       {
         id: 'prologue-obj-2',
         description: '听听Ludwig在说什么',
+        cid: 'quest.obj.prologue.2',
         condition: { type: 'observe', targetId: 'prologue-ludwig-tease' },
         completionText: 'Ludwig又在开玩笑了。',
       },
@@ -145,18 +159,21 @@ export const DAILY_OBJECTIVES: DailyObjective[] = [
       {
         id: 'ch01-obj-1',
         description: '观察新同学的样子',
+        cid: 'quest.obj.ch01.1',
         condition: { type: 'observe', targetId: 'ch01-maya-appearance' },
         completionText: '你记住了她的样子。',
       },
       {
         id: 'ch01-obj-2',
         description: '听她说话',
+        cid: 'quest.obj.ch01.2',
         condition: { type: 'observe', targetId: 'ch01-maya-voice' },
         completionText: '她的声音很清晰。',
       },
       {
         id: 'ch01-obj-3',
         description: '看教室里的光线',
+        cid: 'quest.obj.ch01.3',
         condition: { type: 'observe', targetId: 'ch01-window-light' },
         completionText: '今天的光线很特别。',
       },
@@ -165,25 +182,25 @@ export const DAILY_OBJECTIVES: DailyObjective[] = [
   {
     sceneId: 'ch02-day',
     objectives: [
-      { id: 'ch02-obj-1', description: '观察乒乓球台的样子', condition: { type: 'observe', targetId: 'ch02-table' }, completionText: '球台是水泥的，边缘有缺口。' },
-      { id: 'ch02-obj-2', description: '看 Maya 怎么打球', condition: { type: 'observe', targetId: 'ch02-maya-lip' }, completionText: '她发球前会抿嘴。很轻。' },
-      { id: 'ch02-obj-3', description: '注意 Ludwig 的反应', condition: { type: 'observe', targetId: 'ch02-ludwig-smash' }, completionText: '他把两手一摊，往墙上靠。' },
+      { id: 'ch02-obj-1', description: '观察乒乓球台的样子', cid: 'quest.obj.ch02.1', condition: { type: 'observe', targetId: 'ch02-table' }, completionText: '球台是水泥的，边缘有缺口。' },
+      { id: 'ch02-obj-2', description: '看 Maya 怎么打球', cid: 'quest.obj.ch02.2', condition: { type: 'observe', targetId: 'ch02-maya-lip' }, completionText: '她发球前会抿嘴。很轻。' },
+      { id: 'ch02-obj-3', description: '注意 Ludwig 的反应', cid: 'quest.obj.ch02.3', condition: { type: 'observe', targetId: 'ch02-ludwig-smash' }, completionText: '他把两手一摊，往墙上靠。' },
     ],
   },
   {
     sceneId: 'ch03-day',
     objectives: [
-      { id: 'ch03-obj-1', description: '听 Ludwig 在聊什么', condition: { type: 'observe', targetId: 'ch03-ludwig-ask' }, completionText: '他在试探你的态度。' },
-      { id: 'ch03-obj-2', description: '观察 Maya 的习惯', condition: { type: 'observe', targetId: 'ch03-maya-voice' }, completionText: '她说话的时候会用手比划。' },
-      { id: 'ch03-obj-3', description: '注意食堂的氛围', condition: { type: 'observe', targetId: 'ch03-food' }, completionText: '窗外的光透过窗户照到桌上。' },
+      { id: 'ch03-obj-1', description: '听 Ludwig 在聊什么', cid: 'quest.obj.ch03.1', condition: { type: 'observe', targetId: 'ch03-ludwig-ask' }, completionText: '他在试探你的态度。' },
+      { id: 'ch03-obj-2', description: '观察 Maya 的习惯', cid: 'quest.obj.ch03.2', condition: { type: 'observe', targetId: 'ch03-maya-voice' }, completionText: '她说话的时候会用手比划。' },
+      { id: 'ch03-obj-3', description: '注意食堂的氛围', cid: 'quest.obj.ch03.3', condition: { type: 'observe', targetId: 'ch03-food' }, completionText: '窗外的光透过窗户照到桌上。' },
     ],
   },
   {
     sceneId: 'ch04-day',
     objectives: [
-      { id: 'ch04-obj-1', description: '看纪录片的内容', condition: { type: 'observe', targetId: 'ch04-ocean' }, completionText: '鱼群在屏幕上转。' },
-      { id: 'ch04-obj-2', description: '观察 Maya 的表情', condition: { type: 'observe', targetId: 'ch04-maya-watch' }, completionText: '她看纪录片的时候很安静。' },
-      { id: 'ch04-obj-3', description: '注意光线的变化', condition: { type: 'observe', targetId: 'ch04-light' }, completionText: '窗外的天色在变。' },
+      { id: 'ch04-obj-1', description: '看纪录片的内容', cid: 'quest.obj.ch04.1', condition: { type: 'observe', targetId: 'ch04-ocean' }, completionText: '鱼群在屏幕上转。' },
+      { id: 'ch04-obj-2', description: '观察 Maya 的表情', cid: 'quest.obj.ch04.2', condition: { type: 'observe', targetId: 'ch04-maya-watch' }, completionText: '她看纪录片的时候很安静。' },
+      { id: 'ch04-obj-3', description: '注意光线的变化', cid: 'quest.obj.ch04.3', condition: { type: 'observe', targetId: 'ch04-light' }, completionText: '窗外的天色在变。' },
     ],
   },
 ]

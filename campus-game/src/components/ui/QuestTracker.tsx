@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { useTranslation } from '../../i18n'
+import { useTranslation, useContent } from '../../i18n'
 import { MAIN_QUESTS, CHAPTER_GOALS, DAILY_OBJECTIVES } from '../../data/quests'
 import { CHAPTERS } from '../../data/chapters'
 
@@ -12,6 +12,7 @@ export function QuestTracker() {
     completedChapters,
   } = useGameStore()
   const t = useTranslation()
+  const { c } = useContent()
   const [expanded, setExpanded] = useState(false)
 
   // 主线进度
@@ -87,7 +88,7 @@ export function QuestTracker() {
               <h4 className="text-stone-500 uppercase tracking-wider mb-1.5 text-[10px]">
                 {t('quest.chapterGoal')}
               </h4>
-              <p className="text-stone-300">{currentGoal.description}</p>
+              <p className="text-stone-300">{c(currentGoal.cid || '', currentGoal.description)}</p>
             </div>
           )}
 
@@ -110,7 +111,7 @@ export function QuestTracker() {
                       <span className="text-xs w-3 text-center">
                         {done ? '✓' : '○'}
                       </span>
-                      <span className={done ? 'line-through' : ''}>{obj.description}</span>
+                      <span className={done ? 'line-through' : ''}>{c(obj.cid || '', obj.description)}</span>
                     </div>
                   )
                 })}

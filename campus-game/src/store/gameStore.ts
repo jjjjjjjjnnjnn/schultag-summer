@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, Settings, SaveData } from '../types/game'
+import type { GameState, Scene, DayScene, NightScene, StoryLine, CharacterImprint, FocusType, WritingPerspective, Settings, SaveData } from '../types/game'
 import { scenes, CHAPTERS } from '../data/chapters'
 import { characters } from '../data/characters'
 import { evaluateAchievements } from '../data/achievements'
@@ -86,6 +86,7 @@ interface GameStore extends GameState {
 
   // ── 夜晚：写作系统 ──
   toggleEntrySelection: (entryId: string) => void
+  togglePerspective: (p: WritingPerspective) => void
   submitWriting: () => void
 
   // ── 成就系统 ──
@@ -136,6 +137,7 @@ const initialState: GameState = {
     maya: { characterId: 'maya', observationCount: 0, writingCount: 0 },
   },
   isWritingPhaseReady: false,
+  selectedPerspective: 'objective',
   writingFeedback: '',
   exposure: 0,
   attentionRemaining: 3,
@@ -425,8 +427,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const lang = settings.language
 
-    // 注意力消耗：同类 1 点，异类 2 点
-    const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+    // V1.5: 消耗值由 focusCosts 决定（若存在）
+    const dayScene = get().getDayScene()
+    const focusCosts = dayScene?.focusCosts
+    const cost = focusCosts && currentFocus && obs.focusGroup === currentFocus
+      ? focusCosts[obs.focusGroup]!
+      : 2
     if (attentionRemaining < cost) return
 
     // 推进人物印象 + 印记
@@ -533,6 +539,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const visibleIntro = getVisibleLines(intro, writingTags, imprints, focusHistory, allNotebookEntries, exposure, completedMilestones)
     set({
       currentLineIndex: visibleIntro.length,
+      isExploring: false,
     })
   },
 
@@ -549,8 +556,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
+  togglePerspective: (p: WritingPerspective) => {
+    set({ selectedPerspective: p })
+  },
+
   submitWriting: () => {
-    const { selectedEntryIds, allNotebookEntries, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings } = get()
+    const { selectedEntryIds, allNotebookEntries, writings, writingTags, currentSceneId, imprints, exposure, currentFocus, settings, selectedPerspective } = get()
     const scene = scenes[currentSceneId]
     if (!scene || scene.mode !== 'night') return
 
@@ -568,6 +579,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const wpCid = wp.cid || ''
     let composedText = wpCid ? getC(lang, wpCid + '.default', wp.defaultText) : wp.defaultText
     let matchedTag: string | undefined
+    let matchedRecipe: import('../types/game').WritingRecipe | undefined
     // 先尝试焦点专属配方
     for (const recipe of nightScene.writingPhase.recipes) {
       if (recipe.requiresFocus && recipe.requiresFocus !== currentFocus) continue
@@ -575,6 +587,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
         composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
         matchedTag = recipe.influenceTag
+        matchedRecipe = recipe
         break
       }
     }
@@ -586,9 +599,34 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (allMatch && recipe.requiredEntries.length <= selectedEntryIds.length) {
           composedText = recipe.cid ? getC(lang, recipe.cid, recipe.composedText) : recipe.composedText
           matchedTag = recipe.influenceTag
+          matchedRecipe = recipe
           break
         }
       }
+    }
+
+    // V1.5: 视角修饰器（仅配方匹配时应用）
+    if (matchedRecipe?.perspectiveModifiers?.[selectedPerspective]) {
+      composedText += '\n\n' + matchedRecipe.perspectiveModifiers[selectedPerspective]
+    }
+
+    // V1.5: 即兴文本生成（无配方匹配但有素材时）
+    if (!matchedTag && selectedEntryIds.length > 0) {
+      const selectedEntries = allNotebookEntries.filter(e => selectedEntryIds.includes(e.id))
+      const focusCounts: Record<string, number> = {}
+      for (const e of selectedEntries) {
+        const fg = e.focusGroup || 'environment'
+        focusCounts[fg] = (focusCounts[fg] || 0) + 1
+      }
+      const dominantFocus = Object.entries(focusCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'environment'
+      const templates: Record<string, string> = {
+        maya: '今晚我试着写下{labels}。\n\n这些细节在脑子里转了好几圈。我不知道为什么记得这么清楚。',
+        ludwig: '{labels}——这些画面像快照一样叠在眼前。\n\n我写的时候发现自己笑了。',
+        environment: '{labels}\n\n这些观察像空气一样——说不出形状，但确实存在。',
+      }
+      const template = templates[dominantFocus] || templates.environment
+      const labels = selectedLabels.join(lang === 'de' ? ', ' : '、')
+      composedText = template.replace('{labels}', labels)
     }
 
     // 如果只选了一两个，生成简单版
@@ -642,6 +680,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       writingFeedback: feedback,
       exposure: newExposure,
       selectedEntryIds: [],
+      selectedPerspective: 'objective',
       isWritingPhaseReady: false,
     })
 
@@ -759,6 +798,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         observedIds: state.observedIds,
         isExploring: state.isExploring,
         selectedEntryIds: state.selectedEntryIds,
+        selectedPerspective: state.selectedPerspective,
         allNotebookEntries: state.allNotebookEntries,
         writings: state.writings,
         writingTags: state.writingTags,

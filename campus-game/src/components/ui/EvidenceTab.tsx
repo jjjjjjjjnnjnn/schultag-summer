@@ -1,5 +1,5 @@
 import { useGameStore } from '../../store/gameStore'
-import { useTranslation } from '../../i18n'
+import { useTranslation, useContent } from '../../i18n'
 import { ALL_EVIDENCE } from '../../data/evidence'
 import type { EvidenceType } from '../../types/game'
 
@@ -10,16 +10,17 @@ const TYPE_ICONS: Record<EvidenceType, string> = {
   origin: '?',
 }
 
-const TYPE_LABELS: Record<EvidenceType, { en: string; zh: string; de: string }> = {
-  anomaly: { en: 'Anomaly', zh: '异常', de: 'Anomalie' },
-  contradiction: { en: 'Contradiction', zh: '矛盾', de: 'Widerspruch' },
-  prediction: { en: 'Prediction', zh: '预言', de: 'Vorhersage' },
-  origin: { en: 'Origin', zh: '起源', de: 'Ursprung' },
+const TYPE_TRANSLATION_KEYS: Record<EvidenceType, string> = {
+  anomaly: 'evidence.type.anomaly',
+  contradiction: 'evidence.type.contradiction',
+  prediction: 'evidence.type.prediction',
+  origin: 'evidence.type.origin',
 }
 
 export function EvidenceTab() {
   const evidence = useGameStore(s => s.evidence)
   const t = useTranslation()
+  const { c } = useContent()
 
   if (evidence.length === 0) {
     return (
@@ -43,7 +44,7 @@ export function EvidenceTab() {
         return (
           <div key={type}>
             <h4 className="text-[10px] text-stone-600 uppercase tracking-wider mb-2">
-              {TYPE_ICONS[type]} {TYPE_LABELS[type].zh}
+              {TYPE_ICONS[type]} {t(TYPE_TRANSLATION_KEYS[type])}
             </h4>
             <div className="space-y-2">
               {typeEvidence.map(ev => {
@@ -64,7 +65,7 @@ export function EvidenceTab() {
                       </span>
                     </div>
                     <p className="text-xs text-stone-400 leading-relaxed" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-                      {ev.description}
+                      {c(ev.cid || ev.id, ev.description)}
                     </p>
                   </div>
                 )

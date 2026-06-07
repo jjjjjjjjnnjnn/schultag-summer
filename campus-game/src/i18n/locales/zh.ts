@@ -47,6 +47,12 @@ const zh: Record<string, string> = {
   'focus.envHint': '你会更注意到周围的氛围',
   'focus.footnote': '这个选择会影响你今天的观察和写作',
 
+  // 写作视角
+  'perspective.objective': '客观记录',
+  'perspective.literary': '文学修饰',
+  'perspective.analytical': '分析反思',
+  'perspective.projection': '换位想象',
+
   // 笔记本
   'notebook.title': '笔记本',
   'notebook.observations': '观察',
@@ -63,6 +69,7 @@ const zh: Record<string, string> = {
   'write.submit': '写成文字 ({n} 项素材)',
   'write.skip': '今晚不写了 →',
   'write.yourWriting': '你的写作',
+  'write.perspectivePrompt': '你想怎么写？',
   'write.nextDay': '下一天 →',
   'write.demoEnd': 'Demo 结束',
   'write.thanks': '感谢试玩',
@@ -107,6 +114,10 @@ const zh: Record<string, string> = {
   'evidence.title': '证据',
   'evidence.none': '还没有发现证据。继续观察和写作。',
   'evidence.chapter': '第',
+  'evidence.type.anomaly': '异常',
+  'evidence.type.contradiction': '矛盾',
+  'evidence.type.prediction': '预言',
+  'evidence.type.origin': '起源',
 
   // 人物
   'char.observations': '观察 {n} 次',

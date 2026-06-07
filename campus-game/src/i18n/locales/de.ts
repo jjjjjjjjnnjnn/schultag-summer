@@ -53,6 +53,12 @@ const de: Record<string, string> = {
   'focus.envHint': 'Du wirst die Atmosphäre mehr bemerken',
   'focus.footnote': 'Diese Wahl beeinflusst heute Beobachtungen und Schreiben',
 
+  // Perspektive
+  'perspective.objective': 'Objektiv',
+  'perspective.literary': 'Literarisch',
+  'perspective.analytical': 'Analytisch',
+  'perspective.projection': 'Projektion',
+
   // Notizbuch
   'notebook.title': 'Notizbuch',
   'notebook.observations': 'Beobachtungen',
@@ -69,6 +75,7 @@ const de: Record<string, string> = {
   'write.submit': 'Schreiben ({n} Materialien)',
   'write.skip': 'Heute Nacht nicht schreiben →',
   'write.yourWriting': 'Dein Text',
+  'write.perspectivePrompt': 'Wie möchtest du schreiben?',
   'write.nextDay': 'Nächster Tag →',
   'write.demoEnd': 'Demo beendet',
   'write.thanks': 'Danke fürs Spielen',
@@ -114,6 +121,10 @@ const de: Record<string, string> = {
   'evidence.title': 'Beweise',
   'evidence.none': 'Noch keine Beweise entdeckt. Beobachte und schreibe weiter.',
   'evidence.chapter': 'Kap.',
+  'evidence.type.anomaly': 'Anomalie',
+  'evidence.type.contradiction': 'Widerspruch',
+  'evidence.type.prediction': 'Vorhersage',
+  'evidence.type.origin': 'Ursprung',
 
   // Charaktere
   'char.observations': '{n} Beobachtungen',

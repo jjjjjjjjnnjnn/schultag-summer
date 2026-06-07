@@ -530,6 +530,58 @@ const de: Record<string, string> = {
   // ═══════════════════════════════════════
   'prologue.day.intro.tutorial.0': 'Licht fällt durch das Fenster am Ende des Korridors. Wieder diese Zeit.',
   'prologue.day.intro.tutorial.1': 'Du kannst wählen, wem du heute mehr Aufmerksamkeit schenkst.',
+
+  // ═══════════════════════════════════════
+  // QUEST ZIELE
+  // ═══════════════════════════════════════
+  'quest.goal.prologue': 'Beobachte den Flur und die Mensa-Atmosphäre',
+  'quest.goal.ch01': 'Lerne die neue Mitschülerin kennen',
+  'quest.goal.ch02': 'Verstehe die Dynamik zwischen den dreien',
+  'quest.goal.ch03': 'Beobachte einen Charakter genau',
+  'quest.goal.ch04': 'Vervollständige deine Beobachtungsaufzeichnung',
+
+  // ═══════════════════════════════════════
+  // TÄGLICHE ZIELE
+  // ═══════════════════════════════════════
+  'quest.obj.prologue.1': 'Beobachte das Licht im Flur',
+  'quest.obj.prologue.2': 'Hör zu, was Ludwig sagt',
+  'quest.obj.ch01.1': 'Beobachte das Aussehen der neuen Schülerin',
+  'quest.obj.ch01.2': 'Hör ihrer Stimme zu',
+  'quest.obj.ch01.3': 'Betrachte das Licht im Klassenzimmer',
+  'quest.obj.ch02.1': 'Schau dir den Tischtennistisch an',
+  'quest.obj.ch02.2': 'Sieh Maya beim Spielen zu',
+  'quest.obj.ch02.3': 'Beachte Ludwigs Reaktion',
+  'quest.obj.ch03.1': 'Hör zu, worüber Ludwig spricht',
+  'quest.obj.ch03.2': 'Beobachte Mayas Gewohnheiten',
+  'quest.obj.ch03.3': 'Nimm die Mensa-Atmosphäre wahr',
+  'quest.obj.ch04.1': 'Schau dir die Dokumentation an',
+  'quest.obj.ch04.2': 'Beobachte Mayas Gesichtsausdruck',
+  'quest.obj.ch04.3': 'Nimm das sich verändernde Licht wahr',
+
+  // ═══════════════════════════════════════
+  // HAUPTMEILENSTEINE
+  // ═══════════════════════════════════════
+  'quest.milestone.first-writing': 'Den ersten Text schreiben',
+  'quest.milestone.meet-maya': 'Die neue Mitschülerin kennenlernen',
+  'quest.milestone.understand-dynamics': 'Die subtile Dynamik zwischen den dreien verstehen',
+  'quest.milestone.echo-awakening': 'Bemerken, dass das Schreiben die Realität verändert',
+  'quest.milestone.final-chapter': 'Den Konsequenzen des Schreibens gegenübertreten',
+
+  // ═══════════════════════════════════════
+  // BEWEISBESCHREIBUNGEN
+  // ═══════════════════════════════════════
+  'evidence.ev-wrong-date': 'Das Erstellungsdatum des Dokuments ist 2025-08-01, aber Robert fing erst am 2025-08-08 an zu schreiben. Das Dokument existierte bereits, bevor er begann.',
+  'evidence.ev-maya-name': 'Robert hörte den Namen "Maya" zum ersten Mal bei ihrer Selbstvorstellung. Aber das Dokument enthielt bereits vorher Mayas Initialen, als ob jemand wusste, dass sie kommen würde.',
+  'evidence.ev-light-twice': 'Das Flurlicht erschien zweimal. Einmal am ersten Tag, einmal jetzt. Aber diese beiden Momente können nicht aus derselben Erinnerung stammen—Robert hatte noch nicht mit dem Schreiben begonnen.',
+  'evidence.ev-first-line': 'Eine Zeile erschien am Anfang des Dokuments, an die Robert sich nicht erinnert: "Es hat stark geregnet an dem Tag, als sie kam." Aber der Tag, an dem Maya kam, war sonnig.',
+  'evidence.ev-ludwig-line': 'Ludwig sagte etwas, von dem Robert sicher ist, dass er es nie geschrieben hat. Aber Ludwig sprach es genauso aus, wie es im Dokument stand, als ob das Dokument ihn schrieb, nicht umgekehrt.',
+  'evidence.ev-maya-motion': 'Maya machte eine Geste—identisch mit der, die Robert im vorherigen Kapitel geschrieben hatte. Kein Zufall. Sie konnte sein Dokument nicht gelesen haben.',
+  'evidence.ev-future-date': 'Das Dokument enthält das morgige Datum. Eine Passage hat einen Zeitstempel aus der Zukunft. Dinge, die Robert noch nicht geschrieben hat, sind bereits aufgezeichnet.',
+  'evidence.ev-ludwig-knows': 'Ludwig fragte: "Findest du nicht auch—sie weiß irgendwie etwas?" Er weiß nicht, was er sagt. Aber Robert schon.',
+  'evidence.ev-you-wrote-wrong': 'Eine Zeile erschien am unteren Rand des Dokuments. Nicht von Robert geschrieben. "Du hast es falsch geschrieben." "Ich habe an dem Tag nicht die Lippen zusammengepresst." "Aber nachdem du es geschrieben hast, fing ich damit an."',
+  'evidence.ev-deviation': 'Die Kluft zwischen Dokument und Realität wächst. Robert kann nicht mehr unterscheiden, was er geschrieben hat und was das Dokument selbst geschrieben hat.',
+  'evidence.ev-mirror': 'Mayas Reaktionen fühlen sich nicht mehr an wie die einer Person, über die geschrieben wird. Sie beginnt, Roberts Handlungen vorherzusagen. Wie eine Figur, die gegen ihren Autor kämpft. Oder—vielleicht ist der Autor nicht Robert.',
+  'evidence.ev-dual-writers': 'Fazit: Dieses Dokument hatte von Anfang an zwei Autoren. Robert schreibt Maya. Maya schreibt Robert. Sie schreiben beide in diesem selben Dokument. Jede Zeile ist eine Fortsetzung der Geschichte des anderen. Keiner von ihnen weiß es.',
 }
 
 export default de

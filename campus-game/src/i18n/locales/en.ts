@@ -53,6 +53,12 @@ const en: Record<string, string> = {
   'focus.envHint': 'You\'ll notice the atmosphere more',
   'focus.footnote': 'This choice affects today\'s observations and writing',
 
+  // Perspective
+  'perspective.objective': 'Objective',
+  'perspective.literary': 'Literary',
+  'perspective.analytical': 'Analytical',
+  'perspective.projection': 'Projection',
+
   // Notebook
   'notebook.title': 'Notebook',
   'notebook.observations': 'Observations',
@@ -69,6 +75,7 @@ const en: Record<string, string> = {
   'write.submit': 'Write ({n} materials)',
   'write.skip': 'Skip writing tonight →',
   'write.yourWriting': 'Your Writing',
+  'write.perspectivePrompt': 'How would you like to write?',
   'write.nextDay': 'Next day →',
   'write.demoEnd': 'Demo Complete',
   'write.thanks': 'Thanks for playing',
@@ -114,6 +121,10 @@ const en: Record<string, string> = {
   'evidence.title': 'Evidence',
   'evidence.none': 'No evidence discovered yet. Keep observing and writing.',
   'evidence.chapter': 'Ch.',
+  'evidence.type.anomaly': 'Anomaly',
+  'evidence.type.contradiction': 'Contradiction',
+  'evidence.type.prediction': 'Prediction',
+  'evidence.type.origin': 'Origin',
 
   // Characters
   'char.observations': '{n} observations',

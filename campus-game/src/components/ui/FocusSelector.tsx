@@ -12,9 +12,10 @@ const FOCUS_KEYS: { type: FocusType; labelKey: string; subKey: string; hintKey: 
 interface Props {
   onSelect: (f: FocusType) => void
   budget?: number
+  focusCosts?: Record<string, number>
 }
 
-export function FocusSelector({ onSelect, budget = 3 }: Props) {
+export function FocusSelector({ onSelect, budget = 3, focusCosts }: Props) {
   const t = useTranslation()
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export function FocusSelector({ onSelect, budget = 3 }: Props) {
               className="text-sm text-stone-300 group-hover:text-stone-100 transition-colors"
               style={{ fontFamily: 'var(--font-serif-cn)' }}
             >
-              {t(f.labelKey)}
+              {t(f.labelKey)}{focusCosts?.[f.type] !== undefined ? `（${focusCosts[f.type]}）` : ''}
             </span>
             <span className="text-[10px] text-stone-500">{t(f.subKey)}</span>
             <span className="text-[10px] text-stone-600 group-hover:text-stone-500 transition-colors">{t(f.hintKey)}</span>

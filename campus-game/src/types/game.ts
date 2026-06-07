@@ -1,6 +1,8 @@
 // ── 焦点类型 ──
 export type FocusType = 'maya' | 'ludwig' | 'environment'
 
+export type WritingPerspective = 'objective' | 'literary' | 'analytical' | 'projection'
+
 // ── V1.1 后果系统 ──
 
 /** 行为效果：角色因 Robert 的写作而产生的行为改变 */
@@ -179,6 +181,8 @@ export interface WritingRecipe {
   requiresFocus?: FocusType
   /** 内容翻译 key（用于多语言查找） */
   cid?: string
+  /** V1.5: 视角修饰器：不同写作视角下追加的文字 */
+  perspectiveModifiers?: Partial<Record<WritingPerspective, string>>
 }
 
 // ── 场景骨架元素 ──
@@ -215,6 +219,8 @@ export interface DayScene {
   sceneLayout?: SceneLayout
   /** 每日注意力预算（默认 3） */
   attentionBudget?: number
+  /** V1.5: 各焦点方向的观察消耗 */
+  focusCosts?: Record<FocusType, number>
   /** 内容翻译 key（用于多语言查找） */
   cid?: string
 }
@@ -296,6 +302,8 @@ export interface GameState {
   imprints: Record<string, CharacterImprint>
   /** 夜晚场景：写作阶段就绪标记 */
   isWritingPhaseReady: boolean
+  /** V1.5: 当前选择的写作视角 */
+  selectedPerspective: WritingPerspective
   /** 写作完成后的叙事反馈 */
   writingFeedback: string
   /** 暴露度：被看见的程度 (0-100) */
@@ -358,6 +366,7 @@ export interface Evidence {
   type: EvidenceType
   chapterId: string
   isKeyEvidence: boolean
+  cid?: string
 }
 
 // ── 存档数据结构 ──

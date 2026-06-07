@@ -202,7 +202,7 @@ function DaySceneView({
                 </p>
               </div>
             )}
-            <FocusSelector onSelect={selectFocus} budget={dayScene.attentionBudget ?? 3} />
+            <FocusSelector onSelect={selectFocus} budget={dayScene.attentionBudget ?? 3} focusCosts={dayScene.focusCosts} />
           </>
         )}
 
@@ -249,7 +249,9 @@ function DaySceneView({
                   if (!obs.position) return null
                   const isObserved = observedIds.includes(obs.id)
                   const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
-                  const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+                  const cost = dayScene.focusCosts && currentFocus && obs.focusGroup === currentFocus
+                    ? dayScene.focusCosts[obs.focusGroup]
+                    : 2
                   const tooExpensive = attentionRemaining < cost
                   const isFocused = currentFocus === obs.focusGroup
                   const isDisabled = isLocked || tooExpensive
@@ -286,7 +288,9 @@ function DaySceneView({
                 {dayScene.observations.map((obs) => {
                 const isObserved = observedIds.includes(obs.id)
                 const isLocked = !!(obs.requires && !observedIds.includes(obs.requires))
-                const cost = (currentFocus && obs.focusGroup === currentFocus) ? 1 : 2
+                const cost = dayScene.focusCosts && currentFocus && obs.focusGroup === currentFocus
+                  ? dayScene.focusCosts[obs.focusGroup]
+                  : 2
                 const tooExpensive = attentionRemaining < cost
                 const isDisabled = isLocked || tooExpensive
                 const focusColor = obs.focusGroup === 'maya' ? '#8b5cf6' : obs.focusGroup === 'ludwig' ? '#3b82f6' : '#a8a29e'
@@ -467,7 +471,7 @@ function NightSceneView({ onAdvance }: { onAdvance: () => void }) {
 
 // ── 写作阶段组件 ──
 function WritingPhase({ nightScene }: { nightScene: NightScene }) {
-  const { selectedEntryIds, allNotebookEntries, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus } = useGameStore()
+  const { selectedEntryIds, allNotebookEntries, writings, writingFeedback, toggleEntrySelection, submitWriting, currentFocus, selectedPerspective, togglePerspective } = useGameStore()
   const t = useTranslation()
   const { c, co } = useContent()
   const wp = nightScene.writingPhase!
@@ -570,6 +574,28 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
                   backgroundColor: entry.focusGroup === 'maya' ? '#8b5cf6' : entry.focusGroup === 'ludwig' ? '#3b82f6' : '#a8a29e'
                 }} />
               )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* V1.5: 写作视角选择 */}
+      <div className="border-t border-stone-800/30 pt-3">
+        <p className="text-xs text-stone-600 mb-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>
+          {c('write.perspectivePrompt', '你想怎么写？')}
+        </p>
+        <div className="flex gap-2">
+          {(['objective', 'literary', 'analytical', 'projection'] as const).map(p => (
+            <button
+              key={p}
+              onClick={() => togglePerspective(p)}
+              className={`px-3 py-1.5 text-xs rounded border transition-all ${
+                selectedPerspective === p
+                  ? 'border-amber-700 bg-amber-900/20 text-amber-400'
+                  : 'border-stone-700 text-stone-500 hover:text-stone-300 hover:border-stone-500'
+              }`}
+            >
+              {t('perspective.' + p)}
             </button>
           ))}
         </div>

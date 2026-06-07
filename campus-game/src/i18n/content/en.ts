@@ -530,6 +530,58 @@ const en: Record<string, string> = {
   // ═══════════════════════════════════════
   'prologue.day.intro.tutorial.0': 'Light pours in from the window at the end of the hallway. That time of day again.',
   'prologue.day.intro.tutorial.1': 'You can choose who to pay more attention to today.',
+
+  // ═══════════════════════════════════════
+  // QUEST GOALS
+  // ═══════════════════════════════════════
+  'quest.goal.prologue': 'Observe the hallway and cafeteria atmosphere',
+  'quest.goal.ch01': 'Get to know the new classmate',
+  'quest.goal.ch02': 'Understand the dynamics between the three',
+  'quest.goal.ch03': 'Observe one character deeply',
+  'quest.goal.ch04': 'Complete your observation record',
+
+  // ═══════════════════════════════════════
+  // DAILY OBJECTIVES
+  // ═══════════════════════════════════════
+  'quest.obj.prologue.1': 'Observe the light in the hallway',
+  'quest.obj.prologue.2': 'Listen to what Ludwig is saying',
+  'quest.obj.ch01.1': 'Observe the new student\'s appearance',
+  'quest.obj.ch01.2': 'Listen to her voice',
+  'quest.obj.ch01.3': 'Look at the classroom light',
+  'quest.obj.ch02.1': 'Look at the ping-pong table',
+  'quest.obj.ch02.2': 'Watch Maya play',
+  'quest.obj.ch02.3': 'Notice Ludwig\'s reaction',
+  'quest.obj.ch03.1': 'Listen to what Ludwig is talking about',
+  'quest.obj.ch03.2': 'Observe Maya\'s habits',
+  'quest.obj.ch03.3': 'Notice the cafeteria atmosphere',
+  'quest.obj.ch04.1': 'Watch the documentary',
+  'quest.obj.ch04.2': 'Observe Maya\'s expression',
+  'quest.obj.ch04.3': 'Notice the changing light',
+
+  // ═══════════════════════════════════════
+  // MAIN MILESTONES
+  // ═══════════════════════════════════════
+  'quest.milestone.first-writing': 'Complete the first piece of writing',
+  'quest.milestone.meet-maya': 'Meet the new classmate',
+  'quest.milestone.understand-dynamics': 'Understand the subtle dynamics between the three',
+  'quest.milestone.echo-awakening': 'Realize writing is changing reality',
+  'quest.milestone.final-chapter': 'Face the consequences of writing',
+
+  // ═══════════════════════════════════════
+  // EVIDENCE DESCRIPTIONS
+  // ═══════════════════════════════════════
+  'evidence.ev-wrong-date': 'The document creation date is 2025-08-01, but Robert didn\'t start writing until 2025-08-08. The document existed before he began.',
+  'evidence.ev-maya-name': 'Robert first heard the name "Maya" during her self-introduction. But the document contained Maya\'s initial beforehand, as if someone already knew she was coming.',
+  'evidence.ev-light-twice': 'The hallway light appeared twice. Once on the first day, once now. But these two moments cannot be from the same memory—Robert hadn\'t started writing yet.',
+  'evidence.ev-first-line': 'A line appeared at the beginning of the document that Robert doesn\'t remember writing: "It rained heavily the day she arrived." But the day Maya came was sunny.',
+  'evidence.ev-ludwig-line': 'Ludwig said something Robert is sure he never wrote. But Ludwig spoke it exactly as it appeared in the document, as if the document was writing him, not the other way around.',
+  'evidence.ev-maya-motion': 'Maya made a gesture—identical to what Robert wrote the previous chapter. Not the kind of coincidence. She couldn\'t have read his document.',
+  'evidence.ev-future-date': 'The document contains tomorrow\'s date. A passage has a timestamp from the future. Things Robert hasn\'t written yet are already recorded.',
+  'evidence.ev-ludwig-knows': 'Ludwig asked: "Don\'t you feel like—she knows something?" He doesn\'t know what he\'s saying. But Robert does.',
+  'evidence.ev-you-wrote-wrong': 'A line appeared at the bottom of the document. Not written by Robert. "You wrote it wrong." "I didn\'t purse my lips that day." "But after you wrote it, I started doing it."',
+  'evidence.ev-deviation': 'The gap between the document and reality is growing. Robert can no longer tell what he wrote and what the document wrote itself.',
+  'evidence.ev-mirror': 'Maya\'s reactions no longer feel like those of someone being written about. She starts predicting Robert\'s actions. Like a character fighting her author. Or—perhaps the author is not Robert.',
+  'evidence.ev-dual-writers': 'Conclusion: This document has had two authors from the very start. Robert writes Maya. Maya writes Robert. They are both writing in this same document. Every line is a continuation of the other\'s story. Neither of them knows.',
 }
 
 export default en
