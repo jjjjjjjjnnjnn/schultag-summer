@@ -599,7 +599,7 @@ function WritingPhase({ nightScene }: { nightScene: NightScene }) {
       {/* V1.5: 写作视角选择 */}
       <div className="border-t border-stone-800/30 pt-3">
         <p className="text-xs text-stone-600 mb-2" style={{ fontFamily: 'var(--font-serif-cn)' }}>
-          {c('write.perspectivePrompt', '你想怎么写？')}
+          {t('write.perspectivePrompt')}
         </p>
         <div className="flex gap-2">
           {(['objective', 'literary', 'analytical', 'projection'] as const).map(p => (

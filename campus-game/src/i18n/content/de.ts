@@ -568,6 +568,20 @@ const de: Record<string, string> = {
   'quest.milestone.final-chapter': 'Den Konsequenzen des Schreibens gegenübertreten',
 
   // ═══════════════════════════════════════
+  // EVIDENCE TITLES
+  'evidence.ev-wrong-date.title': 'Falsches Erstellungsdatum',
+  'evidence.ev-maya-name.title': 'Mayas Name',
+  'evidence.ev-light-twice.title': 'Sich wiederholendes Licht',
+  'evidence.ev-first-line.title': 'Die fremde erste Zeile',
+  'evidence.ev-ludwig-line.title': 'Ludwigs Satz',
+  'evidence.ev-maya-motion.title': 'Mayas Geste',
+  'evidence.ev-future-date.title': 'Zukünftiges Datum',
+  'evidence.ev-ludwig-knows.title': 'Ludwigs Intuition',
+  'evidence.ev-you-wrote-wrong.title': 'Du hast es falsch geschrieben',
+  'evidence.ev-deviation.title': 'Sich häufende Abweichung',
+  'evidence.ev-mirror.title': 'Rollenumkehr',
+  'evidence.ev-dual-writers.title': 'Doppelte Autorenschaft',
+
   // BEWEISBESCHREIBUNGEN
   // ═══════════════════════════════════════
   'evidence.ev-wrong-date': 'Das Erstellungsdatum des Dokuments ist 2025-08-01, aber Robert fing erst am 2025-08-08 an zu schreiben. Das Dokument existierte bereits, bevor er begann.',

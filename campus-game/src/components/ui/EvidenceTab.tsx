@@ -20,7 +20,7 @@ const TYPE_TRANSLATION_KEYS: Record<EvidenceType, string> = {
 export function EvidenceTab() {
   const evidence = useGameStore(s => s.evidence)
   const t = useTranslation()
-  const { c } = useContent()
+  const { c, co } = useContent()
 
   if (evidence.length === 0) {
     return (
@@ -59,7 +59,7 @@ export function EvidenceTab() {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       {ev.isKeyEvidence && <span className="text-amber-500 text-xs">◆</span>}
-                      <span className="text-xs text-stone-200 font-medium">{ev.title}</span>
+                      <span className="text-xs text-stone-200 font-medium">{ev.cid ? co(ev.cid, 'title', ev.title) : ev.title}</span>
                       <span className="text-[10px] text-stone-600 ml-auto">
                         {t('evidence.chapter')} {ev.chapterId.replace('ch', '')}
                       </span>
