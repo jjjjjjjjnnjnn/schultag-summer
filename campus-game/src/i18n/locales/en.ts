@@ -174,6 +174,11 @@ const en: Record<string, string> = {
   'quest.dailyObjectives': 'Daily Objectives',
   'quest.noObjectives': 'No active objectives for this scene.',
 
+  // HUD
+  'hud.attention': 'Attention',
+  'hud.exposure': 'Exposure',
+  'hud.inspiration': 'Inspiration',
+
   // V1.6 Echo + Memory
   'write.echoPreview': 'Echo',
   'memory.unlocked': 'Memory Unlocked',

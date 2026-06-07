@@ -180,6 +180,11 @@ const zh: Record<string, string> = {
   'quest.dailyObjectives': '今日目标',
   'quest.noObjectives': '当前场景没有活跃目标。',
 
+  // HUD
+  'hud.attention': '注意力',
+  'hud.exposure': '暴露度',
+  'hud.inspiration': '灵感',
+
   // V1.6 回响 + 记忆
   'write.echoPreview': '回响',
   'memory.unlocked': '记忆解锁',

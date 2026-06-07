@@ -174,6 +174,11 @@ const de: Record<string, string> = {
   'quest.dailyObjectives': 'Tägliche Ziele',
   'quest.noObjectives': 'Keine aktiven Ziele für diese Szene.',
 
+  // HUD
+  'hud.attention': 'Aufmerksamkeit',
+  'hud.exposure': 'Exposition',
+  'hud.inspiration': 'Inspiration',
+
   // V1.6 Echo + Erinnerung
   'write.echoPreview': 'Echo',
   'memory.unlocked': 'Erinnerung entsperrt',
